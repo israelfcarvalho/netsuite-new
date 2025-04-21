@@ -1,23 +1,27 @@
 {
-  "name": "web",
+  "name": "list-report",
   "version": "0.0.1",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "next dev",
+    "build": "next build && ns-builder",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "lint": "next lint --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@types/xlsx": "^0.0.36",
     "@workspace/ui": "workspace:*",
+    "@workspace/infrastructure": "workspace:*",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.475.0",
-    "next": "^15.2.3",
+    "next": "15.1.0",
     "next-themes": "^0.4.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20",
