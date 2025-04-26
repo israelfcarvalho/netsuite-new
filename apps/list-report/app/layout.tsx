@@ -1,7 +1,10 @@
 import { Geist, Geist_Mono } from 'next/font/google'
 
 import '@workspace/ui/globals.css'
-import { Providers } from '@/components/providers'
+import { cn } from '@workspace/ui/lib/utils'
+
+import { Providers } from '@/lib/components/providers'
+import { environments } from '@/lib/environments'
 
 const fontSans = Geist({
   subsets: ['latin'],
@@ -19,8 +22,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`h-[600px] ${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
+    <html
+      className={cn({ 'w-dvw h-dvh p-4 flex items-center justify-center': !environments.isProduction })}
+      lang="en"
+      suppressHydrationWarning
+    >
+      <body
+        className={`overflow-visible h-[600px] w-full ${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

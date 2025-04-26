@@ -8,6 +8,9 @@
       ],
       "@workspace/ui/*": [
         "../../packages/ui/src/*"
+      ],
+      "@workspace/core/*": [
+        "../../packages/core/src/*"
       ]
     },
     "plugins": [
