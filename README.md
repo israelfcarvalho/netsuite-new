@@ -125,3 +125,34 @@ Common issues and their solutions:
 ## 📅 Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history and changes.
+
+## Prerequisites
+
+- Node.js >= 20
+- pnpm >= 9.12.3
+
+### Setting up pnpm
+
+This project uses corepack to manage pnpm version. To set up:
+
+1. Enable corepack (if not already enabled):
+   ```bash
+   corepack enable
+   ```
+
+2. The project will automatically use the correct pnpm version (9.12.3) when you run:
+   ```bash
+   pnpm install
+   ```
+
+3. To switch pnpm versions manually:
+   ```bash
+   corepack prepare pnpm@9.12.3 --activate
+   ```
+
+4. To verify your pnpm version:
+   ```bash
+   pnpm --version
+   ```
+
+The project includes a version check that will run before installation. If your pnpm version doesn't match the required version, you'll see an error message with instructions on how to fix it.

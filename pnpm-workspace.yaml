@@ -1,3 +1,7 @@
+# This file requires pnpm version 9.12.3
+# To install the correct version: npm install -g pnpm@9.12.3
+
 packages:
   - "apps/*"
   - "packages/*"
+  - "scripts"
