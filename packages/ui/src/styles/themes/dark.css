@@ -1,0 +1,236 @@
+.dark {
+  /* Base Colors */
+  --white: rgb(255, 255, 255);
+  --black: rgb(0, 0, 0);
+  --oracle: rgb(202, 77, 60);
+  --netsuite: rgb(67, 124, 148);
+  --brand-light: rgb(95, 125, 79);
+  --brand-dark: rgb(137, 114, 63);
+  --neutral: rgb(122, 115, 110);
+  --blue: rgb(34, 126, 158);
+  --red: rgb(214, 59, 37);
+  --orange: rgb(172, 99, 12);
+  --green: rgb(80, 130, 35);
+  --black-opacity-lower: rgba(0, 0, 0, 0.1);
+  --black-opacity-low: rgba(0, 0, 0, 0.3);
+  --black-opacity-20: rgba(0, 0, 0, 0.2);
+  --pine: rgb(76, 130, 92);
+  --teal: rgb(79, 125, 123);
+  --ocean: rgb(67, 124, 148);
+  --sky: rgb(67, 124, 148);
+  --slate: rgb(105, 119, 120);
+  --pebble: rgb(111, 117, 126);
+  --lilac: rgb(107, 116, 148);
+  --plum: rgb(132, 106, 146);
+  --rose: rgb(163, 100, 114);
+  --button-transparent: transparent;
+  --button-4: rgb(245, 245, 245);
+  --button-5: rgb(243, 243, 243);
+  --button-8: rgb(236, 236, 236);
+  --button-10: rgb(231, 231, 231);
+  --button-12: rgb(227, 226, 226);
+  --button-16: rgb(217, 217, 217);
+  --button-20: rgb(208, 208, 207);
+  --button-50: rgb(138, 138, 137);
+
+  /* Neutral Colors */
+  --neutral-0: rgb(0, 0, 0);
+  --neutral-10: rgb(22, 21, 19);
+  --neutral-20: rgb(32, 30, 28);
+  --neutral-30: rgb(48, 45, 42);
+  --neutral-40: rgb(58, 54, 50);
+  --neutral-50: rgb(71, 66, 62);
+  --neutral-60: rgb(81, 76, 71);
+  --neutral-70: rgb(92, 86, 81);
+  --neutral-80: rgb(102, 95, 91);
+  --neutral-90: rgb(111, 105, 100);
+  --neutral-100: rgb(122, 115, 110);
+  --neutral-110: rgb(139, 133, 128);
+  --neutral-120: rgb(158, 152, 146);
+  --neutral-130: rgb(174, 168, 162);
+  --neutral-140: rgb(188, 182, 177);
+  --neutral-150: rgb(212, 207, 202);
+  --neutral-160: rgb(228, 225, 221);
+  --neutral-170: rgb(241, 239, 237);
+  --neutral-180: rgb(245, 244, 242);
+  --neutral-190: rgb(251, 249, 248);
+  --neutral-200: rgb(255, 255, 255);
+
+  /* Brand Colors */
+  --brand-10: rgb(11, 23, 31);
+  --brand-20: rgb(19, 33, 44);
+  --brand-30: rgb(26, 47, 63);
+  --brand-40: rgb(31, 58, 75);
+  --brand-50: rgb(38, 71, 89);
+  --brand-60: rgb(44, 82, 102);
+  --brand-70: rgb(50, 92, 114);
+  --brand-80: rgb(54, 103, 125);
+  --brand-90: rgb(59, 112, 135);
+  --brand-100: rgb(34, 126, 158);
+  --brand-110: rgb(85, 142, 164);
+  --brand-120: rgb(107, 161, 182);
+  --brand-130: rgb(129, 178, 195);
+  --brand-140: rgb(148, 191, 206);
+  --brand-150: rgb(181, 213, 224);
+  --brand-160: rgb(208, 229, 237);
+  --brand-170: rgb(231, 242, 245);
+  --brand-180: rgb(237, 246, 249);
+  --brand-190: rgb(245, 250, 252);
+
+  /* Success Colors */
+  --success-10: rgb(15, 23, 6);
+  --success-20: rgb(21, 35, 9);
+  --success-30: rgb(31, 51, 14);
+  --success-40: rgb(38, 61, 16);
+  --success-50: rgb(46, 73, 20);
+  --success-60: rgb(53, 86, 23);
+  --success-70: rgb(60, 96, 26);
+  --success-80: rgb(67, 107, 29);
+  --success-90: rgb(73, 118, 32);
+  --success-100: rgb(80, 130, 35);
+  --success-110: rgb(94, 148, 43);
+  --success-120: rgb(111, 169, 57);
+  --success-130: rgb(125, 186, 69);
+  --success-140: rgb(138, 201, 79);
+  --success-150: rgb(177, 221, 136);
+  --success-160: rgb(207, 235, 179);
+  --success-170: rgb(228, 245, 211);
+  --success-180: rgb(235, 248, 222);
+  --success-190: rgb(244, 252, 235);
+
+  /* Info Colors */
+  --info-10: rgb(2, 24, 31);
+  --info-20: rgb(4, 35, 45);
+  --info-30: rgb(5, 50, 66);
+  --info-40: rgb(6, 60, 78);
+  --info-50: rgb(6, 72, 95);
+  --info-60: rgb(4, 83, 111);
+  --info-70: rgb(2, 94, 126);
+  --info-80: rgb(0, 104, 140);
+  --info-90: rgb(14, 114, 149);
+  --info-100: rgb(34, 126, 158);
+  --info-110: rgb(65, 144, 172);
+  --info-120: rgb(95, 162, 186);
+  --info-130: rgb(121, 177, 198);
+  --info-140: rgb(143, 191, 208);
+  --info-150: rgb(180, 213, 225);
+  --info-160: rgb(208, 229, 238);
+  --info-170: rgb(228, 241, 247);
+  --info-180: rgb(237, 246, 249);
+  --info-190: rgb(246, 250, 252);
+
+  /* Warning Colors */
+  --warning-10: rgb(32, 18, 2);
+  --warning-20: rgb(46, 26, 3);
+  --warning-30: rgb(69, 39, 5);
+  --warning-40: rgb(81, 47, 6);
+  --warning-50: rgb(99, 56, 7);
+  --warning-60: rgb(114, 65, 8);
+  --warning-70: rgb(129, 73, 9);
+  --warning-80: rgb(143, 82, 10);
+  --warning-90: rgb(156, 89, 11);
+  --warning-100: rgb(172, 99, 12);
+  --warning-110: rgb(198, 113, 14);
+  --warning-120: rgb(225, 130, 18);
+  --warning-130: rgb(235, 150, 50);
+  --warning-140: rgb(240, 169, 87);
+  --warning-150: rgb(246, 199, 146);
+  --warning-160: rgb(249, 221, 188);
+  --warning-170: rgb(252, 237, 220);
+  --warning-180: rgb(253, 242, 229);
+  --warning-190: rgb(254, 249, 242);
+
+  /* Danger Colors */
+  --danger-10: rgb(43, 12, 7);
+  --danger-20: rgb(60, 17, 11);
+  --danger-30: rgb(86, 24, 15);
+  --danger-40: rgb(102, 28, 18);
+  --danger-50: rgb(124, 34, 22);
+  --danger-60: rgb(143, 39, 25);
+  --danger-70: rgb(162, 44, 29);
+  --danger-80: rgb(179, 49, 31);
+  --danger-90: rgb(195, 53, 34);
+  --danger-100: rgb(214, 59, 37);
+  --danger-110: rgb(236, 79, 59);
+  --danger-120: rgb(254, 105, 84);
+  --danger-130: rgb(255, 133, 117);
+  --danger-140: rgb(255, 157, 144);
+  --danger-150: rgb(255, 193, 184);
+  --danger-160: rgb(255, 217, 211);
+  --danger-170: rgb(255, 235, 232);
+  --danger-180: rgb(255, 241, 239);
+  --danger-190: rgb(255, 248, 247);
+
+  /* Text Colors */
+  --text-primary: rgb(255, 255, 255);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-disabled: rgba(255, 255, 255, 0.4);
+  --text-inverse: rgb(0, 0, 0);
+  --text-link: rgb(107, 161, 182);
+  --text-success: rgb(138, 201, 79);
+  --text-success-low: rgb(80, 130, 35);
+  --text-info: rgb(143, 191, 208);
+  --text-info-low: rgb(34, 126, 158);
+  --text-warning: rgb(240, 169, 87);
+  --text-warning-low: rgb(172, 99, 12);
+  --text-danger: rgb(255, 157, 144);
+  --text-danger-low: rgb(214, 59, 37);
+
+  /* Border Colors */
+  --border-enabled: rgba(255, 255, 255, 0.5);
+  --border-disabled: rgba(255, 255, 255, 0.2);
+  --border-divider: rgba(255, 255, 255, 0.12);
+  --border-selected: rgb(34, 126, 158);
+  --border-drop-line: rgb(34, 126, 158);
+  --border-selected-neutral: rgb(255, 255, 255);
+  --border-warning: rgb(240, 169, 87);
+  --border-danger: rgb(255, 157, 144);
+  --border-keyboard-focus: rgb(255, 255, 255);
+
+  /* Overlay Colors */
+  --overlay-hover: rgba(255, 255, 255, 0.08);
+  --overlay-hover-inverse: rgba(0, 0, 0, 0.08);
+  --overlay-active: rgba(255, 255, 255, 0.16);
+  --overlay-active-inverse: rgba(0, 0, 0, 0.12);
+  --overlay-hover-danger: rgba(255, 157, 144, 0.24);
+  --overlay-hover-danger-active: rgba(255, 157, 144, 0.32);
+  --overlay-scrim: rgba(0, 0, 0, 0.4);
+
+  /* Surface Colors */
+  --surface-selected: rgb(31, 58, 75);
+  --surface-disabled: rgba(255, 255, 255, 0.04);
+  --surface-neutral-low: rgb(22, 21, 19);
+  --surface-neutral-subtle: rgba(255, 255, 255, 0.08);
+  --surface-neutral-strong: rgb(122, 115, 110);
+  --surface-info-low: rgb(11, 23, 31);
+  --surface-info-subtle: rgba(143, 191, 208, 0.4);
+  --surface-info-strong: rgb(34, 126, 158);
+  --surface-success-low: rgb(15, 23, 6);
+  --surface-success-subtle: rgba(138, 201, 79, 0.4);
+  --surface-success-strong: rgb(80, 130, 35);
+  --surface-warning-low: rgb(32, 18, 2);
+  --surface-warning-subtle: rgba(240, 169, 87, 0.4);
+  --surface-warning-strong: rgb(172, 99, 12);
+  --surface-danger-low: rgb(43, 12, 7);
+  --surface-danger-subtle: rgba(255, 157, 144, 0.4);
+  --surface-danger-strong: rgb(214, 59, 37);
+
+  /* Chart Colors */
+  --chart-1: rgb(36, 93, 99);
+  --chart-2: rgb(215, 121, 15);
+  --chart-3: rgb(49, 160, 156);
+  --chart-4: rgb(78, 65, 55);
+  --chart-5: rgb(105, 158, 97);
+  --chart-6: rgb(180, 114, 130);
+  --chart-7: rgb(131, 64, 30);
+  --chart-8: rgb(158, 127, 204);
+  --chart-9: rgb(168, 142, 0);
+  --chart-10: rgb(88, 49, 110);
+  --chart-11: rgb(89, 153, 181);
+  --chart-12: rgb(49, 122, 69);
+
+  /* Threshold Colors */
+  --threshold-success: rgb(80, 130, 35);
+  --threshold-warning: rgb(207, 124, 0);
+  --threshold-danger: rgb(214, 59, 37);
+} 
