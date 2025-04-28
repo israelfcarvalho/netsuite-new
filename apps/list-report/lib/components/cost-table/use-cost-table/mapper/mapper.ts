@@ -1,8 +1,8 @@
 import { CostNode, CostState } from '../types'
 
-import { CropPlanLine } from '@/lib/api/crop-plan/types'
+import { CropPlanLineItem } from '@/lib/api/crop-plan/types'
 
-export function createNode(item: CropPlanLine, parentRowId: string = ''): CostNode {
+export function createNode(item: CropPlanLineItem, parentRowId: string = ''): CostNode {
   const rowId = parentRowId.concat(item.id)
 
   return {
@@ -16,10 +16,10 @@ export function createNode(item: CropPlanLine, parentRowId: string = ''): CostNo
   }
 }
 
-export function mapCropPlanToNodes(data: CropPlanLine[]): Map<string, CostNode> {
+export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, CostNode> {
   const nodes = new Map<string, CostNode>()
 
-  function processNode(item: CropPlanLine, parentRowId?: string) {
+  function processNode(item: CropPlanLineItem, parentRowId?: string) {
     const node = createNode(item, parentRowId)
 
     node.children = item.children?.map((child) => processNode(child, node.rowId))
@@ -32,10 +32,11 @@ export function mapCropPlanToNodes(data: CropPlanLine[]): Map<string, CostNode> 
   return nodes
 }
 
-export function buildInitialState(data: CropPlanLine[]): CostState {
+export function buildInitialState(data: CropPlanLineItem[]): CostState {
   const nodes = mapCropPlanToNodes(data)
 
   return {
     nodes,
+    tree: Array.from(nodes.values()).filter((node) => !node.parentRowId),
   }
 }

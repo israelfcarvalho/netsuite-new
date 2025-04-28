@@ -1,8 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common'
+import { Controller, Get, Query, Post, Body } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CropPlanService } from './crop-plan.service'
-import { CropPlanApiResponse, CropPlanQueryParams } from './crop-plan.types'
+import { CropPlanApiResponse, CropPlanQueryParams, CropPlanLine } from './crop-plan.types'
 
 @ApiTags('List Report - Crop Plan')
 @Controller('')
@@ -34,5 +34,35 @@ export class CropPlanController {
     }
 
     return this.cropPlanService.getCropPlanLines(cropPlanId)
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Update crop plan lines' })
+  @ApiResponse({ status: 200, description: 'Success' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  async updateCropPlanLines(
+    @Query() query: CropPlanQueryParams,
+    @Body() body: { action: string; cropPlanId: number; lines: CropPlanLine[] }
+  ): Promise<CropPlanApiResponse> {
+    const { script, deploy } = query
+    const { action, cropPlanId, lines } = body
+
+    if (!script || !deploy) {
+      return {
+        status: 400,
+        message: 'Script and deploy parameters are required',
+        data: [],
+      }
+    }
+
+    if (action !== 'update-lines') {
+      return {
+        status: 400,
+        message: 'Invalid action. Expected: update-lines',
+        data: [],
+      }
+    }
+
+    return this.cropPlanService.updateCropPlanLines(cropPlanId, lines)
   }
 }

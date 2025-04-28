@@ -2,6 +2,7 @@
 
 import { jsPDF } from 'jspdf'
 import { Trash2 } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 import * as XLSX from 'xlsx'
 
@@ -14,11 +15,17 @@ import { CostTableAddModal } from './cost-table-add-modal'
 import { useCostTable } from './use-cost-table'
 import { CostCode, CostType, Division } from '../../api'
 import { CostNode } from './use-cost-table/types'
+import { useSaveCropPlanLines } from '../../api/crop-plan/use-crop-plan-lines'
+
 const ExpandableTable = createExpandableTable<CostNode>()
 
 export function CostTable() {
+  const searchParams = useSearchParams()
+  const cropPlanId = searchParams.get('cropPlanId')
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useCostTable()
+  const { updateLines, isLoading: isSaving } = useSaveCropPlanLines()
 
   const handleAddNew = (newItem: {
     division: Division
@@ -31,6 +38,27 @@ export function CostTable() {
     const { division, costCode, costType, initialCost, currentPlannedCost, projectedCost } = newItem
 
     addNode(division, costCode, costType, initialCost, currentPlannedCost, projectedCost)
+  }
+
+  const handleSave = () => {
+    const lines = Array.from(state.nodes.values())
+      .filter((item) => !item.children && item.id !== 'grand-total')
+      .map((item) => {
+        const costType = item
+        const costCode = state.nodes.get(costType.parentRowId ?? '')
+        const division = state.nodes.get(costCode?.parentRowId ?? '')
+
+        return {
+          divisionId: Number(division?.id),
+          costCodeId: Number(costCode?.id),
+          costTypeId: Number(costType.id),
+          initialCost: item.initialCost,
+          currentPlannedCost: item.currentPlannedCost,
+          projectedCost: item.projectedCost,
+        }
+      })
+
+    updateLines(Number(cropPlanId), lines)
   }
 
   const handleExcelExport = (): void => {
@@ -168,7 +196,7 @@ export function CostTable() {
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
     ],
-    [updateNode, state.nodes, deleteNode]
+    [updateNode, deleteNode]
   )
 
   return (
@@ -177,7 +205,7 @@ export function CostTable() {
         <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
           Add New Cost Line
         </Button>
-        <Button variant="default" size="sm" onClick={() => {}} disabled={isLoading}>
+        <Button variant="default" size="sm" onClick={handleSave} disabled={isLoading || isSaving}>
           Save
         </Button>
         <div className="ml-auto flex gap-2">

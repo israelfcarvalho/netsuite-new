@@ -134,4 +134,20 @@ export class CropPlanService {
       data: cropPlanLines,
     }
   }
+
+  async updateCropPlanLines(cropPlanId: number, lines: CropPlanLine[]): Promise<CropPlanApiResponse> {
+    if (!cropPlanId) {
+      return {
+        status: 400,
+        message: 'Crop Plan ID is required',
+        data: [],
+      }
+    }
+    this.mockDataStore[cropPlanId] = lines
+    return {
+      status: 200,
+      message: 'Success',
+      data: lines,
+    }
+  }
 }
