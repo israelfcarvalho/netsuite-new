@@ -258,7 +258,7 @@ export function CostTable() {
         <ExpandableTable.Body
           className={cn(
             'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
-            'data-[level=1]:data-[has-children=true]:bg-neutral-20'
+            'data-[level=1]:data-[has-children=true]:bg-neutral-10'
           )}
         />
       </ExpandableTable.Root>
