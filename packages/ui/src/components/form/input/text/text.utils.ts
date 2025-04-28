@@ -23,8 +23,6 @@ const formatCurrency = (amount: number, options?: CurrencyInputOptions): string 
     ...restOptions,
   }
 
-  console.log(amount, mergedOptions)
-
   return Intl.NumberFormat(locales, mergedOptions).format(amount)
 }
 
