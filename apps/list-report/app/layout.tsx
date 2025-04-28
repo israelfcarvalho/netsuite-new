@@ -28,7 +28,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className={`overflow-visible h-[600px] w-full ${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
+        className={cn(
+          `overflow-visible w-full h-full ${fontSans.variable} ${fontMono.variable} font-sans antialiased `,
+          {
+            'h-[600px]': !environments.isProduction,
+          }
+        )}
       >
         <Providers>{children}</Providers>
       </body>
