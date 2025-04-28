@@ -27,7 +27,8 @@
   "tailwindCSS.classFunctions": [
     "twMerge",
     "cn",
-    "cva"
+    "cva",
+    "tv"
   ],
   "tailwindCSS.includeLanguages": {
     "typescript": "javascript",
