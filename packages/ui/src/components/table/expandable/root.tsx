@@ -47,8 +47,6 @@ export function Root<T extends TData>({
       error,
       onExpandRow: (rowId: string) => {
         setExpandedRows((prev) => {
-          console.log({ prev, rowId })
-
           const next = new Set(prev)
           if (next.has(rowId)) {
             next.delete(rowId)

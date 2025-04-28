@@ -6,7 +6,7 @@ import { QueryParams, UseApiOptions } from '../_common/types'
 import { mountUrl } from '../_common/utils'
 import { useApi } from '../provider/Provider'
 
-export function useApiPost<TData, TBody extends ApiBody, TError = Error, Q extends QueryParams = QueryParams>(
+export function useApiPost<TData, TBody extends ApiBody, Q extends QueryParams = QueryParams, TError = Error>(
   route: string,
   options?: UseApiOptions<Q>
 ): IUseApiPost<TData, TBody, TError> {
