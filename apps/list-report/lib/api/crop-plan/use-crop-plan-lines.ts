@@ -48,13 +48,24 @@ export function useSaveCropPlanLines() {
     },
   })
 
-  function updateLines(cropPlanId: number, lines: UpdateCropPlanLinesPayload['lines']) {
-    api.post({
-      action: UPDATE_ACTION,
-      cropPlanId,
-      lines,
-    })
+  function updateLines(
+    cropPlanId: number,
+    lines: UpdateCropPlanLinesPayload['lines'],
+    options?: {
+      onSuccess?: () => void
+      onError?: () => void
+    }
+  ) {
+    api.post(
+      {
+        action: UPDATE_ACTION,
+        cropPlanId,
+        lines,
+      },
+      options
+    )
   }
+
   return {
     updateLines,
     data: api.data,

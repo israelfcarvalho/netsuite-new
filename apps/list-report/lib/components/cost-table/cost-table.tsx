@@ -9,6 +9,7 @@ import * as XLSX from 'xlsx'
 import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
 import { createExpandableTable, createColumn, formatCurrency } from '@workspace/ui/components/table'
+import { useToast } from '@workspace/ui/components/toast'
 import { cn } from '@workspace/ui/lib/utils'
 
 import { CostTableAddModal } from './cost-table-add-modal'
@@ -22,6 +23,7 @@ const ExpandableTable = createExpandableTable<CostNode>()
 export function CostTable() {
   const searchParams = useSearchParams()
   const cropPlanId = searchParams.get('cropPlanId')
+  const { toast } = useToast()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useCostTable()
@@ -58,7 +60,22 @@ export function CostTable() {
         }
       })
 
-    updateLines(Number(cropPlanId), lines)
+    updateLines(Number(cropPlanId), lines, {
+      onSuccess: () => {
+        toast({
+          title: 'Success',
+          description: 'Costs saved successfully',
+          variant: 'success',
+        })
+      },
+      onError: () => {
+        toast({
+          title: 'Error',
+          description: 'Failed to save costs',
+          variant: 'destructive',
+        })
+      },
+    })
   }
 
   const handleExcelExport = (): void => {
