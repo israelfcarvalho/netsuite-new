@@ -1,10 +1,10 @@
 import { CostNode } from '../types'
 
-import { CostCode, CostType, CropPlanLine, Division } from '@/lib/api'
+import { CostCode, CostType, CropPlanLineItem, Division } from '@/lib/api'
 
 export type LoadNodesAction = {
   type: 'LOAD_NODES'
-  payload: CropPlanLine[]
+  payload: CropPlanLineItem[]
 }
 
 export type UpdateNodeAction = {
