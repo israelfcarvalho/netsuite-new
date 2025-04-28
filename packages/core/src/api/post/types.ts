@@ -4,5 +4,11 @@ export interface IUseApiPost<TData, TBody = ApiBody, TError = Error> {
   data?: TData
   error: TError | null
   isPending: boolean
-  post(body: TBody): void
+  post(
+    body: TBody,
+    options?: {
+      onSuccess?: () => void
+      onError?: () => void
+    }
+  ): void
 }
