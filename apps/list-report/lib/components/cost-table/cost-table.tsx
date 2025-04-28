@@ -26,8 +26,9 @@ export function CostTable() {
   const { toast } = useToast()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useCostTable()
-  const { updateLines, isLoading: isSaving } = useSaveCropPlanLines()
+  const { updateLines } = useSaveCropPlanLines()
 
   const handleAddNew = (newItem: {
     division: Division
@@ -43,6 +44,7 @@ export function CostTable() {
   }
 
   const handleSave = () => {
+    setIsSaving(true)
     const lines = Array.from(state.nodes.values())
       .filter((item) => !item.children && item.id !== 'grand-total')
       .map((item) => {
@@ -67,6 +69,7 @@ export function CostTable() {
           description: 'Costs saved successfully',
           variant: 'success',
         })
+        setIsSaving(false)
       },
       onError: () => {
         toast({
@@ -74,6 +77,8 @@ export function CostTable() {
           description: 'Failed to save costs',
           variant: 'destructive',
         })
+        parent.refreshCalculations()
+        setIsSaving(false)
       },
     })
   }
@@ -156,7 +161,7 @@ export function CostTable() {
           </div>
         )
       }),
-      createColumn<CostNode>('initialCost', 'INITIAL COST', ({ row }) => {
+      createColumn<CostNode>('initialCost', 'Initial Cost', ({ row }) => {
         const value = (row.original as unknown as CostNode).initialCost
         if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
           return (
@@ -174,7 +179,7 @@ export function CostTable() {
         }
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
-      createColumn<CostNode>('currentPlannedCost', 'CURRENT PLANNED COST', ({ row }) => {
+      createColumn<CostNode>('currentPlannedCost', 'Current Planned Cost', ({ row }) => {
         const value = (row.original as unknown as CostNode).currentPlannedCost
         if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
           return (
@@ -194,7 +199,7 @@ export function CostTable() {
         }
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
-      createColumn<CostNode>('projectedCost', 'PROJECTED COST', ({ row }) => {
+      createColumn<CostNode>('projectedCost', 'Projected Cost', ({ row }) => {
         const value = (row.original as unknown as CostNode).projectedCost
         if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
           return (
@@ -217,16 +222,30 @@ export function CostTable() {
   )
 
   return (
-    <div className="size-full flex flex-col gap-4 overflow-visible">
+    <div className="size-full flex flex-col gap-4 overflow-visible relative">
+      {isSaving && (
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-40"></div>
+            <p className="text-lg font-medium">Saving changes...</p>
+          </div>
+        </div>
+      )}
       <div className="flex gap-2">
-        <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
+        <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading || isSaving}>
           Add New Cost Line
         </Button>
         <Button variant="default" size="sm" onClick={handleSave} disabled={isLoading || isSaving}>
           Save
         </Button>
         <div className="ml-auto flex gap-2">
-          <Button className="flex-1" variant="secondary" size="sm" onClick={handleExcelExport} disabled={isLoading}>
+          <Button
+            className="flex-1"
+            variant="secondary"
+            size="sm"
+            onClick={handleExcelExport}
+            disabled={isLoading || isSaving}
+          >
             Export to Excel
           </Button>
           <Button className="flex-1" variant="secondary" size="sm" onClick={handlePDFExport} disabled>
