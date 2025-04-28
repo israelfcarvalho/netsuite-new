@@ -1,0 +1,32 @@
+import { CostNode } from '../types'
+
+import { CostCode, CostType, CropPlanLine, Division } from '@/lib/api'
+
+export type LoadNodesAction = {
+  type: 'LOAD_NODES'
+  payload: CropPlanLine[]
+}
+
+export type UpdateNodeAction = {
+  type: 'UPDATE_NODE'
+  payload: { rowId: string; updates: Partial<CostNode> }
+}
+
+export type AddNodeAction = {
+  type: 'ADD_NODE'
+  payload: {
+    division: Division
+    costCode: CostCode
+    costType: CostType
+    initialCost: number
+    currentPlannedCost: number
+    projectedCost: number
+  }
+}
+
+export type DeleteNodeAction = {
+  type: 'DELETE_NODE'
+  payload: { rowId: string }
+}
+
+export type Action = LoadNodesAction | UpdateNodeAction | AddNodeAction | DeleteNodeAction

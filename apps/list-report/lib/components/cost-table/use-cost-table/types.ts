@@ -1,21 +1,17 @@
 import { TData } from '@workspace/ui/components/table'
 
 export interface CostNode extends TData {
+  id: string
+  rowId: string
+  name: string
   initialCost: number
   currentPlannedCost: number
   projectedCost: number
   children?: CostNode[]
+  parentRowId?: string
 }
 
 export interface CostState {
-  nodes: Record<string, CostNode>
+  nodes: Map<string, CostNode>
   tree: CostNode[]
-}
-
-export interface UseCostTableReturn {
-  state: CostState
-  data: CostNode[]
-  updateNode: (id: CostNode, updates: Partial<CostNode>) => void
-  isLoading: boolean
-  error?: string
 }

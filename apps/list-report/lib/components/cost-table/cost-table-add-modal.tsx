@@ -8,10 +8,10 @@ import { FormInputText } from '@workspace/ui/components/form'
 import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 
-import { CostCode, CostType, Division, useGetDivisions } from '../api'
-import { useGetCostCodes } from '../api/cost-code/useGetCostCodes'
-import { useGetCostTypes } from '../api/cost-type/useGetCostTypes'
-import { CostNode, CostState } from '../hooks/use-cost-table/types'
+import { CostCode, CostType, Division, useGetDivisions } from '../../api'
+import { CostNode, CostState } from './use-cost-table/types'
+import { useGetCostCodes } from '../../api/cost-code/useGetCostCodes'
+import { useGetCostTypes } from '../../api/cost-type/useGetCostTypes'
 
 interface CostTableAddModalProps {
   onAddNew: (data: {

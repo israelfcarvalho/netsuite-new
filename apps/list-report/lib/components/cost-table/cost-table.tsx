@@ -1,6 +1,7 @@
 'use client'
 
 import { jsPDF } from 'jspdf'
+import { Trash2 } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
 import * as XLSX from 'xlsx'
 
@@ -10,14 +11,14 @@ import { createExpandableTable, createColumn, formatCurrency } from '@workspace/
 import { cn } from '@workspace/ui/lib/utils'
 
 import { CostTableAddModal } from './cost-table-add-modal'
-import { CostCode, CostType, Division } from '../api'
-import { CostNode } from '../hooks/use-cost-table/types'
-import { useCostTable } from '../hooks/use-cost-table/use-cost-table'
+import { useCostTable } from './use-cost-table'
+import { CostCode, CostType, Division } from '../../api'
+import { CostNode } from './use-cost-table/types'
 const ExpandableTable = createExpandableTable<CostNode>()
 
 export function CostTable() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { data, updateNode, error, isLoading, state } = useCostTable()
+  const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useCostTable()
 
   const handleAddNew = (newItem: {
     division: Division
@@ -28,40 +29,8 @@ export function CostTable() {
     projectedCost: number
   }) => {
     const { division, costCode, costType, initialCost, currentPlannedCost, projectedCost } = newItem
-    // Create the new node
 
-    const newNode: CostNode = {
-      id: division.id,
-      rowId: division.id,
-      name: division.name,
-      initialCost: 0,
-      currentPlannedCost: 0,
-      projectedCost: 0,
-      children: [
-        {
-          id: costCode.id,
-          rowId: division.id + costCode.id,
-          parentRowId: division.id,
-          name: costCode.name,
-          initialCost: 0,
-          currentPlannedCost: 0,
-          projectedCost: 0,
-          children: [
-            {
-              id: costType.id,
-              name: costType.name,
-              parentRowId: division.id + costCode.id,
-              rowId: division.id + costCode.id + costType.id,
-              initialCost,
-              currentPlannedCost,
-              projectedCost,
-            },
-          ],
-        },
-      ],
-    }
-    // Update the node using the updateNode function
-    updateNode(newNode, newNode)
+    addNode(division, costCode, costType, initialCost, currentPlannedCost, projectedCost)
   }
 
   const handleExcelExport = (): void => {
@@ -124,7 +93,24 @@ export function CostTable() {
 
   const columns = useMemo(
     () => [
-      createColumn<CostNode>('id', '', ({ row }) => <span>{row.original.name}</span>),
+      createColumn<CostNode>('id', '', ({ row }) => {
+        const isLastChild = row.original.parentRowId && !row.original.children?.length
+        return (
+          <div className="group flex items-center gap-2">
+            {isLastChild && (
+              <Button
+                variant="destructive"
+                size="sm"
+                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => deleteNode(row.original.rowId)}
+              >
+                <Trash2 className="text-bg-danger-40 h-4 w-4" />
+              </Button>
+            )}
+            <span>{row.original.name}</span>
+          </div>
+        )
+      }),
       createColumn<CostNode>('initialCost', 'INITIAL COST', ({ row }) => {
         const value = (row.original as unknown as CostNode).initialCost
         if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
@@ -135,7 +121,7 @@ export function CostTable() {
                 variant="currency"
                 value={value}
                 onChange={(value) => {
-                  updateNode(row.original as unknown as CostNode, { initialCost: value })
+                  updateNode(row.original.rowId, { initialCost: value })
                 }}
               />
             </div>
@@ -153,9 +139,7 @@ export function CostTable() {
                 variant="currency"
                 value={value}
                 onChange={(value) => {
-                  console.log({ value })
-
-                  updateNode(row.original as unknown as CostNode, {
+                  updateNode(row.original.rowId, {
                     currentPlannedCost: value,
                   })
                 }}
@@ -175,7 +159,7 @@ export function CostTable() {
                 variant="currency"
                 value={value}
                 onChange={(value) => {
-                  updateNode(row.original as unknown as CostNode, { projectedCost: value })
+                  updateNode(row.original.rowId, { projectedCost: value })
                 }}
               />
             </div>
@@ -184,7 +168,7 @@ export function CostTable() {
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
     ],
-    [updateNode]
+    [updateNode, state.nodes, deleteNode]
   )
 
   return (
@@ -214,7 +198,13 @@ export function CostTable() {
           )}
         />
       </ExpandableTable.Root>
-      {isModalOpen && <CostTableAddModal state={state} onAddNew={handleAddNew} onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <CostTableAddModal
+          state={{ ...state, tree: data }}
+          onAddNew={handleAddNew}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   )
 }
