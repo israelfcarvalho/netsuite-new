@@ -143,6 +143,11 @@ export class CropPlanService {
         data: [],
       }
     }
+
+    console.log('Starting update with 5 second delay...')
+    await new Promise(resolve => setTimeout(resolve, 5000))
+    console.log('Delay completed, updating data...')
+
     this.mockDataStore[cropPlanId] = lines
     return {
       status: 200,

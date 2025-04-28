@@ -63,6 +63,6 @@ export class CropPlanController {
       }
     }
 
-    return this.cropPlanService.updateCropPlanLines(cropPlanId, lines)
+    return await this.cropPlanService.updateCropPlanLines(cropPlanId, lines)
   }
 }
