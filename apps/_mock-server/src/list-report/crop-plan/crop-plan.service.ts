@@ -135,13 +135,17 @@ export class CropPlanService {
     }
   }
 
-  async updateCropPlanLines(cropPlanId: number, lines: CropPlanLine[]): Promise<CropPlanApiResponse> {
+  async updateCropPlanLines(cropPlanId: number, lines: CropPlanLine[]): Promise<CropPlanApiResponse | undefined> {
     if (!cropPlanId) {
       return {
         status: 400,
-        message: 'Crop Plan ID is required',
+        message: 'TypeError: Cannot read property \'sort\' of undefined [at orderByAcresAscending (/SuiteScripts/projects/js_ag_solution/js_ag_service/js-ag-crop-plan.service.js:109:24)]',
         data: [],
       }
+    }
+
+    if(cropPlanId == 1){
+      return
     }
 
     console.log('Starting update with 5 second delay...')
