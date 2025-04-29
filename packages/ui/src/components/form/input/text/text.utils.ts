@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent } from 'react'
+import { ChangeEvent, KeyboardEvent, RefObject } from 'react'
 
 import {
   CurrencyInputOptions,
@@ -26,12 +26,24 @@ const formatCurrency = (amount: number, options?: CurrencyInputOptions): string 
   return Intl.NumberFormat(locales, mergedOptions).format(amount)
 }
 
-const changeCurrency = (onChange: FormInputTextCurrencyProps['onChange']) => (e: ChangeEvent<HTMLInputElement>) => {
-  const numericValue = e.target.value.replace(/[^0-9]/g, '')
-  const nonEmptyValue = numericValue.padStart(4, '0')
-  const formattedValue = `${nonEmptyValue.slice(0, -2)}.${nonEmptyValue.slice(-2)}`
-  onChange(Number(formattedValue))
-}
+const changeCurrency =
+  (onChange: FormInputTextCurrencyProps['onChange'], inputRef: RefObject<HTMLInputElement | null>) =>
+  (e: ChangeEvent<HTMLInputElement>) => {
+    const input = inputRef.current
+
+    if (!input) return
+
+    const cursorPosition = input.selectionStart ?? input.value.length
+
+    const numericValue = e.target.value.replace(/[^0-9]/g, '')
+    const nonEmptyValue = numericValue.padStart(4, '0')
+    const formattedValue = `${nonEmptyValue.slice(0, -2)}.${nonEmptyValue.slice(-2)}`
+    onChange(Number(formattedValue))
+
+    requestAnimationFrame(() => {
+      input.setSelectionRange(cursorPosition, cursorPosition)
+    })
+  }
 
 const keyDownCurrency = (e: KeyboardEvent<HTMLInputElement>) => {
   if (
@@ -67,12 +79,12 @@ const handlers = {
   normal,
 }
 
-export const getInputHandlers = (props: FormInputTextProps) => {
+export const getInputHandlers = (props: FormInputTextProps, inputRef: RefObject<HTMLInputElement | null>) => {
   switch (props.variant) {
     case 'currency':
       return {
         format: () => handlers[props.variant].format(props.value, props.options),
-        handleChange: handlers[props.variant].handleChange(props.onChange),
+        handleChange: handlers[props.variant].handleChange(props.onChange, inputRef),
         handleKeyDown: handlers[props.variant].handleKeyDown,
       }
     case 'normal':
