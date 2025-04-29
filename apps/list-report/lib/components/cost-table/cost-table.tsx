@@ -26,9 +26,8 @@ export function CostTable() {
   const { toast } = useToast()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
   const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useCostTable()
-  const { updateLines } = useSaveCropPlanLines()
+  const { updateLines, isPending: isSaving } = useSaveCropPlanLines()
 
   const handleAddNew = (newItem: {
     division: Division
@@ -44,7 +43,6 @@ export function CostTable() {
   }
 
   const handleSave = () => {
-    setIsSaving(true)
     const lines = Array.from(state.nodes.values())
       .filter((item) => !item.children && item.id !== 'grand-total')
       .map((item) => {
@@ -69,16 +67,14 @@ export function CostTable() {
           description: 'Costs saved successfully',
           variant: 'success',
         })
-        setIsSaving(false)
+        parent.refreshCalculations()
       },
-      onError: () => {
+      onError: (error) => {
         toast({
           title: 'Error',
-          description: 'Failed to save costs',
+          description: error.message,
           variant: 'destructive',
         })
-        parent.refreshCalculations()
-        setIsSaving(false)
       },
     })
   }
@@ -232,20 +228,14 @@ export function CostTable() {
         </div>
       )}
       <div className="flex gap-2">
-        <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading || isSaving}>
+        <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
           Add New Cost Line
         </Button>
-        <Button variant="default" size="sm" onClick={handleSave} disabled={isLoading || isSaving}>
+        <Button variant="default" size="sm" onClick={handleSave} disabled={isLoading}>
           Save
         </Button>
         <div className="ml-auto flex gap-2">
-          <Button
-            className="flex-1"
-            variant="secondary"
-            size="sm"
-            onClick={handleExcelExport}
-            disabled={isLoading || isSaving}
-          >
+          <Button className="flex-1" variant="secondary" size="sm" onClick={handleExcelExport} disabled={isLoading}>
             Export to Excel
           </Button>
           <Button className="flex-1" variant="secondary" size="sm" onClick={handlePDFExport} disabled>

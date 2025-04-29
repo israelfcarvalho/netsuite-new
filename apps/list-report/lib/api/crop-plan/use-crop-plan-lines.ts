@@ -10,6 +10,7 @@ import {
   UpdateCropPlanLinesPayload,
 } from './types'
 import { environments } from '../../environments'
+
 const ACTION = 'get-lines-hierarchy'
 const UPDATE_ACTION = 'update-lines'
 
@@ -23,7 +24,7 @@ const initialData: CropPlanApiResponse['data'] = []
 
 export function useGetCropPlanLines({ cropPlanId }: GetCropPlanLinesParams) {
   const { data, error, isLoading, refetch } = useApiGet<CropPlanApiResponse, CropPlanLinesQueryParams>(route, {
-    queryOptions: { enabled: cropPlanId !== undefined },
+    queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
     queryParams: {
       script,
       deploy,
@@ -53,7 +54,7 @@ export function useSaveCropPlanLines() {
     lines: UpdateCropPlanLinesPayload['lines'],
     options?: {
       onSuccess?: () => void
-      onError?: () => void
+      onError?: (error: Error) => void
     }
   ) {
     api.post(
@@ -70,6 +71,6 @@ export function useSaveCropPlanLines() {
     updateLines,
     data: api.data,
     error: api.error,
-    isLoading: api.isPending,
+    isPending: api.isPending,
   }
 }

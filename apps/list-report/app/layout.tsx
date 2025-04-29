@@ -30,10 +30,7 @@ export default function RootLayout({
     >
       <body
         className={cn(
-          `overflow-visible w-full h-full ${fontSans.variable} ${fontMono.variable} font-sans antialiased `,
-          {
-            'h-[600px]': !environments.isProduction,
-          }
+          `overflow-visible w-full h-[700px] ${fontSans.variable} ${fontMono.variable} font-sans antialiased `
         )}
       >
         <Providers>{children}</Providers>
