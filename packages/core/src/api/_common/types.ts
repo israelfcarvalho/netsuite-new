@@ -16,3 +16,16 @@ export interface ApiContext {
 }
 
 export interface ProviderProps extends PropsWithChildren, ApiContext {}
+
+export type ApiHeaders = {
+  'Content-Type'?: 'application/json' | 'text/html'
+}
+
+export type HeadersMap = {
+  [HK in keyof Required<ApiHeaders>]: {
+    name: HK
+    values: {
+      [HV in Required<ApiHeaders>[HK]]: HV
+    }
+  }
+}

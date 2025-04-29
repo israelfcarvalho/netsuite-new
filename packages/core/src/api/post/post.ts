@@ -1,3 +1,6 @@
+import { errorMiddleware } from '../_common/error/utils'
+import { responseMiddleware } from '../_common/utils'
+
 export async function apiPost<TData, TBody>(url: string, body: TBody): Promise<TData> {
   return fetch(url, {
     method: 'POST',
@@ -5,11 +8,7 @@ export async function apiPost<TData, TBody>(url: string, body: TBody): Promise<T
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
-  }).then((res) => {
-    if (!res.ok) {
-      throw new Error(`API Error: ${res.status} ${res.statusText}`)
-    }
-
-    return res.json()
   })
+    .then((res) => responseMiddleware<TData>(res))
+    .catch(errorMiddleware)
 }

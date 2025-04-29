@@ -1,4 +1,5 @@
-import { QueryParams } from './types'
+import { NetSuiteError, RawNetsuiteError } from './error/netsuite'
+import { HeadersMap, QueryParams } from './types'
 
 export function mountUrl(baseUrl: string, route: string, params: QueryParams = {}) {
   let hasDomain = false
@@ -54,4 +55,51 @@ export function queryParamsToString(params: QueryParams) {
   })
 
   return queryParams.size > 0 ? `?${queryParams.toString()}` : ''
+}
+
+export const headersMap: HeadersMap = {
+  'Content-Type': {
+    name: 'Content-Type',
+    values: {
+      'application/json': 'application/json',
+      'text/html': 'text/html',
+    },
+  },
+}
+
+export function responseMiddleware<TData>(res: Response) {
+  return new Promise<TData>((resolve, reject) => {
+    if (res.ok) {
+      res
+        .json()
+        .then<TData>((res) => {
+          resolve(res)
+
+          return res
+        })
+        .catch((error) => {
+          reject(new NetSuiteError(error.message))
+        })
+    } else {
+      const headerContentTypes = res.headers.get(headersMap['Content-Type'].name) ?? ''
+      const contentTypeAppJson = headersMap['Content-Type'].values['application/json']
+      const contentTypeIsApplicationJson = headerContentTypes.includes(contentTypeAppJson)
+
+      if (contentTypeIsApplicationJson) {
+        res.text().then((res) => {
+          // eslint-disable-next-line no-useless-escape
+          reject(JSON.parse(res.replaceAll("\\'", '').replaceAll('\n', '<br/>').replaceAll("\'", '')))
+        })
+      } else {
+        const error: RawNetsuiteError = {
+          error: {
+            code: 'unknow',
+            message: `[${res.status}] uknown reason. Contact Support`,
+          },
+        }
+
+        reject(error)
+      }
+    }
+  })
 }

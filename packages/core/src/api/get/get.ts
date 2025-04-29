@@ -1,3 +1,6 @@
+import { errorMiddleware } from '../_common/error/utils'
+import { responseMiddleware } from '../_common/utils'
+
 export async function apiGet<TData>(url: string): Promise<TData> {
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -5,11 +8,7 @@ export async function apiGet<TData>(url: string): Promise<TData> {
 
   return fetch(url, {
     headers,
-  }).then((res) => {
-    if (!res.ok) {
-      throw new Error(`API Error: ${res.status} ${res.statusText}`)
-    }
-
-    return res.json()
   })
+    .then((res) => responseMiddleware<TData>(res))
+    .catch(errorMiddleware)
 }

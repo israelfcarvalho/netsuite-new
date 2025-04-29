@@ -8,7 +8,7 @@ export interface IUseApiPost<TData, TBody = ApiBody, TError = Error> {
     body: TBody,
     options?: {
       onSuccess?: () => void
-      onError?: () => void
+      onError?: (error: TError) => void
     }
   ): void
 }
