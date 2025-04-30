@@ -1,9 +1,9 @@
-import { CostTable } from '@/lib/components/cost-table'
+import { CropPlanBudgetTable } from './crop-plan-budget/crop-plan-budget-table'
 
 export default function Page() {
   return (
     <div className="size-full overflow-visible">
-      <CostTable />
+      <CropPlanBudgetTable />
     </div>
   )
 }

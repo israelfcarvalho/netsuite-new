@@ -2,82 +2,33 @@
 
 import { jsPDF } from 'jspdf'
 import { Trash2 } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 import * as XLSX from 'xlsx'
 
 import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
 import { createExpandableTable, createColumn, formatCurrency } from '@workspace/ui/components/table'
-import { useToast } from '@workspace/ui/components/toast'
 import { cn } from '@workspace/ui/lib/utils'
 
 import { BudgetTableAddModal } from './budget-table-add-modal'
-import { useBudgetTable } from './use-budget-table'
-import { CostCode, CostType, Division } from '../../api'
+import { BudgetTableLoading } from './budget-table-loading'
+import { BudgetTableProps } from './budget-table.types'
 import { BudgetNode } from './use-budget-table/types'
-import { useSaveCropPlanLines } from '../../api/crop-plan/use-crop-plan-lines'
 
 const ExpandableTable = createExpandableTable<BudgetNode>()
 
-export function BudgetTable() {
-  const searchParams = useSearchParams()
-  const cropPlanId = searchParams.get('cropPlanId')
-  const { toast } = useToast()
-
+export function BudgetTable({
+  data,
+  isLoading,
+  isSaving,
+  error,
+  onAddNew,
+  onUpdate,
+  onDelete,
+  onSave,
+  state,
+}: BudgetTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useBudgetTable()
-  const { updateLines, isPending: isSaving } = useSaveCropPlanLines()
-
-  const handleAddNew = (newItem: {
-    division: Division
-    costCode: CostCode
-    costType: CostType
-    initialCost: number
-    currentPlannedCost: number
-    projectedCost: number
-  }) => {
-    const { division, costCode, costType, initialCost, currentPlannedCost, projectedCost } = newItem
-
-    addNode(division, costCode, costType, initialCost, currentPlannedCost, projectedCost)
-  }
-
-  const handleSave = () => {
-    const lines = Array.from(state.nodes.values())
-      .filter((item) => !item.children && item.id !== 'grand-total')
-      .map((item) => {
-        const costType = item
-        const costCode = state.nodes.get(costType.parentRowId ?? '')
-        const division = state.nodes.get(costCode?.parentRowId ?? '')
-
-        return {
-          divisionId: Number(division?.id),
-          costCodeId: Number(costCode?.id),
-          costTypeId: Number(costType.id),
-          initialCost: item.initialCost,
-          currentPlannedCost: item.currentPlannedCost,
-          projectedCost: item.projectedCost,
-        }
-      })
-
-    updateLines(Number(cropPlanId), lines, {
-      onSuccess: () => {
-        toast({
-          title: 'Success',
-          description: 'Costs saved successfully',
-          variant: 'success',
-        })
-        parent.refreshCalculations()
-      },
-      onError: (error) => {
-        toast({
-          title: 'Error',
-          description: error.message,
-          variant: 'destructive',
-        })
-      },
-    })
-  }
 
   const handleExcelExport = (): void => {
     const headerData = [
@@ -148,7 +99,7 @@ export function BudgetTable() {
                 variant="destructive"
                 size="sm"
                 className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => deleteNode(row.original.rowId)}
+                onClick={() => onDelete(row.original.rowId)}
               >
                 <Trash2 className="text-bg-danger-40 h-4 w-4" />
               </Button>
@@ -159,7 +110,7 @@ export function BudgetTable() {
       }),
       createColumn<BudgetNode>('initialCost', 'Initial Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).initialCost
-        if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
+        if (onUpdate && !row.original.children && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
               <FormInputText
@@ -167,7 +118,7 @@ export function BudgetTable() {
                 variant="currency"
                 value={value}
                 onChange={(value) => {
-                  updateNode(row.original.rowId, { initialCost: value })
+                  onUpdate(row.original.rowId, { initialCost: value })
                 }}
               />
             </div>
@@ -177,7 +128,7 @@ export function BudgetTable() {
       }),
       createColumn<BudgetNode>('currentPlannedCost', 'Current Planned Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).currentPlannedCost
-        if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
+        if (onUpdate && !row.original.children && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
               <FormInputText
@@ -185,7 +136,7 @@ export function BudgetTable() {
                 variant="currency"
                 value={value}
                 onChange={(value) => {
-                  updateNode(row.original.rowId, {
+                  onUpdate(row.original.rowId, {
                     currentPlannedCost: value,
                   })
                 }}
@@ -197,7 +148,7 @@ export function BudgetTable() {
       }),
       createColumn<BudgetNode>('projectedCost', 'Projected Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).projectedCost
-        if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
+        if (onUpdate && !row.original.children && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
               <FormInputText
@@ -205,7 +156,7 @@ export function BudgetTable() {
                 variant="currency"
                 value={value}
                 onChange={(value) => {
-                  updateNode(row.original.rowId, { projectedCost: value })
+                  onUpdate(row.original.rowId, { projectedCost: value })
                 }}
               />
             </div>
@@ -214,24 +165,20 @@ export function BudgetTable() {
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
     ],
-    [updateNode, deleteNode]
+    [onUpdate, onDelete]
   )
 
   return (
     <div className="size-full flex flex-col gap-4 overflow-visible relative">
-      {isSaving && (
-        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center gap-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-40"></div>
-            <p className="text-lg font-medium">Saving changes...</p>
-          </div>
-        </div>
-      )}
+      {isSaving && <BudgetTableLoading />}
+
       <div className="flex gap-2">
-        <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
-          Add New Cost Line
-        </Button>
-        <Button variant="default" size="sm" onClick={handleSave} disabled={isLoading}>
+        {onAddNew && (
+          <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
+            Add New Cost Line
+          </Button>
+        )}
+        <Button variant="default" size="sm" onClick={onSave} disabled={isLoading}>
           Save
         </Button>
         <div className="ml-auto flex gap-2">
@@ -243,6 +190,7 @@ export function BudgetTable() {
           </Button>
         </div>
       </div>
+
       <ExpandableTable.Root data={data} columns={columns} error={error} isLoading={isLoading}>
         <ExpandableTable.Header />
         <ExpandableTable.Body
@@ -252,10 +200,10 @@ export function BudgetTable() {
           )}
         />
       </ExpandableTable.Root>
-      {isModalOpen && (
+      {isModalOpen && onAddNew && (
         <BudgetTableAddModal
           state={{ ...state, tree: data }}
-          onAddNew={handleAddNew}
+          onAddNew={onAddNew}
           onClose={() => setIsModalOpen(false)}
         />
       )}
