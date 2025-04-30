@@ -44,3 +44,17 @@ export interface UpdateCropPlanLinesParams extends QueryParams {
   script: string
   deploy: string
 }
+
+export interface UpdateCropPlanLinesByRanchPayload {
+  action: string
+  cropPlanId: number
+  lines: {
+    ranchId: number
+    divisionId: number
+    costCodeId: number
+    costTypeId: number
+    initialCost: number
+    currentPlannedCost: number
+    projectedCost: number
+  }[]
+}
