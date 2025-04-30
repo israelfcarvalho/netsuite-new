@@ -10,7 +10,7 @@ export class CropPlanController {
   constructor(private readonly cropPlanService: CropPlanService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get crop plan lines hierarchy' })
+  @ApiOperation({ summary: 'Get crop plan lines' })
   @ApiResponse({ status: 200, description: 'Success' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'Not Found' })
@@ -25,15 +25,19 @@ export class CropPlanController {
       }
     }
 
-    if (action !== 'get-lines-hierarchy') {
-      return {
-        status: 400,
-        message: 'Invalid action. Expected: get-lines-hierarchy',
-        data: [],
-      }
+    if (action === 'get-lines-hierarchy') {
+      return this.cropPlanService.getCropPlanLines(cropPlanId)
     }
 
-    return this.cropPlanService.getCropPlanLines(cropPlanId)
+    if (action === 'get-lines-by-ranch-id') {
+      return this.cropPlanService.getCropPlanLinesByRanch(cropPlanId)
+    }
+
+    return {
+      status: 400,
+      message: 'Invalid action. Expected: get-lines-hierarchy or get-lines-by-ranch-id',
+      data: [],
+    }
   }
 
   @Post()
@@ -55,14 +59,18 @@ export class CropPlanController {
       }
     }
 
-    if (action !== 'update-lines') {
-      return {
-        status: 400,
-        message: 'Invalid action. Expected: update-lines',
-        data: [],
-      }
+    if (action === 'update-lines') {
+      return await this.cropPlanService.updateCropPlanLines(cropPlanId, lines) as any
     }
 
-    return await this.cropPlanService.updateCropPlanLines(cropPlanId, lines) as any
+    if (action === 'update-lines-by-ranch') {
+      return await this.cropPlanService.updateCropPlanLinesByRanch(cropPlanId, lines) as any
+    }
+
+    return {
+      status: 400,
+      message: 'Invalid action. Expected: update-lines or update-lines-by-ranch',
+      data: [],
+    }
   }
 }
