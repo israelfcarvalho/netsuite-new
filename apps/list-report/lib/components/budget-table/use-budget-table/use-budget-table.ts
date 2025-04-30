@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useReducer, useCallback } from 'react'
+import { useEffect, useReducer, useCallback, useMemo } from 'react'
 
 import { budgetTableReducer } from './reducer/reducer'
 import { BudgetNode } from './types'
@@ -18,6 +18,20 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
     if (cropPlanLines) {
       dispatch({ type: 'LOAD_NODES', payload: cropPlanLines })
     }
+  }, [cropPlanLines])
+
+  const levels = useMemo(() => {
+    type Children = { children?: Children[] }
+
+    function getLevels(children?: Children[], level = 0): number {
+      if (!children?.length) return level
+
+      return children.reduce((_, child) => {
+        return getLevels(child.children, level + 1)
+      }, level)
+    }
+
+    return getLevels(cropPlanLines)
   }, [cropPlanLines])
 
   const updateNode = useCallback((rowId: string, updates: Partial<BudgetNode>) => {
@@ -50,5 +64,6 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
     addNode,
     deleteNode,
     state,
+    levels,
   }
 }

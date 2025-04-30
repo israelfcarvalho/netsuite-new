@@ -27,6 +27,7 @@ export function BudgetTable({
   onDelete,
   onSave,
   state,
+  levels,
 }: BudgetTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -110,7 +111,8 @@ export function BudgetTable({
       }),
       createColumn<BudgetNode>('initialCost', 'Initial Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).initialCost
-        if (onUpdate && !row.original.children && row.original.id !== 'grand-total') {
+        const hasChildren = row.original.children?.length
+        if (onUpdate && !hasChildren && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
               <FormInputText
@@ -128,7 +130,8 @@ export function BudgetTable({
       }),
       createColumn<BudgetNode>('currentPlannedCost', 'Current Planned Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).currentPlannedCost
-        if (onUpdate && !row.original.children && row.original.id !== 'grand-total') {
+        const hasChildren = row.original.children?.length
+        if (onUpdate && !hasChildren && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
               <FormInputText
@@ -148,7 +151,8 @@ export function BudgetTable({
       }),
       createColumn<BudgetNode>('projectedCost', 'Projected Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).projectedCost
-        if (onUpdate && !row.original.children && row.original.id !== 'grand-total') {
+        const hasChildren = row.original.children?.length
+        if (onUpdate && !hasChildren && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
               <FormInputText
@@ -194,10 +198,18 @@ export function BudgetTable({
       <ExpandableTable.Root data={data} columns={columns} error={error} isLoading={isLoading}>
         <ExpandableTable.Header />
         <ExpandableTable.Body
-          className={cn(
-            'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
-            'data-[level=1]:data-[has-children=true]:bg-neutral-10'
-          )}
+          className={
+            levels > 3
+              ? cn(
+                  'data-[level=0]:data-[has-children=true]:bg-pine/30 data-[level=0]:data-[has-children=true]:shadow',
+                  'data-[level=1]:data-[has-children=true]:bg-brand-40',
+                  'data-[level=2]:data-[has-children=true]:bg-neutral-10'
+                )
+              : cn(
+                  'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
+                  'data-[level=1]:data-[has-children=true]:bg-neutral-10'
+                )
+          }
         />
       </ExpandableTable.Root>
       {isModalOpen && onAddNew && (

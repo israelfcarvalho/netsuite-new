@@ -25,4 +25,5 @@ export interface BudgetTableProps {
   onDelete: (rowId: string) => void
   onSave: () => void
   state: BudgetState
+  levels: number
 }

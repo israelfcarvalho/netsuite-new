@@ -1,4 +1,4 @@
-import { CostNode } from '../types'
+import { BudgetNode } from '../types'
 
 import { CostCode, CostType, CropPlanLineItem, Division } from '@/lib/api'
 
@@ -9,7 +9,7 @@ export type LoadNodesAction = {
 
 export type UpdateNodeAction = {
   type: 'UPDATE_NODE'
-  payload: { rowId: string; updates: Partial<CostNode> }
+  payload: { rowId: string; updates: Partial<BudgetNode> }
 }
 
 export type AddNodeAction = {
