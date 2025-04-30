@@ -34,7 +34,7 @@ export function useGetCropPlanLines({ cropPlanId }: GetCropPlanLinesParams) {
   })
 
   return {
-    data: data?.data ?? initialData,
+    cropPlanLines: data?.data ?? initialData,
     error,
     isLoading,
     refetch,
