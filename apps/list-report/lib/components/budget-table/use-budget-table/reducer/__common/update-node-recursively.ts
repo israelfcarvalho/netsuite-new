@@ -1,6 +1,6 @@
-import { CostState } from '../../types'
+import { BudgetState } from '../../types'
 
-export function updateParents(state: CostState, parentRowId?: string): CostState {
+export function updateParents(state: BudgetState, parentRowId?: string): BudgetState {
   if (!parentRowId) return state
 
   const node = state.nodes.get(parentRowId)

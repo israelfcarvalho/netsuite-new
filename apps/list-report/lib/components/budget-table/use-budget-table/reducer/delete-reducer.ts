@@ -1,8 +1,8 @@
-import { CostState, CostNode } from '../types'
+import { BudgetState, BudgetNode } from '../types'
 import { updateParents } from './__common/update-node-recursively'
 import { DeleteNodeAction } from './actions'
 
-function deleteFromParent(state: CostState, node: CostNode): CostState {
+function deleteFromParent(state: BudgetState, node: BudgetNode): BudgetState {
   const parentNode = state.nodes.get(node.parentRowId ?? '')
   if (!parentNode) return state
 
@@ -18,7 +18,7 @@ function deleteFromParent(state: CostState, node: CostNode): CostState {
   return updateParents({ ...state, nodes: newNodes }, node.parentRowId)
 }
 
-export function deleteNodeReducer(state: CostState, action: DeleteNodeAction): CostState {
+export function deleteNodeReducer(state: BudgetState, action: DeleteNodeAction): BudgetState {
   const { rowId } = action.payload
   const node = state.nodes.get(rowId)
 

@@ -3,20 +3,20 @@
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useReducer, useCallback, useMemo } from 'react'
 
-import { costTableReducer } from './reducer/reducer'
-import { CostNode } from './types'
+import { budgetTableReducer } from './reducer/reducer'
+import { BudgetNode } from './types'
 
 import { useGetCropPlanLines } from '@/lib/api'
 import { Division, CostCode, CostType } from '@/lib/api'
 
-export function useCostTable() {
+export function useBudgetTable() {
   const queryParams = useSearchParams()
   const cropPlanId = queryParams.get('cropPlanId')
 
   const { data: initialData, isLoading, error } = useGetCropPlanLines({ cropPlanId: Number(cropPlanId) })
 
-  const [state, dispatch] = useReducer(costTableReducer, {
-    nodes: new Map<string, CostNode>(),
+  const [state, dispatch] = useReducer(budgetTableReducer, {
+    nodes: new Map<string, BudgetNode>(),
     tree: [],
   })
 
@@ -26,7 +26,7 @@ export function useCostTable() {
     }
   }, [initialData])
 
-  const updateNode = useCallback((rowId: string, updates: Partial<CostNode>) => {
+  const updateNode = useCallback((rowId: string, updates: Partial<BudgetNode>) => {
     dispatch({ type: 'UPDATE_NODE', payload: { rowId, updates } })
   }, [])
 
@@ -65,7 +65,7 @@ export function useCostTable() {
     )
 
     // Add grand total row
-    const grandTotalNode: CostNode = {
+    const grandTotalNode: BudgetNode = {
       id: 'grand-total',
       rowId: 'grand-total',
       name: 'Grand Total',

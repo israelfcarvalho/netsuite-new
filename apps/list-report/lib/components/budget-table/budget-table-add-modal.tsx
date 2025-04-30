@@ -9,11 +9,11 @@ import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 
 import { CostCode, CostType, Division, useGetDivisions } from '../../api'
-import { CostNode, CostState } from './use-cost-table/types'
+import { BudgetNode, BudgetState } from './use-budget-table/types'
 import { useGetCostCodes } from '../../api/cost-code/useGetCostCodes'
 import { useGetCostTypes } from '../../api/cost-type/useGetCostTypes'
 
-interface CostTableAddModalProps {
+interface BudgetTableAddModalProps {
   onAddNew: (data: {
     division: Division
     costCode: CostCode
@@ -23,13 +23,13 @@ interface CostTableAddModalProps {
     projectedCost: number
   }) => void
   onClose: () => void
-  state: CostState
+  state: BudgetState
 }
 
-export function CostTableAddModal({ onAddNew, onClose, state: initialState }: CostTableAddModalProps) {
-  const [stateTree] = useState(initialState.tree.filter((node) => node.id !== 'grand-total'))
-  const [costCodeTrees, setCostCodeTrees] = useState<CostNode[] | undefined>(undefined)
-  const [costTypeTrees, setCostTypeTrees] = useState<CostNode[] | undefined>(undefined)
+export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: BudgetTableAddModalProps) {
+  const [stateTree] = useState(initialState.tree.filter((node: BudgetNode) => node.id !== 'grand-total'))
+  const [costCodeTrees, setCostCodeTrees] = useState<BudgetNode[] | undefined>(undefined)
+  const [costTypeTrees, setCostTypeTrees] = useState<BudgetNode[] | undefined>(undefined)
   const [isOpen, setIsOpen] = useState(true)
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>('')
   const [selectedCostCodeId, setSelectedCostCodeId] = useState<string>('')

@@ -1,11 +1,11 @@
 import { AddNodeAction } from './actions'
-import { CostState } from '../types'
-import { CostNode } from '../types'
+import { BudgetState } from '../types'
+import { BudgetNode } from '../types'
 import { updateParents } from './__common/update-node-recursively'
 const createNode = (
-  data: Pick<CostNode, 'id' | 'name' | 'parentRowId' | 'initialCost' | 'currentPlannedCost' | 'projectedCost'>,
+  data: Pick<BudgetNode, 'id' | 'name' | 'parentRowId' | 'initialCost' | 'currentPlannedCost' | 'projectedCost'>,
   parentRowId: string = ''
-): CostNode => {
+): BudgetNode => {
   const rowId = parentRowId.concat(data.id)
   return {
     ...data,
@@ -14,7 +14,7 @@ const createNode = (
   }
 }
 
-export function addNodeReducer(state: CostState, action: AddNodeAction): CostState {
+export function addNodeReducer(state: BudgetState, action: AddNodeAction): BudgetState {
   const { division, costCode, costType, initialCost, currentPlannedCost, projectedCost } = action.payload
   const newNodes = new Map(state.nodes)
 
@@ -25,7 +25,7 @@ export function addNodeReducer(state: CostState, action: AddNodeAction): CostSta
   let divisionNode = state.nodes.get(divisionRowId)
   let costCodeNode = state.nodes.get(costCodeRowId)
   let costTypeNode = state.nodes.get(costTypeRowId)
-  const partialNode: Pick<CostNode, 'initialCost' | 'currentPlannedCost' | 'projectedCost'> = {
+  const partialNode: Pick<BudgetNode, 'initialCost' | 'currentPlannedCost' | 'projectedCost'> = {
     initialCost,
     currentPlannedCost,
     projectedCost,

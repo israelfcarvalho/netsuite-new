@@ -1,17 +1,17 @@
 import { TData } from '@workspace/ui/components/table'
 
-export interface CostNode extends TData {
+export interface BudgetNode extends TData {
   id: string
   rowId: string
   name: string
   initialCost: number
   currentPlannedCost: number
   projectedCost: number
-  children?: CostNode[]
+  children?: BudgetNode[]
   parentRowId?: string
 }
 
-export interface CostState {
-  nodes: Map<string, CostNode>
-  tree: CostNode[]
+export interface BudgetState {
+  nodes: Map<string, BudgetNode>
+  tree: BudgetNode[]
 }

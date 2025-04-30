@@ -12,21 +12,21 @@ import { createExpandableTable, createColumn, formatCurrency } from '@workspace/
 import { useToast } from '@workspace/ui/components/toast'
 import { cn } from '@workspace/ui/lib/utils'
 
-import { CostTableAddModal } from './cost-table-add-modal'
-import { useCostTable } from './use-cost-table'
+import { BudgetTableAddModal } from './budget-table-add-modal'
+import { useBudgetTable } from './use-budget-table'
 import { CostCode, CostType, Division } from '../../api'
-import { CostNode } from './use-cost-table/types'
+import { BudgetNode } from './use-budget-table/types'
 import { useSaveCropPlanLines } from '../../api/crop-plan/use-crop-plan-lines'
 
-const ExpandableTable = createExpandableTable<CostNode>()
+const ExpandableTable = createExpandableTable<BudgetNode>()
 
-export function CostTable() {
+export function BudgetTable() {
   const searchParams = useSearchParams()
   const cropPlanId = searchParams.get('cropPlanId')
   const { toast } = useToast()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useCostTable()
+  const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useBudgetTable()
   const { updateLines, isPending: isSaving } = useSaveCropPlanLines()
 
   const handleAddNew = (newItem: {
@@ -139,7 +139,7 @@ export function CostTable() {
 
   const columns = useMemo(
     () => [
-      createColumn<CostNode>('id', '', ({ row }) => {
+      createColumn<BudgetNode>('id', '', ({ row }) => {
         const isLastChild = row.original.parentRowId && !row.original.children?.length
         return (
           <div className="group flex items-center gap-2">
@@ -157,8 +157,8 @@ export function CostTable() {
           </div>
         )
       }),
-      createColumn<CostNode>('initialCost', 'Initial Cost', ({ row }) => {
-        const value = (row.original as unknown as CostNode).initialCost
+      createColumn<BudgetNode>('initialCost', 'Initial Cost', ({ row }) => {
+        const value = (row.original as unknown as BudgetNode).initialCost
         if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
@@ -175,8 +175,8 @@ export function CostTable() {
         }
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
-      createColumn<CostNode>('currentPlannedCost', 'Current Planned Cost', ({ row }) => {
-        const value = (row.original as unknown as CostNode).currentPlannedCost
+      createColumn<BudgetNode>('currentPlannedCost', 'Current Planned Cost', ({ row }) => {
+        const value = (row.original as unknown as BudgetNode).currentPlannedCost
         if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
@@ -195,8 +195,8 @@ export function CostTable() {
         }
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
-      createColumn<CostNode>('projectedCost', 'Projected Cost', ({ row }) => {
-        const value = (row.original as unknown as CostNode).projectedCost
+      createColumn<BudgetNode>('projectedCost', 'Projected Cost', ({ row }) => {
+        const value = (row.original as unknown as BudgetNode).projectedCost
         if (updateNode && !row.original.children && row.original.id !== 'grand-total') {
           return (
             <div className="relative">
@@ -253,7 +253,7 @@ export function CostTable() {
         />
       </ExpandableTable.Root>
       {isModalOpen && (
-        <CostTableAddModal
+        <BudgetTableAddModal
           state={{ ...state, tree: data }}
           onAddNew={handleAddNew}
           onClose={() => setIsModalOpen(false)}

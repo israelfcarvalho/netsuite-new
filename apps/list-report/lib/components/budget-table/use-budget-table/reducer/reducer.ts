@@ -5,9 +5,9 @@ import { addNodeReducer } from './add-reducer'
 import { deleteNodeReducer } from './delete-reducer'
 import { loadNodesReducer } from './load-reducer'
 import { updateNodeReducer } from './update-reducer'
-import { CostState } from '../types'
+import { BudgetState } from '../types'
 
-export function costTableReducer(state: CostState, action: Action): CostState {
+export function budgetTableReducer(state: BudgetState, action: Action): BudgetState {
   switch (action.type) {
     case 'LOAD_NODES': {
       return loadNodesReducer(state, action)
@@ -20,7 +20,6 @@ export function costTableReducer(state: CostState, action: Action): CostState {
 
     case 'ADD_NODE': {
       const newState = addNodeReducer(state, action)
-
       return newState
     }
 
