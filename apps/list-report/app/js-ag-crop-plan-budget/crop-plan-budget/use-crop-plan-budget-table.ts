@@ -13,7 +13,7 @@ export function useCropPlanBudgetTable() {
   const cropPlanId = queryParams.get('cropPlanId')
   const { cropPlanLines, isLoading, error } = useGetCropPlanLines({ cropPlanId: Number(cropPlanId) })
 
-  const { updateNode, addNode, deleteNode, state } = useBudgetTable({ cropPlanLines })
+  const { updateNode, addNode, deleteNode, state, levels } = useBudgetTable({ cropPlanLines })
 
   const data = useMemo(() => {
     const nodes = Array.from(state.nodes.values()).filter((node) => !node.parentRowId)
@@ -45,5 +45,6 @@ export function useCropPlanBudgetTable() {
     isLoading,
     error: error?.message,
     data,
+    levels,
   }
 }

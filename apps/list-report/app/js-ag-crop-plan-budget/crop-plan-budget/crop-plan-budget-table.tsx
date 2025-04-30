@@ -16,7 +16,7 @@ export const CropPlanBudgetTable = () => {
   const cropPlanId = searchParams.get('cropPlanId')
   const { updateLines, isPending } = useSaveCropPlanLines()
 
-  const { updateNode, addNode, deleteNode, state, data, isLoading, error } = useCropPlanBudgetTable()
+  const { updateNode, addNode, deleteNode, state, data, isLoading, error, levels } = useCropPlanBudgetTable()
 
   const handleAddNew = (newItem: {
     division: Division
@@ -79,6 +79,7 @@ export const CropPlanBudgetTable = () => {
       onDelete={deleteNode}
       onSave={handleSave}
       state={state}
+      levels={levels}
     />
   )
 }
