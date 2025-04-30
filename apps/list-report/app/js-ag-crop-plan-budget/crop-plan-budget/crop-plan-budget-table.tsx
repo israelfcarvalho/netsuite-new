@@ -4,10 +4,11 @@ import { useSearchParams } from 'next/navigation'
 
 import { useToast } from '@workspace/ui/components/toast'
 
+import { useCropPlanBudgetTable } from './use-crop-plan-budget-table'
+
 import { CostCode, Division, CostType } from '@/lib/api'
 import { useSaveCropPlanLines } from '@/lib/api/crop-plan/use-crop-plan-lines'
 import { BudgetTable } from '@/lib/components/budget-table/budget-table'
-import { useBudgetTable } from '@/lib/components/budget-table/use-budget-table'
 
 export const CropPlanBudgetTable = () => {
   const { toast } = useToast()
@@ -15,7 +16,7 @@ export const CropPlanBudgetTable = () => {
   const cropPlanId = searchParams.get('cropPlanId')
   const { updateLines, isPending } = useSaveCropPlanLines()
 
-  const { data, updateNode, addNode, deleteNode, error, isLoading, state } = useBudgetTable()
+  const { updateNode, addNode, deleteNode, state, data, isLoading, error } = useCropPlanBudgetTable()
 
   const handleAddNew = (newItem: {
     division: Division
