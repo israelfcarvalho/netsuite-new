@@ -1,20 +1,18 @@
 'use client'
 
-import { jsPDF } from 'jspdf'
 import { Trash2 } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
-import * as XLSX from 'xlsx'
 
 import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
-import { createExpandableTable, createColumn, formatCurrency } from '@workspace/ui/components/table'
+import { formatCurrency } from '@workspace/ui/components/form/input/text'
+import { createExpandableTable, createColumn } from '@workspace/ui/components/table'
 import { cn } from '@workspace/ui/lib/utils'
 
 import { BudgetTableAddModal } from './budget-table-add-modal'
 import { BudgetTableLoading } from './budget-table-loading'
 import { BudgetTableProps } from './budget-table.types'
 import { BudgetNode } from './use-budget-table/types'
-
 const ExpandableTable = createExpandableTable<BudgetNode>()
 
 export function BudgetTable({
@@ -32,61 +30,11 @@ export function BudgetTable({
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleExcelExport = (): void => {
-    const headerData = [
-      {
-        'Cost Code': '',
-        'Original Estimate': 'ORIGINAL ESTIMATE',
-        'Current Estimate': 'CURRENT ESTIMATE',
-        'Total Cost': 'TOTAL COST',
-      },
-    ]
-
-    const bodyRows = data
-      .filter((item) => item !== null)
-      .map((item) => ({
-        'Cost Code': `${item.name}`,
-        'Initial Cost': item.initialCost,
-        'Current Planned Cost': item.currentPlannedCost,
-        'Projected Cost': item.projectedCost,
-      }))
-
-    const ws = XLSX.utils.json_to_sheet([...headerData, ...bodyRows])
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'Cost Report')
-    XLSX.writeFile(wb, 'cost-report.xlsx')
+    parent.printExcel()
   }
 
   const handlePDFExport = async (): Promise<void> => {
-    const autoTable = (await import('jspdf-autotable')).default
-    const doc = new jsPDF('l', 'pt')
-
-    const tableColumns = ['', 'INITIAL COST', 'CURRENT PLANNED COST', 'PROJECTED COST']
-
-    const tableRows = data
-      .filter((item) => item !== null)
-      .map((item) => [`${item.name}`, item.initialCost, item.currentPlannedCost, item.projectedCost])
-
-    autoTable(doc, {
-      head: [tableColumns],
-      body: tableRows,
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: {
-        fillColor: [240, 240, 240],
-        textColor: [0, 0, 0],
-        fontStyle: 'bold',
-        halign: 'right',
-      },
-      columnStyles: {
-        0: { halign: 'left' },
-        1: { halign: 'right' },
-        2: { halign: 'right' },
-        3: { halign: 'right' },
-      },
-      margin: { top: 20 },
-      theme: 'plain',
-    })
-
-    doc.save('cost-report.pdf')
+    parent.printPdf()
   }
 
   const columns = useMemo(
@@ -189,7 +137,7 @@ export function BudgetTable({
           <Button className="flex-1" variant="secondary" size="sm" onClick={handleExcelExport} disabled={isLoading}>
             Export to Excel
           </Button>
-          <Button className="flex-1" variant="secondary" size="sm" onClick={handlePDFExport} disabled>
+          <Button className="flex-1" variant="secondary" size="sm" onClick={handlePDFExport}>
             Export to PDF
           </Button>
         </div>
