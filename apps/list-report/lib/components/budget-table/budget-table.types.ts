@@ -22,7 +22,7 @@ export interface BudgetTableProps {
   error?: string
   onAddNew?: OnBudgetTableAddNew
   onUpdate: (rowId: string, node: Partial<BudgetNode>) => void
-  onDelete: (rowId: string) => void
+  onDelete?: (rowId: string) => void
   onSave: () => void
   state: BudgetState
   levels: number

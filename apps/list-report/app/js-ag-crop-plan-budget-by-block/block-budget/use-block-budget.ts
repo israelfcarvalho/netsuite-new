@@ -13,7 +13,7 @@ export function useBlockBudget() {
   const cropPlanId = queryParams.get('cropPlanId')
   const { cropPlanLines, isLoading, error } = useGetCropPlanLinesByRanch({ cropPlanId: Number(cropPlanId) })
 
-  const { updateNode, deleteNode, state, levels } = useBudgetTable({ cropPlanLines })
+  const { updateNode, state, levels } = useBudgetTable({ cropPlanLines })
 
   const data = useMemo(() => {
     const nodes = Array.from(state.nodes.values()).filter((node) => !node.parentRowId)
@@ -42,7 +42,6 @@ export function useBlockBudget() {
     isLoading,
     error: error?.message,
     updateNode,
-    deleteNode,
     state,
     levels,
   }

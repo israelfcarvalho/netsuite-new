@@ -15,7 +15,7 @@ export const BlockBudgetTable = () => {
   const searchParams = useSearchParams()
   const cropPlanId = searchParams.get('cropPlanId')
 
-  const { data, isLoading, error, updateNode, deleteNode, state, levels } = useBlockBudget()
+  const { data, isLoading, error, updateNode, state, levels } = useBlockBudget()
   const { updateLines, isPending } = useSaveCropPlanLinesByRanch()
 
   const handleSave = () => {
@@ -64,7 +64,6 @@ export const BlockBudgetTable = () => {
       isSaving={isPending}
       error={error}
       onUpdate={updateNode}
-      onDelete={deleteNode}
       onSave={handleSave}
       state={state}
       levels={levels}

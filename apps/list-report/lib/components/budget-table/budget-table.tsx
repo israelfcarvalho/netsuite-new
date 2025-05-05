@@ -43,7 +43,7 @@ export function BudgetTable({
         const isLastChild = row.original.parentRowId && !row.original.children?.length
         return (
           <div className="group flex items-center gap-2">
-            {isLastChild && (
+            {isLastChild && onDelete && (
               <Button
                 variant="destructive"
                 size="sm"
