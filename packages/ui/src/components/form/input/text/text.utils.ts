@@ -1,77 +1,28 @@
-import { ChangeEvent, KeyboardEvent, RefObject } from 'react'
+import { ChangeEvent } from 'react'
 
+import { FormInputTextNormalProps, FormInputTextProps, FormInputTextStateManager } from './text.types'
 import {
-  CurrencyInputOptions,
-  FormInputTextCurrencyProps,
-  FormInputTextNormalProps,
-  FormInputTextProps,
-} from './text.types'
-
-const defaultCurrencyOptions: CurrencyInputOptions = {
-  locales: 'en-US',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-  minimumIntegerDigits: 1,
-}
-
-const formatCurrency = (amount: number, options?: CurrencyInputOptions): string => {
-  const { locales = 'en-US', ...restOptions } = options || {}
-  const mergedOptions: Intl.NumberFormatOptions = {
-    style: 'currency',
-    ...defaultCurrencyOptions,
-    ...restOptions,
-  }
-
-  return Intl.NumberFormat(locales, mergedOptions).format(amount)
-}
-
-const changeCurrency =
-  (onChange: FormInputTextCurrencyProps['onChange'], inputRef: RefObject<HTMLInputElement | null>) =>
-  (e: ChangeEvent<HTMLInputElement>) => {
-    const input = inputRef.current
-
-    if (!input) return
-
-    const cursorPosition = input.selectionStart ?? input.value.length
-
-    const numericValue = e.target.value.replace(/[^0-9]/g, '')
-    const nonEmptyValue = numericValue.padStart(4, '0')
-    const formattedValue = `${nonEmptyValue.slice(0, -2)}.${nonEmptyValue.slice(-2)}`
-    onChange(Number(formattedValue))
-
-    requestAnimationFrame(() => {
-      input.setSelectionRange(cursorPosition, cursorPosition)
-    })
-  }
-
-const keyDownCurrency = (e: KeyboardEvent<HTMLInputElement>) => {
-  if (
-    !/[0-9]/.test(e.key) &&
-    e.key !== 'Backspace' &&
-    e.key !== 'ArrowLeft' &&
-    e.key !== 'ArrowRight' &&
-    e.key !== 'ArrowUp' &&
-    e.key !== 'ArrowDown' &&
-    e.key !== 'Delete' &&
-    e.key !== 'Enter' &&
-    e.key !== 'Tab'
-  ) {
-    e.preventDefault()
-  }
-}
+  handleChangeCurrency,
+  handleClickCurrency,
+  handleKeyDownCurrency,
+  handleKeyUpCurrency,
+  handleSelectCurrency,
+  formatCurrency,
+} from './utils'
 
 const currency = {
   format: formatCurrency,
-  handleChange: changeCurrency,
-  handleKeyDown: keyDownCurrency,
+  handleChange: handleChangeCurrency,
+  handleKeyDown: handleKeyDownCurrency,
+  handleSelect: handleSelectCurrency,
+  handleKeyUp: handleKeyUpCurrency,
+  handleClick: handleClickCurrency,
 }
 
 const normal = {
   format: (value: string) => value,
   handleChange: (onChange: FormInputTextNormalProps['onChange']) => (e: ChangeEvent<HTMLInputElement>) =>
     onChange(e.target.value),
-  handleKeyDown: undefined,
 }
 
 const handlers = {
@@ -79,19 +30,21 @@ const handlers = {
   normal,
 }
 
-export const getInputHandlers = (props: FormInputTextProps, inputRef: RefObject<HTMLInputElement | null>) => {
+export const getInputHandlers = (props: FormInputTextProps, stateManager: FormInputTextStateManager) => {
   switch (props.variant) {
     case 'currency':
       return {
         format: () => handlers[props.variant].format(props.value, props.options),
-        handleChange: handlers[props.variant].handleChange(props.onChange, inputRef),
+        handleChange: handlers[props.variant].handleChange(props, stateManager),
         handleKeyDown: handlers[props.variant].handleKeyDown,
+        handleSelect: handlers[props.variant].handleSelect(stateManager),
+        handleKeyUp: handlers[props.variant].handleKeyUp(stateManager),
+        handleClick: handlers[props.variant].handleClick(stateManager),
       }
     case 'normal':
       return {
         format: () => handlers[props.variant].format(props.value),
         handleChange: handlers[props.variant].handleChange(props.onChange),
-        handleKeyDown: handlers[props.variant].handleKeyDown,
       }
   }
 }

@@ -1,3 +1,7 @@
+import { Dispatch, SetStateAction } from 'react'
+
+import { FormatNumberOptions } from '../../../../lib/numbers'
+
 export interface FormInputTextBaseProps {
   id?: string
   required?: boolean
@@ -12,16 +16,25 @@ export interface FormInputTextNormalProps extends FormInputTextBaseProps {
   onChange: (value: string) => void
 }
 
-export interface CurrencyInputOptions extends Omit<Intl.NumberFormatOptions, 'style'> {
-  locales?: 'en-US' | 'pt-BR'
-}
-
 export interface FormInputTextCurrencyProps extends FormInputTextBaseProps {
   variant: 'currency'
   value: number
   onChange: (value: number) => void
-  options?: CurrencyInputOptions
+  options?: FormatNumberOptions
 }
 
 export type FormInputTextProps = FormInputTextNormalProps | FormInputTextCurrencyProps
 export type FormInputTextVariant = FormInputTextProps['variant']
+
+interface FormInputTextSelectionRange {
+  start: number
+  end: number
+}
+
+export interface FormInputTextStateManager {
+  state: {
+    currentSelectionRange: FormInputTextSelectionRange
+    prevCursorPosition?: number
+  }
+  setState: Dispatch<SetStateAction<FormInputTextStateManager['state']>>
+}
