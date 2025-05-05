@@ -7,6 +7,7 @@ import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
 import { formatCurrency } from '@workspace/ui/components/form/input/text'
 import { createExpandableTable, createColumn } from '@workspace/ui/components/table'
+import { useSearchParams } from '@workspace/ui/lib/navigation'
 import { cn } from '@workspace/ui/lib/utils'
 
 import { BudgetTableAddModal } from './budget-table-add-modal'
@@ -28,6 +29,11 @@ export function BudgetTable({
   levels,
 }: BudgetTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const searchParamsString = useSearchParams('string')
+  const searchParamsBoolean = useSearchParams('boolean')
+
+  const blockEC = searchParamsString.getAll('blockEC')
+  const blockRR = !!searchParamsBoolean.get('blockRR')
 
   const handleExcelExport = (): void => {
     parent.printExcel()
@@ -41,9 +47,12 @@ export function BudgetTable({
     () => [
       createColumn<BudgetNode>('id', '', ({ row }) => {
         const isLastChild = row.original.parentRowId && !row.original.children?.length
+        const blockRemoveRow = blockRR
+        const canRemove = !blockRemoveRow && onDelete && isLastChild
+
         return (
           <div className="group flex items-center gap-2">
-            {isLastChild && onDelete && (
+            {canRemove && (
               <Button
                 variant="destructive"
                 size="sm"
@@ -60,7 +69,13 @@ export function BudgetTable({
       createColumn<BudgetNode>('initialCost', 'Initial Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).initialCost
         const hasChildren = row.original.children?.length
-        if (onUpdate && !hasChildren && row.original.id !== 'grand-total') {
+        const isBlockEC = blockEC.includes('initialCost')
+
+        console.log({ isBlockEC, name: row.original })
+
+        const canEdit = !hasChildren && row.original.id !== 'grand-total' && !isBlockEC
+
+        if (canEdit) {
           return (
             <div className="relative">
               <FormInputText
@@ -79,7 +94,11 @@ export function BudgetTable({
       createColumn<BudgetNode>('currentPlannedCost', 'Current Planned Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).currentPlannedCost
         const hasChildren = row.original.children?.length
-        if (onUpdate && !hasChildren && row.original.id !== 'grand-total') {
+        const isBlockEC = blockEC.includes('currentPlannedCost')
+
+        const canEdit = !hasChildren && row.original.id !== 'grand-total' && !isBlockEC
+
+        if (canEdit) {
           return (
             <div className="relative">
               <FormInputText
@@ -100,7 +119,11 @@ export function BudgetTable({
       createColumn<BudgetNode>('projectedCost', 'Projected Cost', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).projectedCost
         const hasChildren = row.original.children?.length
-        if (onUpdate && !hasChildren && row.original.id !== 'grand-total') {
+        const isBlockEC = blockEC.includes('projectedCost')
+
+        const canEdit = !hasChildren && row.original.id !== 'grand-total' && !isBlockEC
+
+        if (canEdit) {
           return (
             <div className="relative">
               <FormInputText
@@ -117,7 +140,7 @@ export function BudgetTable({
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
     ],
-    [onUpdate, onDelete]
+    [onUpdate, onDelete, blockEC, blockRR]
   )
 
   return (
