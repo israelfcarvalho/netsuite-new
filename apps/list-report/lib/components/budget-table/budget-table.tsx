@@ -34,6 +34,7 @@ export function BudgetTable({
 
   const blockEC = searchParamsString.getAll('blockEC')
   const blockRR = !!searchParamsBoolean.get('blockRR')
+  const blockNL = !!searchParamsBoolean.get('blockNL')
 
   const handleExcelExport = (): void => {
     parent.printExcel()
@@ -148,7 +149,7 @@ export function BudgetTable({
       {isSaving && <BudgetTableLoading />}
 
       <div className="flex gap-2">
-        {onAddNew && (
+        {onAddNew && !blockNL && (
           <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
             Add New Cost Line
           </Button>
