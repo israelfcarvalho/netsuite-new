@@ -182,8 +182,8 @@ export class CropPlanService {
     // Create ranch nodes as the first level
     const ranchNodes = [
       {
-        id: 'ranch1',
-        name: 'Ranch 1',
+        id: '9',
+        name: 'Ranch',
         unitCost: 0,
         initialCost: 0,
         currentPlannedCost: 0,
@@ -191,8 +191,26 @@ export class CropPlanService {
         children: [],
       },
       {
-        id: 'ranch2',
-        name: 'Ranch 2',
+        id: '10',
+        name: 'Ranch : Field A',
+        unitCost: 0,
+        initialCost: 0,
+        currentPlannedCost: 0,
+        projectedCost: 0,
+        children: [],
+      },
+      {
+        id: '27',
+        name: 'Ranch : Field B',
+        unitCost: 0,
+        initialCost: 0,
+        currentPlannedCost: 0,
+        projectedCost: 0,
+        children: [],
+      },
+      {
+        id: '28',
+        name: 'Ranch : Field C',
         unitCost: 0,
         initialCost: 0,
         currentPlannedCost: 0,

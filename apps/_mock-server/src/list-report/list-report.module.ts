@@ -5,6 +5,7 @@ import { CostCodeModule } from './cost-code/cost-code.module'
 import { CostTypeModule } from './cost-type/cost-type.module'
 import { CropPlanModule } from './crop-plan/crop-plan.module'
 import { DivisionModule } from './division/division.module'
+import { RanchBlockModule } from './ranch-block/ranch-block.module'
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DivisionModule } from './division/division.module'
           { path: 'cost-code', module: CostCodeModule },
           { path: 'cost-type', module: CostTypeModule },
           { path: 'division', module: DivisionModule },
+          { path: 'ranch-block', module: RanchBlockModule },
         ],
       },
     ]),
@@ -23,6 +25,7 @@ import { DivisionModule } from './division/division.module'
     CostCodeModule,
     CostTypeModule,
     DivisionModule,
+    RanchBlockModule,
   ],
 })
 export class ListReportModule {}
