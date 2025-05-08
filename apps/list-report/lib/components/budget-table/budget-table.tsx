@@ -1,6 +1,6 @@
 'use client'
 
-import { Trash2 } from 'lucide-react'
+import { Trash2, Filter } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
 
 import { Button } from '@workspace/ui/components/button'
@@ -11,6 +11,7 @@ import { useSearchParams } from '@workspace/ui/lib/navigation'
 import { cn } from '@workspace/ui/lib/utils'
 
 import { BudgetTableAddModal } from './budget-table-add-modal'
+import { BudgetTableBlockFilters } from './budget-table-block-filters'
 import { BudgetTableExport } from './budget-table-export'
 import { BudgetTableFilters } from './budget-table-filters'
 import { BudgetTableLoading } from './budget-table-loading'
@@ -35,6 +36,7 @@ export function BudgetTable({
   levels,
   hasBlockLevel = false,
 }: BudgetTableProps) {
+  const [blockFilter, setBlockFilter] = useState<string>('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const searchParamsString = useSearchParams('string')
   const searchParamsBoolean = useSearchParams('boolean')
@@ -52,7 +54,7 @@ export function BudgetTable({
     setCostTypeId,
     resetFilters,
     filteredData,
-  } = useBudgetTableFilters(data, hasBlockLevel)
+  } = useBudgetTableFilters(data, hasBlockLevel, blockFilter)
 
   const columns = useMemo(
     () => [
@@ -158,7 +160,7 @@ export function BudgetTable({
   const onlyGrandTotal = filteredData?.length === 1 && filteredData[0]?.id === GRAND_TOTAL_ID
 
   return (
-    <div className="size-full pb-4 flex flex-col gap-4 overflow-visible relative">
+    <div className="size-full flex flex-col gap-4 overflow-visible relative">
       {isSaving && <BudgetTableLoading />}
 
       <div className="flex gap-2">
@@ -173,17 +175,31 @@ export function BudgetTable({
         <BudgetTableExport isLoading={isLoading} />
       </div>
 
-      <div className="flex flex-col">
-        <BudgetTableFilters
-          divisionId={divisionId}
-          costCodeId={costCodeId}
-          costTypeId={costTypeId}
-          setDivisionId={setDivisionId}
-          setCostCodeId={setCostCodeId}
-          setCostTypeId={setCostTypeId}
-          resetFilters={resetFilters}
-        />
-
+      <div className="flex flex-col flex-1 overflow-auto py-2 px-2">
+        <div className="grid grid-rows-[1fr] grid-cols-[auto_1fr] mb-2 gap-x-1 gap-y-1 overflow-visible">
+          <div
+            className={cn(
+              'w-fit row-span-2 flex items-center text-[12px] font-semibold text-neutral-100 rounded-l-lg px-2 py-1 bg-neutral-10 shadow-neutral-40 shadow-[-2px_0px_2px_1px]',
+              {
+                'row-span-1': !hasBlockLevel,
+              }
+            )}
+          >
+            <Filter className="size-2.5 mr-2 text-gray-500" />
+            Filters
+          </div>
+          {hasBlockLevel && <BudgetTableBlockFilters onChange={setBlockFilter} />}
+          <BudgetTableFilters
+            divisionId={divisionId}
+            costCodeId={costCodeId}
+            costTypeId={costTypeId}
+            setDivisionId={setDivisionId}
+            setCostCodeId={setCostCodeId}
+            setCostTypeId={setCostTypeId}
+            resetFilters={resetFilters}
+            hasBlockLevel={hasBlockLevel}
+          />
+        </div>
         <ExpandableTable.Root data={filteredData ?? []} columns={columns} error={error} isLoading={isLoading}>
           <ExpandableTable.Header />
           <ExpandableTable.Body

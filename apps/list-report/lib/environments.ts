@@ -23,5 +23,10 @@ export const environments = {
       script: process.env.NEXT_PUBLIC_API_COST_TYPE_SCRIPT_ID ?? '',
       deploy: process.env.NEXT_PUBLIC_API_COST_TYPE_DEPLOY_ID ?? '',
     },
+    ranchBlock: {
+      route: process.env.NEXT_PUBLIC_API_RANCH_BLOCK_ROUTE ?? '',
+      script: process.env.NEXT_PUBLIC_API_RANCH_BLOCK_SCRIPT_ID ?? '',
+      deploy: process.env.NEXT_PUBLIC_API_RANCH_BLOCK_DEPLOY_ID ?? '',
+    },
   },
 } as const

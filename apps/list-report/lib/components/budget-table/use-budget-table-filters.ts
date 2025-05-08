@@ -4,7 +4,11 @@ import { BudgetNode } from './use-budget-table/types'
 
 import { useGetCostCodes, useGetCostTypes } from '@/lib/api'
 
-export function useBudgetTableFilters(data: BudgetNode[] | undefined, hasBlockLevel: boolean = false) {
+export function useBudgetTableFilters(
+  data: BudgetNode[] | undefined,
+  hasBlockLevel: boolean = false,
+  blockFilter?: string
+) {
   const [divisionId, setDivisionId] = useState<string>('')
   const [costCodeId, setCostCodeId] = useState<string>('')
   const [costTypeId, setCostTypeId] = useState<string>('')
@@ -73,6 +77,9 @@ export function useBudgetTableFilters(data: BudgetNode[] | undefined, hasBlockLe
   const filterBlocks = useCallback(
     (blocks: BudgetNode[]): BudgetNode[] => {
       return blocks.reduce<BudgetNode[]>((filtered, block) => {
+        if (blockFilter && !block.name.includes(blockFilter)) {
+          return filtered
+        }
         const filteredDivisions = filterDivisions(block.children ?? [])
         if (filteredDivisions.length > 0 || !divisionId) {
           return [...filtered, { ...block, children: filteredDivisions }]
@@ -80,7 +87,7 @@ export function useBudgetTableFilters(data: BudgetNode[] | undefined, hasBlockLe
         return filtered
       }, [])
     },
-    [divisionId, filterDivisions]
+    [divisionId, filterDivisions, blockFilter]
   )
 
   const grandTotalNode = data?.find((d) => d.id === 'grand-total')

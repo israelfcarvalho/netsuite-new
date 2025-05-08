@@ -3,6 +3,7 @@ import React from 'react'
 
 import { Button } from '@workspace/ui/components/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { cn } from '@workspace/ui/lib/utils'
 
 import { useGetCostCodes, useGetCostTypes, useGetDivisions } from '@/lib/api'
 
@@ -14,6 +15,7 @@ interface BudgetTableFiltersProps {
   setCostCodeId: (value: string) => void
   setCostTypeId: (value: string) => void
   resetFilters: () => void
+  hasBlockLevel: boolean
 }
 
 export function BudgetTableFilters({
@@ -24,13 +26,21 @@ export function BudgetTableFilters({
   setCostCodeId,
   setCostTypeId,
   resetFilters,
+  hasBlockLevel,
 }: BudgetTableFiltersProps) {
   const { data: divisions } = useGetDivisions()
   const { data: costCodes } = useGetCostCodes({ divisionId })
   const { data: costTypes } = useGetCostTypes({ costCodeId })
 
   return (
-    <div className="flex items-center justify-between bg-neutral-10 pl-2 py-1 rounded-t-lg shadow-sm shadow-neutral-40 mb-1">
+    <div
+      className={cn(
+        'flex items-center justify-between bg-neutral-10 rounded-r-lg shadow-[1px_0px_2px_0px] shadow-neutral-40 p-1',
+        {
+          'rounded-r-none rounded-br-lg shadow-[1px_1px_2px_0px]': hasBlockLevel,
+        }
+      )}
+    >
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-0">
           <Select
@@ -131,15 +141,17 @@ export function BudgetTableFilters({
           )}
         </div>
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="flex items-center gap-1 text-neutral-100 hover:text-neutral-140"
-        onClick={resetFilters}
-      >
-        <RefreshCw className="w-4 h-4" />
-        Reset
-      </Button>
+      {divisionId && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex items-center gap-1 text-neutral-100 hover:text-neutral-140"
+          onClick={resetFilters}
+        >
+          <RefreshCw className="w-4 h-4" />
+          Reset
+        </Button>
+      )}
     </div>
   )
 }
