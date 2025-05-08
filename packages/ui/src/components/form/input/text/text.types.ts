@@ -8,6 +8,7 @@ export interface FormInputTextBaseProps {
   className?: string
   placeholder?: string
   disabled?: boolean
+  changeOnBlur?: boolean
 }
 
 export interface FormInputTextNormalProps extends FormInputTextBaseProps {
