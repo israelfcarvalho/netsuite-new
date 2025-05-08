@@ -11,10 +11,16 @@ import { useSearchParams } from '@workspace/ui/lib/navigation'
 import { cn } from '@workspace/ui/lib/utils'
 
 import { BudgetTableAddModal } from './budget-table-add-modal'
+import { BudgetTableExport } from './budget-table-export'
+import { BudgetTableFilters } from './budget-table-filters'
 import { BudgetTableLoading } from './budget-table-loading'
 import { BudgetTableProps } from './budget-table.types'
 import { BudgetNode } from './use-budget-table/types'
+import { useBudgetTableFilters } from './use-budget-table-filters'
+
 const ExpandableTable = createExpandableTable<BudgetNode>()
+
+const GRAND_TOTAL_ID = 'grand-total'
 
 export function BudgetTable({
   data,
@@ -27,6 +33,7 @@ export function BudgetTable({
   onSave,
   state,
   levels,
+  hasBlockLevel = false,
 }: BudgetTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const searchParamsString = useSearchParams('string')
@@ -36,13 +43,16 @@ export function BudgetTable({
   const blockRR = !!searchParamsBoolean.get('blockRR')
   const blockNL = !!searchParamsBoolean.get('blockNL')
 
-  const handleExcelExport = (): void => {
-    parent.printExcel()
-  }
-
-  const handlePDFExport = async (): Promise<void> => {
-    parent.printPdf()
-  }
+  const {
+    divisionId,
+    costCodeId,
+    costTypeId,
+    setDivisionId,
+    setCostCodeId,
+    setCostTypeId,
+    resetFilters,
+    filteredData,
+  } = useBudgetTableFilters(data, hasBlockLevel)
 
   const columns = useMemo(
     () => [
@@ -72,9 +82,7 @@ export function BudgetTable({
         const hasChildren = row.original.children?.length
         const isBlockEC = blockEC.includes('initialCost')
 
-        console.log({ isBlockEC, name: row.original })
-
-        const canEdit = !hasChildren && row.original.id !== 'grand-total' && !isBlockEC
+        const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
 
         if (canEdit) {
           return (
@@ -86,6 +94,7 @@ export function BudgetTable({
                 onChange={(value) => {
                   onUpdate(row.original.rowId, { initialCost: value })
                 }}
+                changeOnBlur
               />
             </div>
           )
@@ -97,7 +106,7 @@ export function BudgetTable({
         const hasChildren = row.original.children?.length
         const isBlockEC = blockEC.includes('currentPlannedCost')
 
-        const canEdit = !hasChildren && row.original.id !== 'grand-total' && !isBlockEC
+        const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
 
         if (canEdit) {
           return (
@@ -111,6 +120,7 @@ export function BudgetTable({
                     currentPlannedCost: value,
                   })
                 }}
+                changeOnBlur
               />
             </div>
           )
@@ -122,7 +132,7 @@ export function BudgetTable({
         const hasChildren = row.original.children?.length
         const isBlockEC = blockEC.includes('projectedCost')
 
-        const canEdit = !hasChildren && row.original.id !== 'grand-total' && !isBlockEC
+        const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
 
         if (canEdit) {
           return (
@@ -134,6 +144,7 @@ export function BudgetTable({
                 onChange={(value) => {
                   onUpdate(row.original.rowId, { projectedCost: value })
                 }}
+                changeOnBlur
               />
             </div>
           )
@@ -144,8 +155,10 @@ export function BudgetTable({
     [onUpdate, onDelete, blockEC, blockRR]
   )
 
+  const onlyGrandTotal = filteredData?.length === 1 && filteredData[0]?.id === GRAND_TOTAL_ID
+
   return (
-    <div className="size-full flex flex-col gap-4 overflow-visible relative">
+    <div className="size-full pb-4 flex flex-col gap-4 overflow-visible relative">
       {isSaving && <BudgetTableLoading />}
 
       <div className="flex gap-2">
@@ -157,40 +170,54 @@ export function BudgetTable({
         <Button variant="default" size="sm" onClick={onSave} disabled={isLoading}>
           Save
         </Button>
-        <div className="ml-auto flex gap-2">
-          <Button className="flex-1" variant="secondary" size="sm" onClick={handleExcelExport} disabled={isLoading}>
-            Export to Excel
-          </Button>
-          <Button className="flex-1" variant="secondary" size="sm" onClick={handlePDFExport}>
-            Export to PDF
-          </Button>
-        </div>
+        <BudgetTableExport isLoading={isLoading} />
       </div>
 
-      <ExpandableTable.Root data={data} columns={columns} error={error} isLoading={isLoading}>
-        <ExpandableTable.Header />
-        <ExpandableTable.Body
-          className={
-            levels > 3
-              ? cn(
-                  'data-[level=0]:data-[has-children=true]:bg-pine/30 data-[level=0]:data-[has-children=true]:shadow',
-                  'data-[level=1]:data-[has-children=true]:bg-brand-40',
-                  'data-[level=2]:data-[has-children=true]:bg-neutral-10'
-                )
-              : cn(
-                  'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
-                  'data-[level=1]:data-[has-children=true]:bg-neutral-10'
-                )
-          }
+      <div className="flex flex-col">
+        <BudgetTableFilters
+          divisionId={divisionId}
+          costCodeId={costCodeId}
+          costTypeId={costTypeId}
+          setDivisionId={setDivisionId}
+          setCostCodeId={setCostCodeId}
+          setCostTypeId={setCostTypeId}
+          resetFilters={resetFilters}
         />
-      </ExpandableTable.Root>
-      {isModalOpen && onAddNew && (
-        <BudgetTableAddModal
-          state={{ ...state, tree: data }}
-          onAddNew={onAddNew}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
+
+        <ExpandableTable.Root data={filteredData ?? []} columns={columns} error={error} isLoading={isLoading}>
+          <ExpandableTable.Header />
+          <ExpandableTable.Body
+            className={
+              levels > 3
+                ? cn(
+                    'data-[level=0]:data-[has-children=true]:bg-pine/30 data-[level=0]:data-[has-children=true]:shadow',
+                    'data-[level=1]:data-[has-children=true]:bg-brand-40',
+                    'data-[level=2]:data-[has-children=true]:bg-neutral-10'
+                  )
+                : cn(
+                    'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
+                    'data-[level=1]:data-[has-children=true]:bg-neutral-10'
+                  )
+            }
+          />
+          {onlyGrandTotal && (
+            <tbody>
+              <tr>
+                <td colSpan={columns.length} className="text-center py-4 text-neutral-60 border-t bg-neutral-5">
+                  No matching data found. Try adjusting your filters to see more results.
+                </td>
+              </tr>
+            </tbody>
+          )}
+        </ExpandableTable.Root>
+        {isModalOpen && onAddNew && (
+          <BudgetTableAddModal
+            state={{ ...state, tree: data }}
+            onAddNew={onAddNew}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
+      </div>
     </div>
   )
 }

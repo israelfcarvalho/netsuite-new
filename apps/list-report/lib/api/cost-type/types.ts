@@ -15,9 +15,9 @@ export interface CostTypeApiResponse {
 export interface CostTypeQueryParams extends QueryParams {
   script: string
   deploy: string
-  costCodeId: string
+  costCodeId?: string
 }
 
 export interface UseGetCostTypesProps {
-  costCodeId: string
+  costCodeId?: string
 }

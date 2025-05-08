@@ -26,4 +26,5 @@ export interface BudgetTableProps {
   onSave: () => void
   state: BudgetState
   levels: number
+  hasBlockLevel?: boolean
 }

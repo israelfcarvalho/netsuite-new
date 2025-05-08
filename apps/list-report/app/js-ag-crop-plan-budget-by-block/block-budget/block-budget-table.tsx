@@ -67,6 +67,7 @@ export const BlockBudgetTable = () => {
       onSave={handleSave}
       state={state}
       levels={levels}
+      hasBlockLevel={true}
     />
   )
 }
