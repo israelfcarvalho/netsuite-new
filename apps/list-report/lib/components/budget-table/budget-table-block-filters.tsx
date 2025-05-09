@@ -18,10 +18,9 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
   const { data } = useGetRanchBlocks(parentId)
 
   useEffect(() => {
-    const blockChain = selectedBlocks[selectedBlocks.length - 1]?.name
-    if (blockChain) {
-      onChange?.(blockChain)
-    }
+    const blockChain = selectedBlocks[selectedBlocks.length - 1]?.name ?? ''
+
+    onChange?.(blockChain)
   }, [selectedBlocks, onChange])
 
   useEffect(() => {
@@ -48,6 +47,7 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
   }
 
   const handleClear = (idx: number) => {
+    console.log({ idx })
     setSelectedBlocks((oldSelectedBlocks) => oldSelectedBlocks.slice(0, idx))
     setBlocks((oldBlocks) => oldBlocks.slice(0, idx))
   }
@@ -69,8 +69,8 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
               onValueChange={(id) => handleSelect(idx, block, id)}
               disabled={!block}
             >
-              <SelectTrigger className="min-w-[110px] h-7 rounded-l text-xs px-2 py-0 rounded-r-none">
-                <SelectValue placeholder="Block" />
+              <SelectTrigger className="flex-1 min-w-[110px] h-7 rounded-l text-xs px-2 py-0 rounded-r-none">
+                <SelectValue placeholder="- select -" />
               </SelectTrigger>
               <SelectContent>
                 {block.map((b) => (
