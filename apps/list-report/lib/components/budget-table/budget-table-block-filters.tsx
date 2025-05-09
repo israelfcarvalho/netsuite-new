@@ -18,9 +18,10 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
   const { data } = useGetRanchBlocks(parentId)
 
   useEffect(() => {
-    const blockChain = selectedBlocks.map((b) => b.name).join(' > ')
-
-    onChange?.(blockChain)
+    const blockChain = selectedBlocks[selectedBlocks.length - 1]?.name
+    if (blockChain) {
+      onChange?.(blockChain)
+    }
   }, [selectedBlocks, onChange])
 
   useEffect(() => {
@@ -31,10 +32,18 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
     }
   }, [data])
 
-  const handleSelect = (idx: string, blocks: RanchBlock[]) => {
-    const block = blocks.find((b) => b.id === idx)
+  const handleSelect = (idx: number, blocks: RanchBlock[], id: string) => {
+    const block = blocks.find((b) => b.id === id)
     if (block) {
-      setSelectedBlocks((oldSelectedBlocks) => [...oldSelectedBlocks, block])
+      setSelectedBlocks((oldSelectedBlocks) => {
+        const newSelectedBlocks = oldSelectedBlocks.filter((_, i) => i <= idx)
+        if (newSelectedBlocks[idx]?.id !== id) {
+          newSelectedBlocks[idx] = block
+        }
+
+        return newSelectedBlocks
+      })
+      setBlocks((oldBlocks) => oldBlocks.slice(0, idx + 1))
     }
   }
 
@@ -54,19 +63,19 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
     <div className="flex items-center justify-between bg-neutral-10 rounded-tr-lg shadow-[1px_-1px_2px_0px] shadow-neutral-40 p-1">
       <div className="flex items-center gap-4">
         {blocks.map((block, idx) => (
-          <div className="flex items-center gap-0" key={block[0]?.parent?.id}>
+          <div className="flex items-center gap-0" key={block[0]?.name}>
             <Select
               value={selectedBlocks[idx]?.id || ''}
-              onValueChange={(id) => handleSelect(id, block)}
+              onValueChange={(id) => handleSelect(idx, block, id)}
               disabled={!block}
             >
               <SelectTrigger className="min-w-[110px] h-7 rounded-l text-xs px-2 py-0 rounded-r-none">
-                <SelectValue placeholder={`Block Level ${idx + 1}`} />
+                <SelectValue placeholder="Block" />
               </SelectTrigger>
               <SelectContent>
                 {block.map((b) => (
                   <SelectItem key={b.id} value={b.id}>
-                    {b.name}
+                    {b.name.split(':').pop()}
                   </SelectItem>
                 ))}
               </SelectContent>

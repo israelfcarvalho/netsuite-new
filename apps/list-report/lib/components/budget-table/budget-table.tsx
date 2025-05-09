@@ -163,7 +163,7 @@ export function BudgetTable({
     <div className="size-full flex flex-col gap-4 overflow-visible relative">
       {isSaving && <BudgetTableLoading />}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 px-2">
         {onAddNew && !blockNL && (
           <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
             Add New Cost Line

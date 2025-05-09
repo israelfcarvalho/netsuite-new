@@ -77,7 +77,20 @@ export function useBudgetTableFilters(
   const filterBlocks = useCallback(
     (blocks: BudgetNode[]): BudgetNode[] => {
       return blocks.reduce<BudgetNode[]>((filtered, block) => {
-        if (blockFilter && !block.name.includes(blockFilter)) {
+        const blockNamePath = block.name.split(':')
+        const blockFilterPath = blockFilter?.split(':') ?? []
+
+        const isBlockFiltered = blockFilterPath.reduce((acc, filter, idx) => {
+          const blockName = blockNamePath[idx]?.trim()
+          const filterName = filter.trim()
+
+          if (blockName !== filterName) {
+            return false
+          }
+          return acc
+        }, true)
+
+        if (blockFilter && !isBlockFiltered) {
           return filtered
         }
         const filteredDivisions = filterDivisions(block.children ?? [])
