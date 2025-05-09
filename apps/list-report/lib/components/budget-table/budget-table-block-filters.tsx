@@ -69,7 +69,7 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
               onValueChange={(id) => handleSelect(idx, block, id)}
               disabled={!block}
             >
-              <SelectTrigger className="flex-1 min-w-[110px] h-7 rounded-l text-xs px-2 py-0 rounded-r-none">
+              <SelectTrigger className="min-w-[110px] h-7 rounded-l text-xs px-2 py-0 rounded-r-none">
                 <SelectValue placeholder="- select -" />
               </SelectTrigger>
               <SelectContent>
