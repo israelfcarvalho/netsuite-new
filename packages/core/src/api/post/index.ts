@@ -1,1 +1,1 @@
-export { useApiPost } from './use-post'
+export { useApiPost, createApiPost } from './use-post'
