@@ -1,1 +1,1 @@
-export { useApiGet, createApiGet } from './use-get'
+export { createApiGet } from './use-get'

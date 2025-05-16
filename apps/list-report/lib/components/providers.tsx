@@ -3,9 +3,7 @@
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { Suspense } from 'react'
 
-import { ApiProvider } from '@workspace/core/api'
-
-import { environments } from '@/lib/environments'
+import { ListReportApiProvider } from '@/lib/api/_common'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -17,7 +15,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         disableTransitionOnChange
         enableColorScheme
       >
-        <ApiProvider baseUrl={environments.api.baseUrl}>{children}</ApiProvider>
+        <ListReportApiProvider>{children}</ListReportApiProvider>
       </NextThemesProvider>
     </Suspense>
   )

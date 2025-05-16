@@ -1,10 +1,9 @@
 'use client'
 
-import { useApiGet } from '@workspace/core/api'
-
 import { CostCodeApiResponse, CostCodeQueryParams, UseGetCostCodesProps } from './types'
 import { environments } from '../../environments'
 
+import { useListReportApiGet } from '@/lib/api/_common'
 const {
   api: {
     costCode: { deploy, script, route },
@@ -12,7 +11,7 @@ const {
 } = environments
 
 export function useGetCostCodes({ divisionId }: UseGetCostCodesProps = {}) {
-  const { data, error, isLoading, refetch } = useApiGet<CostCodeApiResponse, CostCodeQueryParams>(route, {
+  const { data, error, isLoading, refetch } = useListReportApiGet<CostCodeApiResponse, CostCodeQueryParams>(route, {
     queryOptions: { enabled: divisionId !== undefined },
     queryParams: {
       script,

@@ -1,9 +1,9 @@
 'use client'
 
-import { useApiGet } from '@workspace/core/api'
-
 import { RanchBlockApiResponse, RanchBlockQueryParams } from './types'
 import { environments } from '../../environments'
+
+import { useListReportApiGet } from '@/lib/api/_common'
 
 const {
   api: {
@@ -14,7 +14,7 @@ const {
 const GET_RANCH_BLOCKS_ACTION = 'by-hierarchy'
 
 export function useGetRanchBlocks(parentId?: string) {
-  const { data, error, isLoading, refetch } = useApiGet<RanchBlockApiResponse, RanchBlockQueryParams>(route, {
+  const { data, error, isLoading, refetch } = useListReportApiGet<RanchBlockApiResponse, RanchBlockQueryParams>(route, {
     queryParams: {
       script,
       deploy,

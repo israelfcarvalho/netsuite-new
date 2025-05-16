@@ -1,7 +1,5 @@
 'use client'
 
-import { useApiGet, useApiPost } from '@workspace/core/api'
-
 import {
   CropPlanApiResponse,
   CropPlanLinesQueryParams,
@@ -10,6 +8,8 @@ import {
   UpdateCropPlanLinesPayload,
 } from './types'
 import { environments } from '../../environments'
+
+import { useListReportApiGet, useListReportApiPost } from '@/lib/api/_common'
 
 const ACTION = 'get-lines-hierarchy'
 const UPDATE_ACTION = 'update-lines'
@@ -23,15 +23,18 @@ const {
 const initialData: CropPlanApiResponse['data'] = []
 
 export function useGetCropPlanLines({ cropPlanId }: GetCropPlanLinesParams) {
-  const { data, error, isLoading, refetch } = useApiGet<CropPlanApiResponse, CropPlanLinesQueryParams>(route, {
-    queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
-    queryParams: {
-      script,
-      deploy,
-      action: ACTION,
-      cropPlanId: cropPlanId,
-    },
-  })
+  const { data, error, isLoading, refetch } = useListReportApiGet<CropPlanApiResponse, CropPlanLinesQueryParams>(
+    route,
+    {
+      queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
+      queryParams: {
+        script,
+        deploy,
+        action: ACTION,
+        cropPlanId: cropPlanId,
+      },
+    }
+  )
 
   return {
     cropPlanLines: data?.data ?? initialData,
@@ -42,7 +45,7 @@ export function useGetCropPlanLines({ cropPlanId }: GetCropPlanLinesParams) {
 }
 
 export function useSaveCropPlanLines() {
-  const api = useApiPost<CropPlanApiResponse, UpdateCropPlanLinesPayload, UpdateCropPlanLinesParams>(route, {
+  const api = useListReportApiPost<CropPlanApiResponse, UpdateCropPlanLinesPayload, UpdateCropPlanLinesParams>(route, {
     queryParams: {
       script,
       deploy,
