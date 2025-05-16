@@ -9,9 +9,9 @@ export function createNode(item: CropPlanLineItem, parentRowId: string = ''): Bu
     id: item.id,
     rowId,
     name: item.name,
-    initialCost: item.initialCost,
-    currentPlannedCost: item.currentPlannedCost,
-    projectedCost: item.projectedCost,
+    originalEstimate: item.originalEstimate,
+    currentEstimate: item.currentEstimate,
+    projectedEstimate: item.projectedEstimate,
     parentRowId,
   }
 }

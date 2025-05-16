@@ -22,13 +22,13 @@ export const CropPlanBudgetTable = () => {
     division: Division
     costCode: CostCode
     costType: CostType
-    initialCost: number
-    currentPlannedCost: number
-    projectedCost: number
+    originalEstimate: number
+    currentEstimate: number
+    projectedEstimate: number
   }) => {
-    const { division, costCode, costType, initialCost, currentPlannedCost, projectedCost } = newItem
+    const { division, costCode, costType, originalEstimate, currentEstimate, projectedEstimate } = newItem
 
-    addNode(division, costCode, costType, initialCost, currentPlannedCost, projectedCost)
+    addNode(division, costCode, costType, originalEstimate, currentEstimate, projectedEstimate)
   }
 
   const handleSave = () => {
@@ -43,9 +43,9 @@ export const CropPlanBudgetTable = () => {
           divisionId: Number(division?.id),
           costCodeId: Number(costCode?.id),
           costTypeId: Number(costType.id),
-          initialCost: item.initialCost,
-          currentPlannedCost: item.currentPlannedCost,
-          projectedCost: item.projectedCost,
+          originalEstimate: item.originalEstimate,
+          currentEstimate: item.currentEstimate,
+          projectedEstimate: item.projectedEstimate,
         }
       })
 

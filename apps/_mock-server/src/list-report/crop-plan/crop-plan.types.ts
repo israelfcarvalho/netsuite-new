@@ -2,9 +2,9 @@ export interface CropPlanLine {
   id: string
   name: string
   unitCost: number
-  initialCost: number
-  currentPlannedCost: number
-  projectedCost: number
+  originalEstimate: number
+  currentEstimate: number
+  projectedEstimate: number
   children?: CropPlanLine[]
 }
 

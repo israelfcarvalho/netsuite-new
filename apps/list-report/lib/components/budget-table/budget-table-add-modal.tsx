@@ -18,9 +18,9 @@ interface BudgetTableAddModalProps {
     division: Division
     costCode: CostCode
     costType: CostType
-    initialCost: number
-    currentPlannedCost: number
-    projectedCost: number
+    originalEstimate: number
+    currentEstimate: number
+    projectedEstimate: number
   }) => void
   onClose: () => void
   state: BudgetState
@@ -34,9 +34,9 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>('')
   const [selectedCostCodeId, setSelectedCostCodeId] = useState<string>('')
   const [selectedCostTypeId, setSelectedCostTypeId] = useState<string>('')
-  const [initialCost, setInitialCost] = useState(0)
-  const [currentPlannedCost, setCurrentPlannedCost] = useState(0)
-  const [projectedCost, setProjectedCost] = useState(0)
+  const [originalEstimate, setOriginalEstimate] = useState(0)
+  const [currentEstimate, setCurrentEstimate] = useState(0)
+  const [projectedEstimate, setProjectedEstimate] = useState(0)
 
   const { data: divisions } = useGetDivisions()
   const { data: costCodes } = useGetCostCodes({ divisionId: selectedDivisionId })
@@ -54,18 +54,18 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
         division,
         costCode,
         costType,
-        initialCost: Number(initialCost),
-        currentPlannedCost: Number(currentPlannedCost),
-        projectedCost: Number(projectedCost),
+        originalEstimate: Number(originalEstimate),
+        currentEstimate: Number(currentEstimate),
+        projectedEstimate: Number(projectedEstimate),
       })
     }
     // Reset form
     setSelectedDivisionId('')
     setSelectedCostCodeId('')
     setSelectedCostTypeId('')
-    setInitialCost(0)
-    setCurrentPlannedCost(0)
-    setProjectedCost(0)
+    setOriginalEstimate(0)
+    setCurrentEstimate(0)
+    setProjectedEstimate(0)
     setIsOpen(false)
     onClose()
   }
@@ -160,42 +160,42 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="initialCost">Initial Cost</Label>
+            <Label htmlFor="originalEstimate">Original Estimate</Label>
             <FormInputText
               className="w-full text-right"
-              id="initialCost"
+              id="originalEstimate"
               variant="currency"
-              value={initialCost}
-              onChange={(value) => setInitialCost(value)}
-              placeholder="Enter initial cost"
+              value={originalEstimate}
+              onChange={(value) => setOriginalEstimate(value)}
+              placeholder="Enter original estimate"
               required
               disabled={disabled}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currentPlannedCost">Current Planned Cost</Label>
+            <Label htmlFor="currentEstimate">Current Estimate</Label>
             <FormInputText
               className="w-full text-right"
-              id="currentPlannedCost"
+              id="currentEstimate"
               variant="currency"
-              value={currentPlannedCost}
-              onChange={(value) => setCurrentPlannedCost(value)}
-              placeholder="Enter current planned cost"
+              value={currentEstimate}
+              onChange={(value) => setCurrentEstimate(value)}
+              placeholder="Enter current estimate"
               required
               disabled={disabled}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="projectedCost">Projected Cost</Label>
+            <Label htmlFor="projectedEstimate">Projected Estimate</Label>
             <FormInputText
               className="w-full text-right"
-              id="projectedCost"
+              id="projectedEstimate"
               variant="currency"
-              value={projectedCost}
-              onChange={(value) => setProjectedCost(value)}
-              placeholder="Enter projected cost"
+              value={projectedEstimate}
+              onChange={(value) => setProjectedEstimate(value)}
+              placeholder="Enter projected estimate"
               required
               disabled={disabled}
             />

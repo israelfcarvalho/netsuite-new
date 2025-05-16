@@ -9,9 +9,9 @@ interface OnBudgetTableAddNew {
     division: Division
     costCode: CostCode
     costType: CostType
-    initialCost: number
-    currentPlannedCost: number
-    projectedCost: number
+    originalEstimate: number
+    currentEstimate: number
+    projectedEstimate: number
   }): void
 }
 

@@ -32,9 +32,9 @@ export const BlockBudgetTable = () => {
           costCodeId: Number(costCode?.id),
           costTypeId: Number(costType.id),
           ranchId: Number(ranch?.id),
-          initialCost: item.initialCost,
-          currentPlannedCost: item.currentPlannedCost,
-          projectedCost: item.projectedCost,
+          originalEstimate: item.originalEstimate,
+          currentEstimate: item.currentEstimate,
+          projectedEstimate: item.projectedEstimate,
         }
       })
 

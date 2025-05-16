@@ -20,11 +20,11 @@ export function useBlockBudget() {
 
     const grandTotal = nodes.reduce(
       (acc, node) => ({
-        initialCost: acc.initialCost + node.initialCost,
-        currentPlannedCost: acc.currentPlannedCost + node.currentPlannedCost,
-        projectedCost: acc.projectedCost + node.projectedCost,
+        originalEstimate: acc.originalEstimate + node.originalEstimate,
+        currentEstimate: acc.currentEstimate + node.currentEstimate,
+        projectedEstimate: acc.projectedEstimate + node.projectedEstimate,
       }),
-      { initialCost: 0, currentPlannedCost: 0, projectedCost: 0 }
+      { originalEstimate: 0, currentEstimate: 0, projectedEstimate: 0 }
     )
 
     const grandTotalNode: BudgetNode = {

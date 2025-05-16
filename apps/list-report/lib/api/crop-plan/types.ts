@@ -4,9 +4,9 @@ export interface CropPlanLineItem {
   id: string // Assuming ID is always a string, adjust if it can be a number
   name: string
   unitCost: number
-  initialCost: number
-  currentPlannedCost: number
-  projectedCost: number
+  originalEstimate: number
+  currentEstimate: number
+  projectedEstimate: number
   children?: CropPlanLineItem[] // Optional children for hierarchy
 }
 
@@ -34,9 +34,9 @@ export interface UpdateCropPlanLinesPayload {
     divisionId: number
     costCodeId: number
     costTypeId: number
-    initialCost: number
-    currentPlannedCost: number
-    projectedCost: number
+    originalEstimate: number
+    currentEstimate: number
+    projectedEstimate: number
   }[]
 }
 
@@ -53,8 +53,8 @@ export interface UpdateCropPlanLinesByRanchPayload {
     divisionId: number
     costCodeId: number
     costTypeId: number
-    initialCost: number
-    currentPlannedCost: number
-    projectedCost: number
+    originalEstimate: number
+    currentEstimate: number
+    projectedEstimate: number
   }[]
 }

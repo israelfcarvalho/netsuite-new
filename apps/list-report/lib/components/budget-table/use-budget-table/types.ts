@@ -4,9 +4,9 @@ export interface BudgetNode extends TData {
   id: string
   rowId: string
   name: string
-  initialCost: number
-  currentPlannedCost: number
-  projectedCost: number
+  originalEstimate: number
+  currentEstimate: number
+  projectedEstimate: number
   children?: BudgetNode[]
   parentRowId?: string
 }

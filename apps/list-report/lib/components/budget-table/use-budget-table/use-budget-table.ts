@@ -43,13 +43,13 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
       division: Division,
       costCode: CostCode,
       costType: CostType,
-      initialCost: number,
-      currentPlannedCost: number,
-      projectedCost: number
+      originalEstimate: number,
+      currentEstimate: number,
+      projectedEstimate: number
     ) => {
       dispatch({
         type: 'ADD_NODE',
-        payload: { division, costCode, costType, initialCost, currentPlannedCost, projectedCost },
+        payload: { division, costCode, costType, originalEstimate, currentEstimate, projectedEstimate },
       })
     },
     []

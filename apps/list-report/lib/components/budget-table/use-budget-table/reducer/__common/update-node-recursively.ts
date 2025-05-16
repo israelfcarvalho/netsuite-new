@@ -9,23 +9,21 @@ export function updateParents(state: BudgetState, parentRowId?: string): BudgetS
   const children =
     node.children?.map((child) => state.nodes.get(child.rowId)).filter((child) => child !== undefined) ?? []
 
-  const { initialCost, currentPlannedCost, projectedCost } = children.reduce(
-    (acc, child) => {
-      return {
-        initialCost: acc.initialCost + child.initialCost,
-        currentPlannedCost: acc.currentPlannedCost + child.currentPlannedCost,
-        projectedCost: acc.projectedCost + child.projectedCost,
-      }
-    },
-    { initialCost: 0, currentPlannedCost: 0, projectedCost: 0 }
+  const { originalEstimate, currentEstimate, projectedEstimate } = children.reduce(
+    (acc, child) => ({
+      originalEstimate: acc.originalEstimate + child.originalEstimate,
+      currentEstimate: acc.currentEstimate + child.currentEstimate,
+      projectedEstimate: acc.projectedEstimate + child.projectedEstimate,
+    }),
+    { originalEstimate: 0, currentEstimate: 0, projectedEstimate: 0 }
   )
 
   // Update the current node's values based on its children
   const updatedNode = {
     ...node,
-    initialCost,
-    currentPlannedCost,
-    projectedCost,
+    originalEstimate,
+    currentEstimate,
+    projectedEstimate,
     children,
   }
 

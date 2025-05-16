@@ -79,10 +79,10 @@ export function BudgetTable({
           </div>
         )
       }),
-      createColumn<BudgetNode>('initialCost', 'Initial Cost', ({ row }) => {
-        const value = (row.original as unknown as BudgetNode).initialCost
+      createColumn<BudgetNode>('originalEstimate', 'Original Estimate', ({ row }) => {
+        const value = (row.original as unknown as BudgetNode).originalEstimate
         const hasChildren = row.original.children?.length
-        const isBlockEC = blockEC.includes('initialCost')
+        const isBlockEC = blockEC.includes('originalEstimate')
 
         const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
 
@@ -94,7 +94,7 @@ export function BudgetTable({
                 variant="currency"
                 value={value}
                 onChange={(value) => {
-                  onUpdate(row.original.rowId, { initialCost: value })
+                  onUpdate(row.original.rowId, { originalEstimate: value })
                 }}
                 changeOnBlur
               />
@@ -103,10 +103,10 @@ export function BudgetTable({
         }
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
-      createColumn<BudgetNode>('currentPlannedCost', 'Current Planned Cost', ({ row }) => {
-        const value = (row.original as unknown as BudgetNode).currentPlannedCost
+      createColumn<BudgetNode>('currentEstimate', 'Current Estimate', ({ row }) => {
+        const value = (row.original as unknown as BudgetNode).currentEstimate
         const hasChildren = row.original.children?.length
-        const isBlockEC = blockEC.includes('currentPlannedCost')
+        const isBlockEC = blockEC.includes('currentEstimate')
 
         const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
 
@@ -119,7 +119,7 @@ export function BudgetTable({
                 value={value}
                 onChange={(value) => {
                   onUpdate(row.original.rowId, {
-                    currentPlannedCost: value,
+                    currentEstimate: value,
                   })
                 }}
                 changeOnBlur
@@ -129,10 +129,10 @@ export function BudgetTable({
         }
         return <span className="text-right">{formatCurrency(value)}</span>
       }),
-      createColumn<BudgetNode>('projectedCost', 'Projected Cost', ({ row }) => {
-        const value = (row.original as unknown as BudgetNode).projectedCost
+      createColumn<BudgetNode>('projectedEstimate', 'Projected Estimate', ({ row }) => {
+        const value = (row.original as unknown as BudgetNode).projectedEstimate
         const hasChildren = row.original.children?.length
-        const isBlockEC = blockEC.includes('projectedCost')
+        const isBlockEC = blockEC.includes('projectedEstimate')
 
         const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
 
@@ -144,7 +144,7 @@ export function BudgetTable({
                 variant="currency"
                 value={value}
                 onChange={(value) => {
-                  onUpdate(row.original.rowId, { projectedCost: value })
+                  onUpdate(row.original.rowId, { projectedEstimate: value })
                 }}
                 changeOnBlur
               />
