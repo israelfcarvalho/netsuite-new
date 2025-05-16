@@ -33,8 +33,6 @@ export function ApiProvider({ children, baseUrl }: ProviderProps) {
       })
   )
 
-  console.log('ContextProvider', context.Provider)
-
   return (
     <context.Provider value={{ baseUrl }}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

@@ -47,7 +47,6 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
   }
 
   const handleClear = (idx: number) => {
-    console.log({ idx })
     setSelectedBlocks((oldSelectedBlocks) => oldSelectedBlocks.slice(0, idx))
     setBlocks((oldBlocks) => oldBlocks.slice(0, idx))
   }

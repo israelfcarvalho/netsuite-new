@@ -55,11 +55,12 @@ export class CropPlanService {
           return {
             id: division.id,
             name: division.name,
-            unitCost: 0,
             originalEstimate: 0,
             currentEstimate: 0,
             projectedEstimate: 0,
             children: [],
+            committedCost: 0,
+            actualCost: 0,
           }
         }
 
@@ -71,11 +72,12 @@ export class CropPlanService {
               return {
                 id: costCode.id,
                 name: costCode.name,
-                unitCost: 0,
                 originalEstimate: 0,
                 currentEstimate: 0,
                 projectedEstimate: 0,
                 children: [],
+                committedCost: 0,
+                actualCost: 0,
               }
             }
 
@@ -83,22 +85,24 @@ export class CropPlanService {
             const costTypeNodes = costTypes.map((costType: CostType) => ({
               id: costType.id,
               name: costType.name,
-              unitCost: Math.random() * 100,
-              originalEstimate: Math.random() * 100,
-              currentEstimate: Math.random() * 120,
-              projectedEstimate: Math.random() * 150,
+              originalEstimate: 0,
+              currentEstimate: 0,
+              projectedEstimate: 0,
               children: [],
+              committedCost: 0,
+              actualCost: 0,
             }))
 
             // Calculate cost code values from its cost types
             const costCodeNode: CropPlanLine = {
               id: costCode.id,
               name: costCode.name,
-              unitCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.unitCost, 0),
-              originalEstimate: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.originalEstimate, 0),
-              currentEstimate: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.currentEstimate, 0),
-              projectedEstimate: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.projectedEstimate, 0),
+              originalEstimate: 0,
+              currentEstimate: 0,
+              projectedEstimate: 0,
               children: costTypeNodes,
+              committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
+              actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
             }
 
             return costCodeNode
@@ -109,11 +113,12 @@ export class CropPlanService {
         const divisionNode: CropPlanLine = {
           id: division.id,
           name: division.name,
-          unitCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.unitCost, 0),
-          originalEstimate: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.originalEstimate, 0),
-          currentEstimate: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.currentEstimate, 0),
-          projectedEstimate: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.projectedEstimate, 0),
+          originalEstimate: 0,
+          currentEstimate: 0,
+          projectedEstimate: 0,
           children: costCodeNodes,
+          committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
+          actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
         }
 
         return divisionNode
@@ -178,38 +183,42 @@ export class CropPlanService {
       {
         id: '9',
         name: 'Ranch',
-        unitCost: 0,
         originalEstimate: 0,
         currentEstimate: 0,
         projectedEstimate: 0,
         children: [],
+        committedCost: 0,
+        actualCost: 0,
       },
       {
         id: '10',
         name: 'Ranch : Field A',
-        unitCost: 0,
         originalEstimate: 0,
         currentEstimate: 0,
         projectedEstimate: 0,
         children: [],
+        committedCost: 0,
+        actualCost: 0,
       },
       {
         id: '27',
         name: 'Ranch : Field B',
-        unitCost: 0,
         originalEstimate: 0,
         currentEstimate: 0,
         projectedEstimate: 0,
         children: [],
+        committedCost: 0,
+        actualCost: 0,
       },
       {
         id: '28',
         name: 'Ranch : Field C',
-        unitCost: 0,
         originalEstimate: 0,
         currentEstimate: 0,
         projectedEstimate: 0,
         children: [],
+        committedCost: 0,
+        actualCost: 0,
       },
     ]
 
@@ -235,11 +244,12 @@ export class CropPlanService {
               return {
                 id: division.id,
                 name: division.name,
-                unitCost: 0,
                 originalEstimate: 0,
                 currentEstimate: 0,
                 projectedEstimate: 0,
                 children: [],
+                committedCost: 0,
+                actualCost: 0,
               }
             }
 
@@ -251,11 +261,12 @@ export class CropPlanService {
                   return {
                     id: costCode.id,
                     name: costCode.name,
-                    unitCost: 0,
                     originalEstimate: 0,
                     currentEstimate: 0,
                     projectedEstimate: 0,
                     children: [],
+                    committedCost: 0,
+                    actualCost: 0,
                   }
                 }
 
@@ -263,22 +274,24 @@ export class CropPlanService {
                 const costTypeNodes = costTypes.map((costType: CostType) => ({
                   id: costType.id,
                   name: costType.name,
-                  unitCost: Math.random() * 100,
-                  originalEstimate: Math.random() * 100,
-                  currentEstimate: Math.random() * 120,
-                  projectedEstimate: Math.random() * 150,
+                  originalEstimate: 0,
+                  currentEstimate: 0,
+                  projectedEstimate: 0,
                   children: [],
+                  committedCost: 0,
+                  actualCost: 0,
                 }))
 
                 // Calculate cost code values from its cost types
                 const costCodeNode: CropPlanLine = {
                   id: costCode.id,
                   name: costCode.name,
-                  unitCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.unitCost, 0),
-                  originalEstimate: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.originalEstimate, 0),
-                  currentEstimate: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.currentEstimate, 0),
-                  projectedEstimate: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.projectedEstimate, 0),
+                  originalEstimate: 0,
+                  currentEstimate: 0,
+                  projectedEstimate: 0,
                   children: costTypeNodes,
+                  committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
+                  actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
                 }
 
                 return costCodeNode
@@ -289,11 +302,12 @@ export class CropPlanService {
             const divisionNode: CropPlanLine = {
               id: division.id,
               name: division.name,
-              unitCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.unitCost, 0),
-              originalEstimate: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.originalEstimate, 0),
-              currentEstimate: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.currentEstimate, 0),
-              projectedEstimate: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.projectedEstimate, 0),
+              originalEstimate: 0,
+              currentEstimate: 0,
+              projectedEstimate: 0,
               children: costCodeNodes,
+              committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
+              actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
             }
 
             return divisionNode
@@ -304,11 +318,12 @@ export class CropPlanService {
         const ranchNode: CropPlanLine = {
           id: ranch.id,
           name: ranch.name,
-          unitCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.unitCost, 0),
-          originalEstimate: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.originalEstimate, 0),
-          currentEstimate: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.currentEstimate, 0),
-          projectedEstimate: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.projectedEstimate, 0),
+          originalEstimate: 0,
+          currentEstimate: 0,
+          projectedEstimate: 0,
           children: divisionNodes,
+          committedCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
+          actualCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
         }
 
         return ranchNode
