@@ -33,5 +33,6 @@
   "tailwindCSS.includeLanguages": {
     "typescript": "javascript",
     "typescriptreact": "javascript"
-  }
+  },
+  "workbench.colorTheme": "Visual Studio Dark"
 }
