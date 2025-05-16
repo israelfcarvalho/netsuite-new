@@ -12,6 +12,8 @@ export function createNode(item: CropPlanLineItem, parentRowId: string = ''): Bu
     originalEstimate: item.originalEstimate,
     currentEstimate: item.currentEstimate,
     projectedEstimate: item.projectedEstimate,
+    committedCost: item.committedCost,
+    actualCost: item.actualCost,
     parentRowId,
   }
 }
