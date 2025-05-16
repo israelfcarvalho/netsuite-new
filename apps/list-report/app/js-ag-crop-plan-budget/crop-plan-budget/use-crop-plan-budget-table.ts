@@ -23,8 +23,10 @@ export function useCropPlanBudgetTable() {
         originalEstimate: acc.originalEstimate + node.originalEstimate,
         currentEstimate: acc.currentEstimate + node.currentEstimate,
         projectedEstimate: acc.projectedEstimate + node.projectedEstimate,
+        committedCost: acc.committedCost + node.committedCost,
+        actualCost: acc.actualCost + node.actualCost,
       }),
-      { originalEstimate: 0, currentEstimate: 0, projectedEstimate: 0 }
+      { originalEstimate: 0, currentEstimate: 0, projectedEstimate: 0, committedCost: 0, actualCost: 0 }
     )
 
     const grandTotalNode: BudgetNode = {

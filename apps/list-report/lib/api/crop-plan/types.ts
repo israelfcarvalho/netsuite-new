@@ -8,6 +8,8 @@ export interface CropPlanLineItem {
   currentEstimate: number
   projectedEstimate: number
   children?: CropPlanLineItem[] // Optional children for hierarchy
+  committedCost: number
+  actualCost: number
 }
 
 export interface CropPlanApiResponse {
