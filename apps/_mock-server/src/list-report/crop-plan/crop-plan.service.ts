@@ -85,12 +85,12 @@ export class CropPlanService {
             const costTypeNodes = costTypes.map((costType: CostType) => ({
               id: costType.id,
               name: costType.name,
-              originalEstimate: 0,
-              currentEstimate: 0,
-              projectedEstimate: 0,
+              originalEstimate: Math.floor(Math.random() * 100000) + 50000,
+              currentEstimate: Math.floor(Math.random() * 120000) + 60000,
+              projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
               children: [],
-              committedCost: 0,
-              actualCost: 0,
+              committedCost: Math.floor(Math.random() * 80000) + 40000,
+              actualCost: Math.floor(Math.random() * 70000) + 35000,
             }))
 
             // Calculate cost code values from its cost types
@@ -274,12 +274,12 @@ export class CropPlanService {
                 const costTypeNodes = costTypes.map((costType: CostType) => ({
                   id: costType.id,
                   name: costType.name,
-                  originalEstimate: 0,
-                  currentEstimate: 0,
-                  projectedEstimate: 0,
+                  originalEstimate: Math.floor(Math.random() * 100000) + 50000,
+                  currentEstimate: Math.floor(Math.random() * 120000) + 60000,
+                  projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
                   children: [],
-                  committedCost: 0,
-                  actualCost: 0,
+                  committedCost: Math.floor(Math.random() * 80000) + 40000,
+                  actualCost: Math.floor(Math.random() * 70000) + 35000,
                 }))
 
                 // Calculate cost code values from its cost types
