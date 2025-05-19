@@ -88,7 +88,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNode>(
         'originalEstimate',
-        () => <span className="text-brand-100/70 font-semibold">Original Estimate</span>,
+        () => <span className="text-brand-100/70 font-semibold">Original Plan</span>,
         ({ row }) => {
           const value = (row.original as unknown as BudgetNode).originalEstimate
           const hasChildren = row.original.children?.length
@@ -117,7 +117,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNode>(
         'currentEstimate',
-        () => <span className="text-brand-100/70 font-semibold">Current Estimate</span>,
+        () => <span className="text-brand-100/70 font-semibold">Current Plan</span>,
         ({ row }) => {
           const value = (row.original as unknown as BudgetNode).currentEstimate
           const hasChildren = row.original.children?.length
@@ -196,7 +196,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNodeCalculated>(
         'totalCost',
-        () => <span className="text-danger-100/70 font-semibold">Total Cost</span>,
+        () => <span className="text-lilac font-semibold">Total Cost</span>,
         ({ row }) => {
           const { actualCost = 0, committedCost = 0 } = row.original as unknown as BudgetNode
           const totalCost = actualCost + committedCost
@@ -209,7 +209,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNodeCalculated>(
         'costsToComplete',
-        () => <span className="text-danger-100/70 font-semibold">Costs to Complete</span>,
+        () => <span className="text-lilac font-semibold">Costs to Complete</span>,
         ({ row }) => {
           const { actualCost, committedCost, currentEstimate } = row.original as unknown as BudgetNode
           const totalCost = actualCost + committedCost
@@ -224,7 +224,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNode>(
         'projectedEstimate',
-        () => <span className="text-brand-100/70 font-semibold">Projected Estimate</span>,
+        () => <span className="text-brand-100/70 font-semibold">Projected Plan</span>,
         ({ row }) => {
           const value = (row.original as unknown as BudgetNode).projectedEstimate
           const hasChildren = row.original.children?.length
@@ -252,7 +252,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNodeCalculated>(
         'overUnder',
-        () => <span className="text-danger-100/70 font-semibold">Over/Under</span>,
+        () => <span className="text-lilac font-semibold">Over/Under</span>,
         ({ row }) => {
           const { projectedEstimate, currentEstimate } = row.original as unknown as BudgetNodeCalculated
           const overUnder = currentEstimate - projectedEstimate
@@ -265,7 +265,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNodeCalculated>(
         'projCostComplete',
-        () => <span className="text-danger-100/70 font-semibold">Proj. Cost Complete</span>,
+        () => <span className="text-lilac font-semibold">Proj. Cost Complete</span>,
         ({ row }) => {
           const { actualCost, committedCost, currentEstimate, projectedEstimate } =
             row.original as unknown as BudgetNodeCalculated

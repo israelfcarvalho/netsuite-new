@@ -160,42 +160,42 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="originalEstimate">Original Estimate</Label>
+            <Label htmlFor="originalEstimate">Original Plan</Label>
             <FormInputText
               className="w-full text-right"
               id="originalEstimate"
               variant="currency"
               value={originalEstimate}
               onChange={(value) => setOriginalEstimate(value)}
-              placeholder="Enter original estimate"
+              placeholder="Enter original plan"
               required
               disabled={disabled}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currentEstimate">Current Estimate</Label>
+            <Label htmlFor="currentEstimate">Current Plan</Label>
             <FormInputText
               className="w-full text-right"
               id="currentEstimate"
               variant="currency"
               value={currentEstimate}
               onChange={(value) => setCurrentEstimate(value)}
-              placeholder="Enter current estimate"
+              placeholder="Enter current plan"
               required
               disabled={disabled}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="projectedEstimate">Projected Estimate</Label>
+            <Label htmlFor="projectedEstimate">Projected Plan</Label>
             <FormInputText
               className="w-full text-right"
               id="projectedEstimate"
               variant="currency"
               value={projectedEstimate}
               onChange={(value) => setProjectedEstimate(value)}
-              placeholder="Enter projected estimate"
+              placeholder="Enter projected plan"
               required
               disabled={disabled}
             />
