@@ -8,34 +8,11 @@ import { cn } from '@workspace/ui/lib/utils'
 import { Button } from '../../../button'
 import { useTableContext } from '../../context'
 import { TData } from '../../types'
+import { getFixedColumnLeftPosition } from '../_common/utils/layout'
 import { BodyProps } from '../types'
 
 export const Body = <T extends TData>({ className }: BodyProps) => {
   const { columns, expandedRows, onExpandRow, data, error, headerElementsSize } = useTableContext<T>()
-
-  const leftFixedColumns = (header: string, isFixed: boolean = false) => {
-    if (!isFixed) {
-      return undefined
-    }
-
-    let foundBondries = false
-
-    const left = columns.reduce((acc, column) => {
-      if (column.accessorKey === header) {
-        foundBondries = true
-      }
-
-      if (foundBondries) {
-        return acc
-      }
-
-      const columnWidth = headerElementsSize.get(column.accessorKey.toString())?.clientWidth || 0
-
-      return acc + columnWidth
-    }, 0)
-
-    return left
-  }
 
   const renderRow = (row: T, level = 0): React.ReactElement => {
     const isExpanded = expandedRows.has(row.rowId)
@@ -60,7 +37,12 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
                     'sticky z-10 shadow-[2px_0_3px_0] shadow-neutral-10 border-spacing-4': column.options?.isFixed,
                   })}
                   style={{
-                    left: leftFixedColumns(column.accessorKey.toString(), column.options?.isFixed),
+                    left: getFixedColumnLeftPosition(
+                      column.accessorKey.toString(),
+                      column.options?.isFixed || false,
+                      columns,
+                      headerElementsSize
+                    ),
                   }}
                 >
                   <div className="flex items-center">
@@ -94,7 +76,12 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
                   'sticky z-10 shadow-[2px_0_3px_0] shadow-neutral-10 border-spacing-4': column.options?.isFixed,
                 })}
                 style={{
-                  left: leftFixedColumns(column.accessorKey.toString(), column.options?.isFixed),
+                  left: getFixedColumnLeftPosition(
+                    column.accessorKey.toString(),
+                    column.options?.isFixed || false,
+                    columns,
+                    headerElementsSize
+                  ),
                 }}
               >
                 {column.cell ? (

@@ -4,6 +4,7 @@ import { cn } from '@workspace/ui/lib/utils'
 
 import { useTableContext } from '../context'
 import { TData } from '../types'
+import { getFixedColumnLeftPosition } from './_common/utils/layout'
 
 export const Header = <T extends TData>() => {
   const { columns, setHeaderElementsSize, headerElementsSize } = useTableContext<T>()
@@ -25,30 +26,6 @@ export const Header = <T extends TData>() => {
     }
   }
 
-  const leftFixedColumns = (header: string, isFixed: boolean = false) => {
-    if (!isFixed) {
-      return undefined
-    }
-
-    let foundBondries = false
-
-    const left = columns.reduce((acc, column) => {
-      if (column.accessorKey === header) {
-        foundBondries = true
-      }
-
-      if (foundBondries) {
-        return acc
-      }
-
-      const columnWidth = headerElementsSize.get(column.accessorKey.toString())?.clientWidth || 0
-
-      return acc + columnWidth
-    }, 0)
-
-    return left
-  }
-
   return (
     <thead className="sticky top-0 bg-neutral-30 shadow z-20">
       <tr className="text-left whitespace-nowrap">
@@ -60,7 +37,12 @@ export const Header = <T extends TData>() => {
               'sticky top-0 bg-neutral-30 z-20 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]': column.options?.isFixed,
             })}
             style={{
-              left: leftFixedColumns(column.accessorKey.toString(), column.options?.isFixed),
+              left: getFixedColumnLeftPosition(
+                column.accessorKey.toString(),
+                column.options?.isFixed || false,
+                columns,
+                headerElementsSize
+              ),
             }}
           >
             {column.header}
