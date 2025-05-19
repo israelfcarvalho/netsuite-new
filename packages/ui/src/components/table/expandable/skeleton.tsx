@@ -14,11 +14,11 @@ const SkeletonRow = ({
   hasChildren?: boolean
   columns: unknown[]
 }) => (
-  <tr className="border-x" data-level={level} data-has-children={hasChildren}>
+  <tr className="" data-level={level} data-has-children={hasChildren}>
     {columns.map((_, index) => {
       if (index === 0) {
         return (
-          <td key={index} className={cn('px-4 py-4 border-r', { 'border-x-0': hasChildren })}>
+          <td key={index} className={cn('px-4 py-4')}>
             <div className="flex items-center">
               <div style={{ width: `${level * 20}px` }} className="flex-none" />
               {hasChildren ? (
@@ -37,7 +37,7 @@ const SkeletonRow = ({
       }
 
       return (
-        <td key={index} className={cn('px-4 py-4 border-r', { 'border-x-0': hasChildren })}>
+        <td key={index} className={cn('px-4 py-4')}>
           <Skeleton className="h-4 w-full" />
         </td>
       )
@@ -47,12 +47,12 @@ const SkeletonRow = ({
 
 export function ExpandableTableSkeleton({ columns }: { columns: unknown[] }) {
   return (
-    <div className={'overflow-auto shadow-[0_0_0px_1px] shadow-neutral-50'}>
+    <div className={'overflow-auto'}>
       <table className="w-full">
         <thead className="sticky top-0 bg-gray-50 shadow">
           <tr className="text-left whitespace-nowrap">
             {columns.map((_, index) => (
-              <th key={index} className="px-4 py-4 text-gray-600 font-normal border bg-gray-50">
+              <th key={index} className="px-4 py-4 text-gray-600 font-normal bg-gray-50">
                 <Skeleton className="h-4 w-full" />
               </th>
             ))}

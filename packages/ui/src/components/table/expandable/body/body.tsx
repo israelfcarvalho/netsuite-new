@@ -21,7 +21,7 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
     return (
       <Fragment key={row.id}>
         <tr
-          className={cn('z-0 border-x bg-neutral-10', { 'border-y-none': rowHasChildren }, className)}
+          className={cn('bg-neutral-10', 'hover:bg-neutral-40', className)}
           data-level={level}
           data-has-children={rowHasChildren}
         >
@@ -32,9 +32,8 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
               return (
                 <td
                   key={column.accessorKey.toString()}
-                  className={cn('px-4 bg-inherit py-2 border-r relative', {
-                    'border-x-0': rowHasChildren,
-                    'sticky z-10 shadow-[2px_0_3px_0] shadow-neutral-10 border-spacing-4': column.options?.isFixed,
+                  className={cn('px-4 bg-inherit py-2 text-sm leading-normal h-full', {
+                    'sticky z-10 top-0.5 border-top': column.options?.isFixed,
                   })}
                   style={{
                     left: getFixedColumnLeftPosition(
@@ -51,7 +50,7 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
                       <Button
                         variant="ghost"
                         onClick={() => onExpandRow(row.rowId)}
-                        className="pr-1 hover:bg-neutral-10 rounded flex-none cursor-pointer"
+                        className="mr-1 pr-1 hover:bg-inherit hover:inset-shadow hover:shadow-[0_0_4px_0_inset] active:shadow-[0_0_16px_0_inset]  rounded flex-none cursor-pointer"
                       >
                         {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                       </Button>
@@ -71,9 +70,8 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
             return (
               <td
                 key={column.accessorKey.toString()}
-                className={cn('px-4 bg-inherit py-2 border-r text-right relative', {
-                  'border-x-0': rowHasChildren,
-                  'sticky z-10 shadow-[2px_0_3px_0] shadow-neutral-10 border-spacing-4': column.options?.isFixed,
+                className={cn('px-4 bg-inherit py-2 text-sm leading-normal text-right h-full', {
+                  'sticky z-10': column.options?.isFixed,
                 })}
                 style={{
                   left: getFixedColumnLeftPosition(
@@ -109,7 +107,7 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
   }
 
   return (
-    <tbody className={cn('divide-y divide-gray-200', className)}>
+    <tbody className={cn(className)}>
       {error
         ? renderError()
         : data.map((dataRow, index) => {

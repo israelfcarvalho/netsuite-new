@@ -1,5 +1,6 @@
 'use client'
 
+import { useWindowResize } from '@workspace/ui/lib/browser'
 import { cn } from '@workspace/ui/lib/utils'
 
 import { useTableContext } from '../context'
@@ -7,6 +8,7 @@ import { TData } from '../types'
 import { getFixedColumnLeftPosition } from './_common/utils/layout'
 
 export const Header = <T extends TData>() => {
+  useWindowResize()
   const { columns, setHeaderElementsSize, headerElementsSize } = useTableContext<T>()
 
   function referenceHeaderElements(el: HTMLTableCellElement | null, header: string) {
@@ -27,14 +29,14 @@ export const Header = <T extends TData>() => {
   }
 
   return (
-    <thead className="sticky top-0 bg-neutral-30 shadow z-20">
+    <thead className="sticky top-0 bg-neutral-30 shadow-[0_2px_4px_0px]  py-2 text-sm leading-normal shadow-neutral-50 z-20">
       <tr className="text-left whitespace-nowrap">
         {columns.map((column) => (
           <th
             ref={(el) => referenceHeaderElements(el, column.accessorKey.toString())}
             key={column.accessorKey.toString()}
-            className={cn('px-4 py-3 text-neutral-120 font-bold border', {
-              'sticky top-0 bg-neutral-30 z-20 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]': column.options?.isFixed,
+            className={cn('px-4 py-3 text-neutral-120 font-bold', {
+              'sticky top-0 bg-neutral-30 z-20': column.options?.isFixed,
             })}
             style={{
               left: getFixedColumnLeftPosition(
@@ -45,7 +47,7 @@ export const Header = <T extends TData>() => {
               ),
             }}
           >
-            {column.header}
+            {typeof column.header === 'function' ? column.header({ column }) : column.header}
           </th>
         ))}
       </tr>
