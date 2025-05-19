@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext, Dispatch, SetStateAction, useContext } from 'react'
 
 import { TData, TableColumn } from './types'
 
@@ -8,6 +8,10 @@ export interface TableState<T extends TData> {
   onExpandRow: (id: string) => void
   data: (T | null)[]
   error?: string
+  headerElementsSize: Map<string, { clientWidth: number; offsetWidth: number; scrollWidth: number }>
+  setHeaderElementsSize: Dispatch<
+    SetStateAction<Map<string, { clientWidth: number; offsetWidth: number; scrollWidth: number }>>
+  >
 }
 
 export const TableContext = createContext<TableState<TData> | null>(null)

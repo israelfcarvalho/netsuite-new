@@ -1,5 +1,9 @@
 import React from 'react'
 
+export interface TColumnOptions {
+  isFixed?: boolean
+}
+
 export interface TData {
   id: string
   name: string
@@ -12,6 +16,7 @@ export interface TableColumn<T extends TData> {
   accessorKey: keyof T
   header: string
   cell?: <D extends TData = T>(props: { row: { original: D }; getValue: () => unknown }) => React.ReactNode
+  options?: TColumnOptions
 }
 
 export interface TableProps<T extends TData> extends React.PropsWithChildren {

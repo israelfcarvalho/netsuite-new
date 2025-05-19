@@ -18,6 +18,9 @@ export function Root<T extends TData>({
 }: ExpandableTableProps<T>) {
   const mounted = React.useRef(false)
   const [expandedRows, setExpandedRows] = React.useState<Set<string>>(new Set())
+  const [headerElementsSize, setHeaderElementsSize] = React.useState<
+    Map<string, { clientWidth: number; offsetWidth: number; scrollWidth: number }>
+  >(new Map())
 
   React.useEffect(() => {
     if (data.length) {
@@ -56,8 +59,10 @@ export function Root<T extends TData>({
           return next
         })
       },
+      headerElementsSize,
+      setHeaderElementsSize,
     }),
-    [columns, expandedRows, data, error]
+    [columns, expandedRows, data, error, headerElementsSize, setHeaderElementsSize]
   )
 
   if (isLoading) {
@@ -66,8 +71,10 @@ export function Root<T extends TData>({
 
   return (
     <TableContext.Provider value={state as unknown as TableState<TData>}>
-      <div className={cn('overflow-auto shadow-[0_0_0px_1px] shadow-neutral-50 text-sm', className)}>
-        <table className="w-full">{children}</table>
+      <div className={cn('relative overflow-auto shadow-[0_0_0px_1px] shadow-neutral-50 text-sm', className)}>
+        <div>
+          <table className="w-full border-separate border-spacing-0">{children}</table>
+        </div>
       </div>
     </TableContext.Provider>
   )

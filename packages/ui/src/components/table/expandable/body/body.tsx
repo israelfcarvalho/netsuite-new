@@ -5,13 +5,37 @@ import React, { Fragment } from 'react'
 
 import { cn } from '@workspace/ui/lib/utils'
 
-import { useTableContext } from '../context'
-import { TData } from '../types'
-import { BodyProps } from './types'
-import { Button } from '../../button'
+import { Button } from '../../../button'
+import { useTableContext } from '../../context'
+import { TData } from '../../types'
+import { BodyProps } from '../types'
 
 export const Body = <T extends TData>({ className }: BodyProps) => {
-  const { columns, expandedRows, onExpandRow, data, error } = useTableContext<T>()
+  const { columns, expandedRows, onExpandRow, data, error, headerElementsSize } = useTableContext<T>()
+
+  const leftFixedColumns = (header: string, isFixed: boolean = false) => {
+    if (!isFixed) {
+      return undefined
+    }
+
+    let foundBondries = false
+
+    const left = columns.reduce((acc, column) => {
+      if (column.accessorKey === header) {
+        foundBondries = true
+      }
+
+      if (foundBondries) {
+        return acc
+      }
+
+      const columnWidth = headerElementsSize.get(column.accessorKey.toString())?.clientWidth || 0
+
+      return acc + columnWidth
+    }, 0)
+
+    return left
+  }
 
   const renderRow = (row: T, level = 0): React.ReactElement => {
     const isExpanded = expandedRows.has(row.rowId)
@@ -20,19 +44,24 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
     return (
       <Fragment key={row.id}>
         <tr
-          className={cn('z-0 border-x', { 'border-y-none': rowHasChildren }, className)}
+          className={cn('z-0 border-x bg-neutral-10', { 'border-y-none': rowHasChildren }, className)}
           data-level={level}
           data-has-children={rowHasChildren}
         >
           {columns.map((column, index) => {
             const value = row[column.accessorKey as keyof T]
             const displayValue = String(value ?? '')
-
             if (index === 0) {
               return (
                 <td
                   key={column.accessorKey.toString()}
-                  className={cn('px-4 py-2 border-r', { 'border-x-0': rowHasChildren })}
+                  className={cn('px-4 bg-inherit py-2 border-r relative', {
+                    'border-x-0': rowHasChildren,
+                    'sticky z-10 shadow-[2px_0_3px_0] shadow-neutral-10 border-spacing-4': column.options?.isFixed,
+                  })}
+                  style={{
+                    left: leftFixedColumns(column.accessorKey.toString(), column.options?.isFixed),
+                  }}
                 >
                   <div className="flex items-center">
                     <div style={{ width: `${level * 20}px` }} className="flex-none" />
@@ -40,7 +69,7 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
                       <Button
                         variant="ghost"
                         onClick={() => onExpandRow(row.rowId)}
-                        className="pr-1 hover:bg- rounded flex-none cursor-pointer"
+                        className="pr-1 hover:bg-neutral-10 rounded flex-none cursor-pointer"
                       >
                         {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                       </Button>
@@ -59,8 +88,14 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
 
             return (
               <td
-                key={column.accessorKey as string}
-                className={cn('px-4 py-2 border-r text-right', { 'border-x-0': rowHasChildren })}
+                key={column.accessorKey.toString()}
+                className={cn('px-4 bg-inherit py-2 border-r text-right relative', {
+                  'border-x-0': rowHasChildren,
+                  'sticky z-10 shadow-[2px_0_3px_0] shadow-neutral-10 border-spacing-4': column.options?.isFixed,
+                })}
+                style={{
+                  left: leftFixedColumns(column.accessorKey.toString(), column.options?.isFixed),
+                }}
               >
                 {column.cell ? (
                   column.cell({ row: { original: row }, getValue: () => value })
