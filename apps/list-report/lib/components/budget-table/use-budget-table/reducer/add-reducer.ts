@@ -2,6 +2,7 @@ import { AddNodeAction } from './actions'
 import { BudgetState } from '../types'
 import { BudgetNode } from '../types'
 import { updateParents } from './__common/update-node-recursively'
+
 const createNode = (
   data: Pick<BudgetNode, 'id' | 'name' | 'parentRowId' | 'originalEstimate' | 'currentEstimate' | 'projectedEstimate'>,
   parentRowId: string = ''
@@ -11,6 +12,8 @@ const createNode = (
     ...data,
     rowId,
     parentRowId,
+    committedCost: 0,
+    actualCost: 0,
   }
 }
 
