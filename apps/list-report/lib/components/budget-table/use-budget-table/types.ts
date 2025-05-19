@@ -17,3 +17,10 @@ export interface BudgetState {
   nodes: Map<string, BudgetNode>
   tree: BudgetNode[]
 }
+
+export interface BudgetNodeCalculated extends BudgetNode {
+  totalCost: number
+  costsToComplete: number
+  overUnder: number
+  projCostComplete: number
+}

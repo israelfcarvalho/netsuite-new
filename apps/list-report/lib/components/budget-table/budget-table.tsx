@@ -6,7 +6,7 @@ import React, { useMemo, useState } from 'react'
 import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
 import { formatCurrency } from '@workspace/ui/components/form/input/text'
-import { createExpandableTable, createColumn } from '@workspace/ui/components/table'
+import { createExpandableTable, createColumn, TableColumn } from '@workspace/ui/components/table'
 import { useSearchParams } from '@workspace/ui/lib/navigation'
 import { cn } from '@workspace/ui/lib/utils'
 
@@ -16,7 +16,7 @@ import { BudgetTableExport } from './budget-table-export'
 import { BudgetTableFilters } from './budget-table-filters'
 import { BudgetTableLoading } from './budget-table-loading'
 import { BudgetTableProps } from './budget-table.types'
-import { BudgetNode } from './use-budget-table/types'
+import { BudgetNode, BudgetNodeCalculated } from './use-budget-table/types'
 import { useBudgetTableFilters } from './use-budget-table-filters'
 
 const ExpandableTable = createExpandableTable<BudgetNode>()
@@ -58,76 +58,153 @@ export function BudgetTable({
 
   const columns = useMemo(
     () => [
-      createColumn<BudgetNode>('id', '', ({ row }) => {
-        const isLastChild = row.original.parentRowId && !row.original.children?.length
-        const blockRemoveRow = blockRR
-        const canRemove = !blockRemoveRow && onDelete && isLastChild
+      createColumn<BudgetNode>(
+        'id',
+        '',
+        ({ row }) => {
+          const isLastChild = row.original.parentRowId && !row.original.children?.length
+          const blockRemoveRow = blockRR
+          const canRemove = !blockRemoveRow && onDelete && isLastChild
 
+          return (
+            <div className="flex items-center gap-2 min-w-[200px]">
+              {canRemove && (
+                <div className="absolute left-4 group">
+                  <Button
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-0"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => onDelete(row.original.rowId)}
+                  >
+                    <Trash2 className="text-bg-danger-40 size-4" />
+                  </Button>
+                </div>
+              )}
+              <span>{row.original.name}</span>
+            </div>
+          )
+        },
+        { isFixed: true }
+      ),
+      createColumn<BudgetNode>(
+        'originalEstimate',
+        'Original Estimate',
+        ({ row }) => {
+          const value = (row.original as unknown as BudgetNode).originalEstimate
+          const hasChildren = row.original.children?.length
+          const isBlockEC = blockEC.includes('originalEstimate')
+
+          const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
+
+          if (canEdit) {
+            return (
+              <div className="relative">
+                <FormInputText
+                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                  variant="currency"
+                  value={value}
+                  onChange={(value) => {
+                    onUpdate(row.original.rowId, { originalEstimate: value })
+                  }}
+                  changeOnBlur
+                />
+              </div>
+            )
+          }
+          return <span className="text-right">{formatCurrency(value)}</span>
+        },
+        { isFixed: true }
+      ),
+      createColumn<BudgetNode>(
+        'currentEstimate',
+        'Current Estimate',
+        ({ row }) => {
+          const value = (row.original as unknown as BudgetNode).currentEstimate
+          const hasChildren = row.original.children?.length
+          const isBlockEC = blockEC.includes('currentEstimate')
+
+          const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
+
+          if (canEdit) {
+            return (
+              <div className="relative">
+                <FormInputText
+                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                  variant="currency"
+                  value={value}
+                  onChange={(value) => {
+                    onUpdate(row.original.rowId, {
+                      currentEstimate: value,
+                    })
+                  }}
+                  changeOnBlur
+                />
+              </div>
+            )
+          }
+          return <span className="text-right">{formatCurrency(value)}</span>
+        },
+        { isFixed: true }
+      ),
+      createColumn<BudgetNode>('committedCost', 'Committed Cost', ({ row }) => {
+        const value = (row.original as unknown as BudgetNode).committedCost
+        const canEdit = false
+        if (canEdit) {
+          return (
+            <div className="relative">
+              <FormInputText
+                className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                variant="currency"
+                value={value}
+                onChange={(value) => {
+                  onUpdate(row.original.rowId, { committedCost: value })
+                }}
+                changeOnBlur
+              />
+            </div>
+          )
+        }
+        return <span className="text-right">{formatCurrency(value)}</span>
+      }),
+      createColumn<BudgetNode>('actualCost', 'Actual Cost', ({ row }) => {
+        const value = (row.original as unknown as BudgetNode).actualCost
+        const canEdit = false
+        if (canEdit) {
+          return (
+            <div className="relative">
+              <FormInputText
+                className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                variant="currency"
+                value={value}
+                onChange={(value) => {
+                  onUpdate(row.original.rowId, { actualCost: value })
+                }}
+                changeOnBlur
+              />
+            </div>
+          )
+        }
+        return <span className="text-right">{formatCurrency(value)}</span>
+      }),
+      createColumn<BudgetNodeCalculated>('totalCost', 'Total Cost', ({ row }) => {
+        const { actualCost = 0, committedCost = 0 } = row.original as unknown as BudgetNode
+        const totalCost = actualCost + committedCost
         return (
-          <div className="group flex items-center gap-2">
-            {canRemove && (
-              <Button
-                variant="destructive"
-                size="sm"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => onDelete(row.original.rowId)}
-              >
-                <Trash2 className="text-bg-danger-40 h-4 w-4" />
-              </Button>
-            )}
-            <span>{row.original.name}</span>
-          </div>
+          <span className={cn('text-right', { 'text-danger-80 font-semibold': totalCost < 0 })}>
+            {formatCurrency(totalCost)}
+          </span>
         )
       }),
-      createColumn<BudgetNode>('originalEstimate', 'Original Estimate', ({ row }) => {
-        const value = (row.original as unknown as BudgetNode).originalEstimate
-        const hasChildren = row.original.children?.length
-        const isBlockEC = blockEC.includes('originalEstimate')
+      createColumn<BudgetNodeCalculated>('costsToComplete', 'Costs to Complete', ({ row }) => {
+        const { actualCost, committedCost, currentEstimate } = row.original as unknown as BudgetNode
+        const totalCost = actualCost + committedCost
+        const costsToComplete = currentEstimate - totalCost
 
-        const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
-
-        if (canEdit) {
-          return (
-            <div className="relative">
-              <FormInputText
-                className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                variant="currency"
-                value={value}
-                onChange={(value) => {
-                  onUpdate(row.original.rowId, { originalEstimate: value })
-                }}
-                changeOnBlur
-              />
-            </div>
-          )
-        }
-        return <span className="text-right">{formatCurrency(value)}</span>
-      }),
-      createColumn<BudgetNode>('currentEstimate', 'Current Estimate', ({ row }) => {
-        const value = (row.original as unknown as BudgetNode).currentEstimate
-        const hasChildren = row.original.children?.length
-        const isBlockEC = blockEC.includes('currentEstimate')
-
-        const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
-
-        if (canEdit) {
-          return (
-            <div className="relative">
-              <FormInputText
-                className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                variant="currency"
-                value={value}
-                onChange={(value) => {
-                  onUpdate(row.original.rowId, {
-                    currentEstimate: value,
-                  })
-                }}
-                changeOnBlur
-              />
-            </div>
-          )
-        }
-        return <span className="text-right">{formatCurrency(value)}</span>
+        return (
+          <span className={cn('text-right', { 'text-danger-80 font-semibold': costsToComplete < 0 })}>
+            {formatCurrency(costsToComplete)}
+          </span>
+        )
       }),
       createColumn<BudgetNode>('projectedEstimate', 'Projected Estimate', ({ row }) => {
         const value = (row.original as unknown as BudgetNode).projectedEstimate
@@ -152,6 +229,29 @@ export function BudgetTable({
           )
         }
         return <span className="text-right">{formatCurrency(value)}</span>
+      }),
+      createColumn<BudgetNodeCalculated>('overUnder', 'Over/Under', ({ row }) => {
+        const { projectedEstimate, currentEstimate } = row.original as unknown as BudgetNodeCalculated
+        const overUnder = currentEstimate - projectedEstimate
+        return (
+          <span className={cn('text-right', { 'text-danger-80 font-semibold': overUnder < 0 })}>
+            {formatCurrency(overUnder)}
+          </span>
+        )
+      }),
+      createColumn<BudgetNodeCalculated>('projCostComplete', 'Proj. Cost Complete', ({ row }) => {
+        const { actualCost, committedCost, currentEstimate, projectedEstimate } =
+          row.original as unknown as BudgetNodeCalculated
+        const totalCost = actualCost + committedCost
+        const costsToComplete = currentEstimate - totalCost
+        const overUnder = currentEstimate - projectedEstimate
+        const projCostComplete = costsToComplete - overUnder
+
+        return (
+          <span className={cn('text-right', { 'text-danger-80 font-semibold': projCostComplete < 0 })}>
+            {formatCurrency(projCostComplete)}
+          </span>
+        )
       }),
     ],
     [onUpdate, onDelete, blockEC, blockRR]
@@ -200,19 +300,24 @@ export function BudgetTable({
             hasBlockLevel={hasBlockLevel}
           />
         </div>
-        <ExpandableTable.Root data={filteredData ?? []} columns={columns} error={error} isLoading={isLoading}>
+        <ExpandableTable.Root
+          data={filteredData ?? []}
+          columns={columns as unknown as TableColumn<BudgetNode>[]}
+          error={error}
+          isLoading={isLoading}
+        >
           <ExpandableTable.Header />
           <ExpandableTable.Body
             className={
               levels > 3
                 ? cn(
-                    'data-[level=0]:data-[has-children=true]:bg-pine/30 data-[level=0]:data-[has-children=true]:shadow',
+                    'data-[level=0]:data-[has-children=true]:bg-pine-light data-[level=0]:data-[has-children=true]:shadow',
                     'data-[level=1]:data-[has-children=true]:bg-brand-40',
-                    'data-[level=2]:data-[has-children=true]:bg-neutral-10'
+                    'data-[level=2]:data-[has-children=true]:bg-neutral-20'
                   )
                 : cn(
                     'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
-                    'data-[level=1]:data-[has-children=true]:bg-neutral-10'
+                    'data-[level=1]:data-[has-children=true]:bg-neutral-20'
                   )
             }
           />
