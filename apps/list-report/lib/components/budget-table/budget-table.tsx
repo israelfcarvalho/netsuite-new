@@ -88,7 +88,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNode>(
         'originalEstimate',
-        'Original Estimate',
+        () => <span className="text-brand-100/70 font-semibold">Original Estimate</span>,
         ({ row }) => {
           const value = (row.original as unknown as BudgetNode).originalEstimate
           const hasChildren = row.original.children?.length
@@ -117,7 +117,7 @@ export function BudgetTable({
       ),
       createColumn<BudgetNode>(
         'currentEstimate',
-        'Current Estimate',
+        () => <span className="text-brand-100/70 font-semibold">Current Estimate</span>,
         ({ row }) => {
           const value = (row.original as unknown as BudgetNode).currentEstimate
           const hasChildren = row.original.children?.length
@@ -146,113 +146,141 @@ export function BudgetTable({
         },
         { isFixed: true }
       ),
-      createColumn<BudgetNode>('committedCost', 'Committed Cost', ({ row }) => {
-        const value = (row.original as unknown as BudgetNode).committedCost
-        const canEdit = false
-        if (canEdit) {
+      createColumn<BudgetNode>(
+        'committedCost',
+        () => <span className="text-warning-100/70 font-semibold">Committed Cost</span>,
+        ({ row }) => {
+          const value = (row.original as unknown as BudgetNode).committedCost
+          const canEdit = false
+          if (canEdit) {
+            return (
+              <div className="relative">
+                <FormInputText
+                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                  variant="currency"
+                  value={value}
+                  onChange={(value) => {
+                    onUpdate(row.original.rowId, { committedCost: value })
+                  }}
+                  changeOnBlur
+                />
+              </div>
+            )
+          }
+          return <span className="text-right">{formatCurrency(value)}</span>
+        }
+      ),
+      createColumn<BudgetNode>(
+        'actualCost',
+        () => <span className="text-warning-100/70 font-semibold">Actual Cost</span>,
+        ({ row }) => {
+          const value = (row.original as unknown as BudgetNode).actualCost
+          const canEdit = false
+          if (canEdit) {
+            return (
+              <div className="relative">
+                <FormInputText
+                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                  variant="currency"
+                  value={value}
+                  onChange={(value) => {
+                    onUpdate(row.original.rowId, { actualCost: value })
+                  }}
+                  changeOnBlur
+                />
+              </div>
+            )
+          }
+          return <span className="text-right">{formatCurrency(value)}</span>
+        }
+      ),
+      createColumn<BudgetNodeCalculated>(
+        'totalCost',
+        () => <span className="text-danger-100/70 font-semibold">Total Cost</span>,
+        ({ row }) => {
+          const { actualCost = 0, committedCost = 0 } = row.original as unknown as BudgetNode
+          const totalCost = actualCost + committedCost
           return (
-            <div className="relative">
-              <FormInputText
-                className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                variant="currency"
-                value={value}
-                onChange={(value) => {
-                  onUpdate(row.original.rowId, { committedCost: value })
-                }}
-                changeOnBlur
-              />
-            </div>
+            <span className={cn('text-right', { 'text-danger-80 font-semibold': totalCost < 0 })}>
+              {formatCurrency(totalCost)}
+            </span>
           )
         }
-        return <span className="text-right">{formatCurrency(value)}</span>
-      }),
-      createColumn<BudgetNode>('actualCost', 'Actual Cost', ({ row }) => {
-        const value = (row.original as unknown as BudgetNode).actualCost
-        const canEdit = false
-        if (canEdit) {
+      ),
+      createColumn<BudgetNodeCalculated>(
+        'costsToComplete',
+        () => <span className="text-danger-100/70 font-semibold">Costs to Complete</span>,
+        ({ row }) => {
+          const { actualCost, committedCost, currentEstimate } = row.original as unknown as BudgetNode
+          const totalCost = actualCost + committedCost
+          const costsToComplete = currentEstimate - totalCost
+
           return (
-            <div className="relative">
-              <FormInputText
-                className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                variant="currency"
-                value={value}
-                onChange={(value) => {
-                  onUpdate(row.original.rowId, { actualCost: value })
-                }}
-                changeOnBlur
-              />
-            </div>
+            <span className={cn('text-right', { 'text-danger-80 font-semibold': costsToComplete < 0 })}>
+              {formatCurrency(costsToComplete)}
+            </span>
           )
         }
-        return <span className="text-right">{formatCurrency(value)}</span>
-      }),
-      createColumn<BudgetNodeCalculated>('totalCost', 'Total Cost', ({ row }) => {
-        const { actualCost = 0, committedCost = 0 } = row.original as unknown as BudgetNode
-        const totalCost = actualCost + committedCost
-        return (
-          <span className={cn('text-right', { 'text-danger-80 font-semibold': totalCost < 0 })}>
-            {formatCurrency(totalCost)}
-          </span>
-        )
-      }),
-      createColumn<BudgetNodeCalculated>('costsToComplete', 'Costs to Complete', ({ row }) => {
-        const { actualCost, committedCost, currentEstimate } = row.original as unknown as BudgetNode
-        const totalCost = actualCost + committedCost
-        const costsToComplete = currentEstimate - totalCost
+      ),
+      createColumn<BudgetNode>(
+        'projectedEstimate',
+        () => <span className="text-brand-100/70 font-semibold">Projected Estimate</span>,
+        ({ row }) => {
+          const value = (row.original as unknown as BudgetNode).projectedEstimate
+          const hasChildren = row.original.children?.length
+          const isBlockEC = blockEC.includes('projectedEstimate')
 
-        return (
-          <span className={cn('text-right', { 'text-danger-80 font-semibold': costsToComplete < 0 })}>
-            {formatCurrency(costsToComplete)}
-          </span>
-        )
-      }),
-      createColumn<BudgetNode>('projectedEstimate', 'Projected Estimate', ({ row }) => {
-        const value = (row.original as unknown as BudgetNode).projectedEstimate
-        const hasChildren = row.original.children?.length
-        const isBlockEC = blockEC.includes('projectedEstimate')
+          const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
 
-        const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
-
-        if (canEdit) {
+          if (canEdit) {
+            return (
+              <div className="relative">
+                <FormInputText
+                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                  variant="currency"
+                  value={value}
+                  onChange={(value) => {
+                    onUpdate(row.original.rowId, { projectedEstimate: value })
+                  }}
+                  changeOnBlur
+                />
+              </div>
+            )
+          }
+          return <span className="text-right">{formatCurrency(value)}</span>
+        }
+      ),
+      createColumn<BudgetNodeCalculated>(
+        'overUnder',
+        () => <span className="text-danger-100/70 font-semibold">Over/Under</span>,
+        ({ row }) => {
+          const { projectedEstimate, currentEstimate } = row.original as unknown as BudgetNodeCalculated
+          const overUnder = currentEstimate - projectedEstimate
           return (
-            <div className="relative">
-              <FormInputText
-                className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                variant="currency"
-                value={value}
-                onChange={(value) => {
-                  onUpdate(row.original.rowId, { projectedEstimate: value })
-                }}
-                changeOnBlur
-              />
-            </div>
+            <span className={cn('text-right', { 'text-danger-80 font-semibold': overUnder < 0 })}>
+              {formatCurrency(overUnder)}
+            </span>
           )
         }
-        return <span className="text-right">{formatCurrency(value)}</span>
-      }),
-      createColumn<BudgetNodeCalculated>('overUnder', 'Over/Under', ({ row }) => {
-        const { projectedEstimate, currentEstimate } = row.original as unknown as BudgetNodeCalculated
-        const overUnder = currentEstimate - projectedEstimate
-        return (
-          <span className={cn('text-right', { 'text-danger-80 font-semibold': overUnder < 0 })}>
-            {formatCurrency(overUnder)}
-          </span>
-        )
-      }),
-      createColumn<BudgetNodeCalculated>('projCostComplete', 'Proj. Cost Complete', ({ row }) => {
-        const { actualCost, committedCost, currentEstimate, projectedEstimate } =
-          row.original as unknown as BudgetNodeCalculated
-        const totalCost = actualCost + committedCost
-        const costsToComplete = currentEstimate - totalCost
-        const overUnder = currentEstimate - projectedEstimate
-        const projCostComplete = costsToComplete - overUnder
+      ),
+      createColumn<BudgetNodeCalculated>(
+        'projCostComplete',
+        () => <span className="text-danger-100/70 font-semibold">Proj. Cost Complete</span>,
+        ({ row }) => {
+          const { actualCost, committedCost, currentEstimate, projectedEstimate } =
+            row.original as unknown as BudgetNodeCalculated
+          const totalCost = actualCost + committedCost
+          const costsToComplete = currentEstimate - totalCost
+          const overUnder = currentEstimate - projectedEstimate
+          const projCostComplete = costsToComplete - overUnder
 
-        return (
-          <span className={cn('text-right', { 'text-danger-80 font-semibold': projCostComplete < 0 })}>
-            {formatCurrency(projCostComplete)}
-          </span>
-        )
-      }),
+          return (
+            <span className={cn('text-right', { 'text-danger-80 font-semibold': projCostComplete < 0 })}>
+              {formatCurrency(projCostComplete)}
+            </span>
+          )
+        }
+      ),
     ],
     [onUpdate, onDelete, blockEC, blockRR]
   )
