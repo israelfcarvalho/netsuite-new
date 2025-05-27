@@ -4,9 +4,9 @@ import React from 'react'
 
 import { cn } from '@workspace/ui/lib/utils'
 
-import { TableContext, TableState } from '../context'
-import { TData, ExpandableTableProps } from '../types'
-import { ExpandableTableSkeleton } from './skeleton'
+import { TableContext, TableState } from './context'
+import { TableSkeleton } from './table.skeleton'
+import { TData, ExpandableTableProps } from './table.types'
 
 export function Root<T extends TData>({
   columns,
@@ -66,7 +66,7 @@ export function Root<T extends TData>({
   )
 
   if (isLoading) {
-    return <ExpandableTableSkeleton columns={columns} />
+    return <TableSkeleton columns={columns} />
   }
 
   return (

@@ -1,3 +1,2 @@
-export * from './expandable'
-export * from './types'
-export * from './utils'
+export * from './table.root'
+export * from './table.skeleton'

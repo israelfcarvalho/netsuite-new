@@ -1,11 +1,11 @@
 'use client'
 
-import { TData } from '../types'
 import { Body } from './body'
 import { Header } from './header'
-import { Root } from './root'
+import { Root } from './table'
+import { TData } from './table.types'
 
-export function createExpandableTable<T extends TData>() {
+export function createTable<T extends TData>() {
   return {
     Root: Root<T>,
     Header: Header<T>,

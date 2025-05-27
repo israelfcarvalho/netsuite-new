@@ -1,9 +1,9 @@
-import { TableColumn, TData } from './types'
+import { TableColumn, TData } from '../../table.types'
 
 export const createColumn = <T extends TData>(
   accessorKey: keyof T,
   header: TableColumn<T>['header'],
-  cell?: TableColumn<T>['cell'],
+  cell: TableColumn<T>['cell'],
   options?: TableColumn<T>['options']
 ): TableColumn<T> => ({
   accessorKey,

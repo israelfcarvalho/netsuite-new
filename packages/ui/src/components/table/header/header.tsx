@@ -3,8 +3,8 @@
 import { useWindowResize } from '@workspace/ui/lib/browser'
 import { cn } from '@workspace/ui/lib/utils'
 
-import { useTableContext } from '../context'
-import { TData } from '../types'
+import { useTableContext } from './context'
+import { TData } from './types'
 import { getFixedColumnLeftPosition } from './_common/utils/layout'
 
 export const Header = <T extends TData>() => {

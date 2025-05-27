@@ -5,7 +5,7 @@ import React from 'react'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { cn } from '@workspace/ui/lib/utils'
 
-const SkeletonRow = ({
+const RowSkeleton = ({
   level = 0,
   hasChildren = false,
   columns,
@@ -45,7 +45,7 @@ const SkeletonRow = ({
   </tr>
 )
 
-export function ExpandableTableSkeleton({ columns }: { columns: unknown[] }) {
+export function TableSkeleton({ columns }: { columns: unknown[] }) {
   return (
     <div className={'overflow-auto'}>
       <table className="w-full">
@@ -61,11 +61,11 @@ export function ExpandableTableSkeleton({ columns }: { columns: unknown[] }) {
         <tbody className="divide-y divide-gray-200">
           {[1, 2, 3].map((i) => (
             <React.Fragment key={i}>
-              <SkeletonRow columns={columns} hasChildren={i % 2 === 0} />
+              <RowSkeleton columns={columns} hasChildren={i % 2 === 0} />
               {i % 2 === 0 && (
                 <>
-                  <SkeletonRow columns={columns} level={1} />
-                  <SkeletonRow columns={columns} level={1} />
+                  <RowSkeleton columns={columns} level={1} />
+                  <RowSkeleton columns={columns} level={1} />
                 </>
               )}
             </React.Fragment>

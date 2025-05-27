@@ -1,6 +1,6 @@
 import { createContext, Dispatch, SetStateAction, useContext } from 'react'
 
-import { TData, TableColumn } from './types'
+import { TData, TableColumn } from './table.types'
 
 export interface TableState<T extends TData> {
   columns: TableColumn<T>[]

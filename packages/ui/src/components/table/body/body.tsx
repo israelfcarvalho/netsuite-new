@@ -5,11 +5,11 @@ import React, { Fragment } from 'react'
 
 import { cn } from '@workspace/ui/lib/utils'
 
-import { Button } from '../../../button'
-import { useTableContext } from '../../context'
-import { TData } from '../../types'
+import { Button } from '../../button'
 import { getFixedColumnLeftPosition } from '../_common/utils/layout'
-import { BodyProps } from '../types'
+import { useTableContext } from '../context'
+import { TData } from '../table.types'
+import { BodyProps } from './body.types'
 
 export const Body = <T extends TData>({ className }: BodyProps) => {
   const { columns, expandedRows, onExpandRow, data, error, headerElementsSize } = useTableContext<T>()

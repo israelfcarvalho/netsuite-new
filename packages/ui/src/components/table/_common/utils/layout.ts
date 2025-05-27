@@ -1,5 +1,4 @@
-import { TableColumn, TData } from '../../../types'
-
+import { TableColumn, TData } from '../../table.types'
 /**
  * Calculates the left position for a fixed column in the table.
  * This is used by both header and body components to position fixed columns.
