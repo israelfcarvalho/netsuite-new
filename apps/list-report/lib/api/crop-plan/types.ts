@@ -10,6 +10,7 @@ export interface CropPlanLineItem {
   children?: CropPlanLineItem[] // Optional children for hierarchy
   committedCost: number
   actualCost: number
+  notAllocatedCost?: number
 }
 
 export interface CropPlanApiResponse {
