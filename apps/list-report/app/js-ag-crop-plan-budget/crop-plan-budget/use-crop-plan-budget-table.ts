@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 
 import { useGetCropPlanLines } from '@/lib/api'
 import { useBudgetTable } from '@/lib/components/budget-table/use-budget-table'
-import { BudgetNode } from '@/lib/components/budget-table/use-budget-table/types'
 
 export function useCropPlanBudgetTable() {
   const queryParams = useSearchParams()
@@ -18,25 +17,7 @@ export function useCropPlanBudgetTable() {
   const data = useMemo(() => {
     const nodes = Array.from(state.nodes.values()).filter((node) => !node.parentRowId)
 
-    const grandTotal = nodes.reduce(
-      (acc, node) => ({
-        originalEstimate: acc.originalEstimate + node.originalEstimate,
-        currentEstimate: acc.currentEstimate + node.currentEstimate,
-        projectedEstimate: acc.projectedEstimate + node.projectedEstimate,
-        committedCost: acc.committedCost + node.committedCost,
-        actualCost: acc.actualCost + node.actualCost,
-      }),
-      { originalEstimate: 0, currentEstimate: 0, projectedEstimate: 0, committedCost: 0, actualCost: 0 }
-    )
-
-    const grandTotalNode: BudgetNode = {
-      id: 'grand-total',
-      rowId: 'grand-total',
-      name: 'Grand Total',
-      ...grandTotal,
-    }
-
-    return [grandTotalNode, ...nodes]
+    return nodes
   }, [state.nodes])
 
   return {
