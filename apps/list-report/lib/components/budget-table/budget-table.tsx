@@ -56,8 +56,8 @@ export function BudgetTable({
     filteredData,
   } = useBudgetTableFilters(data, hasBlockLevel)
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const columns = [
       createColumn<BudgetNode>(
         'id',
         '',
@@ -194,31 +194,6 @@ export function BudgetTable({
           return <span className="text-right">{formatCurrency(value)}</span>
         }
       ),
-      hasBlockLevel &&
-        createColumn<BudgetNode>(
-          'notAllocatedCost',
-          () => <span className="text-warning-100/70 font-semibold">Not Allocated Cost</span>,
-          ({ row }) => {
-            const value = (row.original as unknown as BudgetNode).actualCost
-            const canEdit = false
-            if (canEdit) {
-              return (
-                <div className="relative">
-                  <FormInputText
-                    className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                    variant="currency"
-                    value={value}
-                    onChange={(value) => {
-                      onUpdate(row.original.rowId, { notAllocatedCost: value })
-                    }}
-                    changeOnBlur
-                  />
-                </div>
-              )
-            }
-            return <span className="text-right">{formatCurrency(value)}</span>
-          }
-        ),
       createColumn<BudgetNodeCalculated>(
         'totalCost',
         () => <span className="text-lilac font-semibold">Total Cost</span>,
@@ -306,9 +281,39 @@ export function BudgetTable({
           )
         }
       ),
-    ],
-    [onUpdate, onDelete, blockEC, blockRR, hasBlockLevel]
-  )
+    ]
+
+    if (hasBlockLevel) {
+      columns.push(
+        createColumn<BudgetNode>(
+          'notAllocatedCost',
+          () => <span className="text-warning-100/70 font-semibold">Not Allocated Cost</span>,
+          ({ row }) => {
+            const value = (row.original as unknown as BudgetNode).actualCost
+            const canEdit = false
+            if (canEdit) {
+              return (
+                <div className="relative">
+                  <FormInputText
+                    className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                    variant="currency"
+                    value={value}
+                    onChange={(value) => {
+                      onUpdate(row.original.rowId, { notAllocatedCost: value })
+                    }}
+                    changeOnBlur
+                  />
+                </div>
+              )
+            }
+            return <span className="text-right">{formatCurrency(value)}</span>
+          }
+        )
+      )
+    }
+
+    return columns
+  }, [onUpdate, onDelete, blockEC, blockRR, hasBlockLevel])
 
   const onlyGrandTotal = filteredData?.length === 1 && filteredData[0]?.id === GRAND_TOTAL_ID
 
