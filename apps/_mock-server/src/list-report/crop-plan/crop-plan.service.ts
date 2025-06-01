@@ -61,6 +61,7 @@ export class CropPlanService {
             children: [],
             committedCost: 0,
             actualCost: 0,
+            notAllocatedCost: 0 ,
           }
         }
 
@@ -78,6 +79,7 @@ export class CropPlanService {
                 children: [],
                 committedCost: 0,
                 actualCost: 0,
+                notAllocatedCost: 0,
               }
             }
 
@@ -91,6 +93,7 @@ export class CropPlanService {
               children: [],
               committedCost: Math.floor(Math.random() * 80000) + 40000,
               actualCost: Math.floor(Math.random() * 70000) + 35000,
+              notAllocatedCost: Math.floor(Math.random() * 20000) + 10000,
             }))
 
             // Calculate cost code values from its cost types
@@ -103,6 +106,7 @@ export class CropPlanService {
               children: costTypeNodes,
               committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
               actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+              notAllocatedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + (node.notAllocatedCost ?? 0), 0),
             }
 
             return costCodeNode
@@ -119,6 +123,7 @@ export class CropPlanService {
           children: costCodeNodes,
           committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
           actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+          notAllocatedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + (node.notAllocatedCost ?? 0), 0),
         }
 
         return divisionNode
