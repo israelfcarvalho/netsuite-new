@@ -42,7 +42,5 @@ export function updateParents(state: BudgetState, parentRowId?: string): BudgetS
     return updateParents(newState, node.parentRowId)
   }
 
-  console.log('newState', newState)
-
   return newState
 }
