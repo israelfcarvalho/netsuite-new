@@ -1,6 +1,7 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 
 import { useToast } from '@workspace/ui/components/toast'
 
@@ -8,14 +9,17 @@ import { useBlockBudget } from './use-block-budget'
 
 import { useSaveCropPlanLinesByRanch } from '@/lib/api/crop-plan/use-crop-plan-lines-by-ranch'
 import { BudgetTable } from '@/lib/components/budget-table/budget-table'
+import { BlockFilter } from '@/lib/components/budget-table/budget-table-block-filters'
 
 export const BlockBudgetTable = () => {
+  const [blockFilter, setBlockFilter] = useState<BlockFilter>()
+
   const { toast } = useToast()
 
   const searchParams = useSearchParams()
   const cropPlanId = searchParams.get('cropPlanId')
 
-  const { data, isLoading, error, updateNode, state, levels } = useBlockBudget()
+  const { data, isLoading, error, updateNode, state, levels } = useBlockBudget(blockFilter)
   const { updateLines, isPending } = useSaveCropPlanLinesByRanch()
 
   const handleSave = () => {
@@ -68,6 +72,7 @@ export const BlockBudgetTable = () => {
       state={state}
       levels={levels}
       hasBlockLevel={true}
+      setBlockFilter={setBlockFilter}
     />
   )
 }
