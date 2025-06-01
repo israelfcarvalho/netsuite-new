@@ -283,8 +283,10 @@ export function BudgetTable({
       ),
     ]
 
-    if (hasBlockLevel) {
-      columns.push(
+    if (!hasBlockLevel) {
+      columns.splice(
+        5,
+        0,
         createColumn<BudgetNode>(
           'notAllocatedCost',
           () => <span className="text-warning-100/70 font-semibold">Not Allocated Cost</span>,
