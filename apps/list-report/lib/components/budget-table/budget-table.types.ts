@@ -1,8 +1,11 @@
+import { Dispatch, SetStateAction } from 'react'
+
 import { BudgetNode, BudgetState } from './use-budget-table/types'
 
 import { Division } from '@/lib/api'
 import { CostType } from '@/lib/api'
 import { CostCode } from '@/lib/api'
+import { BlockFilter } from '@/lib/components/budget-table/budget-table-block-filters'
 
 interface OnBudgetTableAddNew {
   (node: {
@@ -27,4 +30,5 @@ export interface BudgetTableProps {
   state: BudgetState
   levels: number
   hasBlockLevel?: boolean
+  setBlockFilter?: Dispatch<SetStateAction<BlockFilter | undefined>>
 }

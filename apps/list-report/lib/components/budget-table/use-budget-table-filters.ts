@@ -1,14 +1,22 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { BudgetNode } from './use-budget-table/types'
 
 import { useGetCostCodes, useGetCostTypes } from '@/lib/api'
 
-export function useBudgetTableFilters(
-  data: BudgetNode[] | undefined,
-  hasBlockLevel: boolean = false,
-  blockFilter?: string
-) {
+function sumBudgetNodeValues(node: BudgetNode, children: BudgetNode[]): BudgetNode {
+  return {
+    ...node,
+    originalEstimate: children.reduce((acc, child) => acc + child.originalEstimate, 0),
+    currentEstimate: children.reduce((acc, child) => acc + child.currentEstimate, 0),
+    projectedEstimate: children.reduce((acc, child) => acc + child.projectedEstimate, 0),
+    committedCost: children.reduce((acc, child) => acc + child.committedCost, 0),
+    actualCost: children.reduce((acc, child) => acc + child.actualCost, 0),
+    children: node.children ? [...children] : undefined,
+  }
+}
+
+export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: boolean = false) {
   const [divisionId, setDivisionId] = useState<string>('')
   const [costCodeId, setCostCodeId] = useState<string>('')
   const [costTypeId, setCostTypeId] = useState<string>('')
@@ -17,106 +25,104 @@ export function useBudgetTableFilters(
   const { data: costTypes } = useGetCostTypes({ costCodeId })
 
   const filterCostTypes = useCallback(
-    (costTypeChildren: BudgetNode[] | undefined): BudgetNode[] => {
-      if (!costTypeChildren) return []
-      const costType = costTypes?.find((t: { id: string }) => t.id === costTypeId)
+    (costTypeChildren: BudgetNode[] = []): BudgetNode[] => {
+      const costType = costTypes?.find((ct: { id: string }) => ct.id === costTypeId)
 
-      return costTypeChildren.reduce<BudgetNode[]>((filtered, type) => {
-        if (costTypeId && costType && type.name !== costType?.name) {
-          return filtered
-        }
-        return [...filtered, type]
-      }, [])
+      return costTypeChildren.filter((type) => !costType || type.name === costType.name)
     },
     [costTypes, costTypeId]
   )
 
   const filterCostCodes = useCallback(
-    (costCodeChildren: BudgetNode[] | undefined): BudgetNode[] => {
-      if (!costCodeChildren) return []
-      const costCode = costCodes?.find((c: { id: string }) => c.id === costCodeId)
+    (costCodeChildren: BudgetNode[]): BudgetNode[] => {
+      if (costCodeId) {
+        const costCode = costCodes?.find((c: { id: string }) => c.id === costCodeId)
 
-      return costCodeChildren.reduce<BudgetNode[]>((filtered, code) => {
-        if (costCodeId && costCode && code.name !== costCode?.name) {
+        return costCodeChildren.reduce<BudgetNode[]>((filtered, code) => {
+          const isFilteredCostCode = code.id === costCode?.id
+
+          if (isFilteredCostCode) {
+            const filteredTypes = filterCostTypes(code.children)
+            if (filteredTypes.length > 0) {
+              const costCodeNode = sumBudgetNodeValues(code, filteredTypes)
+              return [...filtered, costCodeNode]
+            }
+          }
+
           return filtered
-        }
+        }, [])
+      }
 
-        const filteredTypes = filterCostTypes(code.children)
-        if (filteredTypes.length > 0 || !costTypeId) {
-          return [...filtered, { ...code, children: filteredTypes }]
-        }
-        return filtered
-      }, [])
+      return costCodeChildren.map((code) => {
+        const filteredTypes = filterCostTypes(code.children ?? [])
+        return sumBudgetNodeValues(code, filteredTypes)
+      })
     },
-    [costCodes, costCodeId, costTypeId, filterCostTypes]
+    [costCodes, costCodeId, filterCostTypes]
   )
 
   const filterDivisions = useCallback(
     (divisions: BudgetNode[]): BudgetNode[] => {
       if (divisionId) {
-        const division = divisions.find((d) => d.id === divisionId)
-        if (!division) return [] // Division filter set, but not found in data
-        const filteredCodes = filterCostCodes(division.children)
-        if (filteredCodes.length > 0 || !costCodeId) {
-          return [{ ...division, children: filteredCodes }]
-        }
-        return []
+        return divisions.reduce<BudgetNode[]>((filtered, division) => {
+          const isFilteredDivision = division.id === divisionId
+
+          if (isFilteredDivision) {
+            const filteredCodes = filterCostCodes(division.children ?? [])
+            if (filteredCodes.length > 0) {
+              const divisionNode = sumBudgetNodeValues(division, filteredCodes)
+
+              return [...filtered, divisionNode]
+            }
+          }
+
+          return filtered
+        }, [])
       }
-      // No division filter, filter all
-      return divisions.reduce<BudgetNode[]>((filtered, divisionNode) => {
-        const filteredCodes = filterCostCodes(divisionNode.children)
-        if (filteredCodes.length > 0 || !costCodeId) {
-          return [...filtered, { ...divisionNode, children: filteredCodes }]
-        }
-        return filtered
-      }, [])
+      return divisions.map((division) => {
+        const filteredCodes = filterCostCodes(division.children ?? [])
+        return sumBudgetNodeValues(division, filteredCodes)
+      })
     },
-    [divisionId, costCodeId, filterCostCodes]
+    [divisionId, filterCostCodes]
   )
 
   const filterBlocks = useCallback(
     (blocks: BudgetNode[]): BudgetNode[] => {
       return blocks.reduce<BudgetNode[]>((filtered, block) => {
-        const blockNamePath = block.name.split(':')
-        const blockFilterPath = blockFilter?.split(':') ?? []
-
-        const isBlockFiltered = blockFilterPath.reduce((acc, filter, idx) => {
-          const blockName = blockNamePath[idx]?.trim()
-          const filterName = filter.trim()
-
-          if (blockName !== filterName) {
-            return false
-          }
-          return acc
-        }, true)
-
-        if (blockFilter && !isBlockFiltered) {
-          return filtered
-        }
         const filteredDivisions = filterDivisions(block.children ?? [])
-        if (filteredDivisions.length > 0 || !divisionId) {
-          return [...filtered, { ...block, children: filteredDivisions }]
+        if (filteredDivisions.length > 0) {
+          const blockNode = sumBudgetNodeValues(block, filteredDivisions)
+
+          return [...filtered, blockNode]
         }
         return filtered
       }, [])
     },
-    [divisionId, filterDivisions, blockFilter]
+    [filterDivisions]
   )
 
-  const grandTotalNode = data?.find((d) => d.id === 'grand-total')
-  const nodesWithoutTotal = data?.filter((d) => d.id !== 'grand-total') ?? []
+  const filteredData = useMemo(() => {
+    if (hasBlockLevel) {
+      return filterBlocks(data)
+    } else {
+      return filterDivisions(data)
+    }
+  }, [data, hasBlockLevel, filterBlocks, filterDivisions])
 
-  let filteredData: BudgetNode[] = []
-  if (hasBlockLevel) {
-    filteredData = filterBlocks(nodesWithoutTotal)
-  } else {
-    filteredData = filterDivisions(nodesWithoutTotal)
-  }
-
-  // Always include grand total if it exists
-  if (grandTotalNode) {
-    filteredData = [grandTotalNode, ...filteredData]
-  }
+  const grandTotalNode = useMemo<BudgetNode>(() => {
+    const grandTotal = {
+      id: 'grand-total',
+      rowId: 'grand-total',
+      name: 'Grand Total',
+      originalEstimate: 0,
+      currentEstimate: 0,
+      projectedEstimate: 0,
+      committedCost: 0,
+      actualCost: 0,
+    }
+    return sumBudgetNodeValues(grandTotal, filteredData)
+  }, [filteredData])
 
   const resetFilters = () => {
     setDivisionId('')
@@ -132,6 +138,6 @@ export function useBudgetTableFilters(
     setCostCodeId,
     setCostTypeId,
     resetFilters,
-    filteredData,
+    filteredData: [grandTotalNode, ...filteredData],
   }
 }

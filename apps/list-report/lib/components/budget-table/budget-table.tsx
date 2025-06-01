@@ -35,8 +35,8 @@ export function BudgetTable({
   state,
   levels,
   hasBlockLevel = false,
+  setBlockFilter,
 }: BudgetTableProps) {
-  const [blockFilter, setBlockFilter] = useState<string>('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const searchParamsString = useSearchParams('string')
   const searchParamsBoolean = useSearchParams('boolean')
@@ -54,7 +54,7 @@ export function BudgetTable({
     setCostTypeId,
     resetFilters,
     filteredData,
-  } = useBudgetTableFilters(data, hasBlockLevel, blockFilter)
+  } = useBudgetTableFilters(data, hasBlockLevel)
 
   const columns = useMemo(
     () => [

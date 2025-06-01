@@ -7,7 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useGetRanchBlocks, RanchBlock } from '@/lib/api/ranch-block'
 
 interface BudgetTableBlockFiltersProps {
-  onChange?: (blockChain: string) => void
+  onChange?: (blockFilter?: BlockFilter) => void
+}
+
+export interface BlockFilter {
+  name: string
+  id: string
 }
 
 export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersProps) {
@@ -18,9 +23,13 @@ export function BudgetTableBlockFilters({ onChange }: BudgetTableBlockFiltersPro
   const { data } = useGetRanchBlocks(parentId)
 
   useEffect(() => {
-    const blockChain = selectedBlocks[selectedBlocks.length - 1]?.name ?? ''
+    const block = selectedBlocks[selectedBlocks.length - 1]
 
-    onChange?.(blockChain)
+    if (block?.id && block?.name) {
+      onChange?.({ name: block.name, id: block.id })
+    } else {
+      onChange?.()
+    }
   }, [selectedBlocks, onChange])
 
   useEffect(() => {
