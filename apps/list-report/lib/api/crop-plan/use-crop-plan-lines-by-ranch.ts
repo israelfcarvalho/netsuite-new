@@ -20,7 +20,7 @@ const {
 
 const initialData: CropPlanApiResponse['data'] = []
 
-export function useGetCropPlanLinesByRanch({ cropPlanId }: GetCropPlanLinesParams) {
+export function useGetCropPlanLinesByRanch({ cropPlanId, block }: GetCropPlanLinesParams) {
   const { data, error, isLoading, refetch } = useListReportApiGet<CropPlanApiResponse, CropPlanLinesQueryParams>(
     route,
     {
@@ -28,6 +28,7 @@ export function useGetCropPlanLinesByRanch({ cropPlanId }: GetCropPlanLinesParam
       queryParams: {
         script,
         deploy,
+        block,
         action: ACTION,
         cropPlanId: cropPlanId,
       },

@@ -27,6 +27,7 @@ export interface CropPlanLinesQueryParams extends QueryParams {
 
 export interface GetCropPlanLinesParams {
   cropPlanId?: number
+  block?: string
 }
 
 export interface UpdateCropPlanLinesPayload {
