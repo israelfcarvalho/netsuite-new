@@ -31,25 +31,27 @@ export const Header = <T extends TData>() => {
   return (
     <thead className="sticky top-0 bg-neutral-30 shadow-[0_2px_4px_0px]  py-2 text-sm leading-normal shadow-neutral-50 z-20">
       <tr className="text-left whitespace-nowrap">
-        {columns.map((column) => (
-          <th
-            ref={(el) => referenceHeaderElements(el, column.accessorKey.toString())}
-            key={column.accessorKey.toString()}
-            className={cn('px-4 py-3 text-neutral-120 font-bold', {
-              'sticky top-0 bg-neutral-30 z-20': column.options?.isFixed,
-            })}
-            style={{
-              left: getFixedColumnLeftPosition(
-                column.accessorKey.toString(),
-                column.options?.isFixed || false,
-                columns,
-                headerElementsSize
-              ),
-            }}
-          >
-            {typeof column.header === 'function' ? column.header({ column }) : column.header}
-          </th>
-        ))}
+        {columns.map((column) => {
+          return (
+            <th
+              ref={(el) => referenceHeaderElements(el, column.accessorKey.toString())}
+              key={column.accessorKey.toString()}
+              className={cn('px-4 py-3 text-neutral-120 font-bold', {
+                'sticky top-0 bg-neutral-30 z-20': column.options?.isFixed,
+              })}
+              style={{
+                left: getFixedColumnLeftPosition(
+                  column.accessorKey.toString(),
+                  column.options?.isFixed || false,
+                  columns,
+                  headerElementsSize
+                ),
+              }}
+            >
+              {typeof column.header === 'function' ? column.header({ column }) : column.header}
+            </th>
+          )
+        })}
       </tr>
     </thead>
   )
