@@ -19,7 +19,7 @@ export const BlockBudgetTable = () => {
   const searchParams = useSearchParams()
   const cropPlanId = searchParams.get('cropPlanId')
 
-  const { data, isLoading, error, updateNode, state, levels } = useBlockBudget(blockFilter)
+  const { data, isLoading, error, updateNode, state, levels, refresh } = useBlockBudget(blockFilter)
   const { updateLines, isPending } = useSaveCropPlanLinesByRanch()
 
   const handleSave = () => {
@@ -73,6 +73,7 @@ export const BlockBudgetTable = () => {
       levels={levels}
       hasBlockLevel={true}
       setBlockFilter={setBlockFilter}
+      onRefresh={refresh}
     />
   )
 }

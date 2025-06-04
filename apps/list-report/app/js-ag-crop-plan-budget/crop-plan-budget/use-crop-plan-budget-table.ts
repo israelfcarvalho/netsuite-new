@@ -10,7 +10,9 @@ export function useCropPlanBudgetTable() {
   const queryParams = useSearchParams()
 
   const cropPlanId = queryParams.get('cropPlanId')
-  const { cropPlanLines, isLoading, error } = useGetCropPlanLines({ cropPlanId: Number(cropPlanId) })
+  const { cropPlanLines, isLoading, error, refetch, isFetching } = useGetCropPlanLines({
+    cropPlanId: Number(cropPlanId),
+  })
 
   const { updateNode, addNode, deleteNode, state, levels } = useBudgetTable({ cropPlanLines })
 
@@ -25,9 +27,10 @@ export function useCropPlanBudgetTable() {
     addNode,
     deleteNode,
     state,
-    isLoading,
+    isLoading: isLoading || isFetching,
     error: error?.message,
     data,
     levels,
+    refresh: refetch,
   }
 }

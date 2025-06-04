@@ -21,25 +21,26 @@ const {
 const initialData: CropPlanApiResponse['data'] = []
 
 export function useGetCropPlanLinesByRanch({ cropPlanId, block }: GetCropPlanLinesParams) {
-  const { data, error, isLoading, refetch } = useListReportApiGet<CropPlanApiResponse, CropPlanLinesQueryParams>(
-    route,
-    {
-      queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
-      queryParams: {
-        script,
-        deploy,
-        block,
-        action: ACTION,
-        cropPlanId: cropPlanId,
-      },
-    }
-  )
+  const { data, error, isLoading, refetch, isFetching } = useListReportApiGet<
+    CropPlanApiResponse,
+    CropPlanLinesQueryParams
+  >(route, {
+    queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
+    queryParams: {
+      script,
+      deploy,
+      block,
+      action: ACTION,
+      cropPlanId: cropPlanId,
+    },
+  })
 
   return {
     cropPlanLines: data?.data ?? initialData,
     error,
     isLoading,
     refetch,
+    isFetching,
   }
 }
 

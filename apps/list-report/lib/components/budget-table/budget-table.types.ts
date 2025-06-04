@@ -31,4 +31,5 @@ export interface BudgetTableProps {
   levels: number
   hasBlockLevel?: boolean
   setBlockFilter?: Dispatch<SetStateAction<BlockFilter | undefined>>
+  onRefresh: () => void
 }

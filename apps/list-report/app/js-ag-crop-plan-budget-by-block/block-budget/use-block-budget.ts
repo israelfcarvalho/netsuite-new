@@ -11,7 +11,7 @@ export function useBlockBudget(blockFilter?: BlockFilter) {
   const queryParams = useSearchParams()
 
   const cropPlanId = queryParams.get('cropPlanId')
-  const { cropPlanLines, isLoading, error } = useGetCropPlanLinesByRanch({
+  const { cropPlanLines, isLoading, error, refetch, isFetching } = useGetCropPlanLinesByRanch({
     cropPlanId: Number(cropPlanId),
     block: blockFilter?.id,
   })
@@ -26,10 +26,11 @@ export function useBlockBudget(blockFilter?: BlockFilter) {
 
   return {
     data,
-    isLoading,
+    isLoading: isLoading || isFetching,
     error: error?.message,
     updateNode,
     state,
     levels,
+    refresh: refetch,
   }
 }

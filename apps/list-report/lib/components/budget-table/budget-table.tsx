@@ -36,6 +36,7 @@ export function BudgetTable({
   levels,
   hasBlockLevel = false,
   setBlockFilter,
+  onRefresh,
 }: BudgetTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const searchParamsString = useSearchParams('string')
@@ -333,6 +334,9 @@ export function BudgetTable({
         )}
         <Button variant="default" size="sm" onClick={onSave} disabled={isLoading}>
           Save
+        </Button>
+        <Button variant="secondary" size="sm" onClick={onRefresh} disabled={isLoading}>
+          Refresh
         </Button>
         <BudgetTableExport isLoading={isLoading} />
       </div>
