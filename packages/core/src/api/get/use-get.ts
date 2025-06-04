@@ -15,7 +15,7 @@ export function createApiGet(baseUrl: string) {
 
     const url = mountUrl(baseUrl, route, options?.queryParams)
 
-    const { data, error, isLoading, refetch } = useQuery<TData, TError>({
+    const { data, error, isLoading, refetch, isFetching } = useQuery<TData, TError>({
       queryKey: [url],
       queryFn: () => apiGet<TData>(url),
       ...(options?.queryOptions ?? {}),
@@ -26,6 +26,7 @@ export function createApiGet(baseUrl: string) {
       error,
       isLoading,
       refetch,
+      isFetching,
     }
   }
 }

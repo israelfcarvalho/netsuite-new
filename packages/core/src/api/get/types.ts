@@ -3,4 +3,5 @@ export interface IUseApiGet<TData, TError = Error> {
   error: TError | null
   isLoading: boolean
   refetch: () => void
+  isFetching: boolean
 }
