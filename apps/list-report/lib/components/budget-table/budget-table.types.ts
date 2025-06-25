@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 
+import { TableColumn } from '@workspace/ui/components/table'
+
 import { BudgetNode, BudgetState } from './use-budget-table/types'
 
 import { Division } from '@/lib/api'
@@ -32,4 +34,5 @@ export interface BudgetTableProps {
   hasBlockLevel?: boolean
   setBlockFilter?: Dispatch<SetStateAction<BlockFilter | undefined>>
   onRefresh: () => void
+  columns: TableColumn<BudgetNode>[]
 }

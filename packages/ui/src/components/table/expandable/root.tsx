@@ -2,37 +2,35 @@
 
 import React from 'react'
 
-import { cn } from '@workspace/ui/lib/utils'
-
 import { TableContext, TableState } from '../context'
 import { TData, ExpandableTableProps } from '../types'
-import { ExpandableTableSkeleton } from './skeleton'
 
 export function Root<T extends TData>({
   columns,
   data,
-  className,
-  children,
-  isLoading,
   error,
-}: ExpandableTableProps<T>) {
+  children,
+}: Omit<ExpandableTableProps<T>, 'className' | 'isLoading'>) {
   const mounted = React.useRef(false)
   const [expandedRows, setExpandedRows] = React.useState<Set<string>>(new Set())
   const [headerElementsSize, setHeaderElementsSize] = React.useState<
     Map<string, { clientWidth: number; offsetWidth: number; scrollWidth: number }>
   >(new Map())
 
-  React.useEffect(() => {
-    if (data.length) {
-      const expandedRows = new Set<string>()
-
-      function expandRow<T extends TData | null>(row: T) {
-        if (row?.children?.length) {
-          mounted.current = true
-          expandedRows.add(row.rowId)
-          row.children.forEach((child) => expandRow<typeof child>(child))
-        }
+  const expandRow = React.useCallback(
+    <T extends TData | null>(row: T) => {
+      if (row?.children?.length) {
+        expandedRows.add(row.rowId)
+        row.children.forEach((child) => expandRow<typeof child>(child))
       }
+    },
+    [expandedRows]
+  )
+
+  React.useEffect(() => {
+    if (data.length && !mounted.current) {
+      mounted.current = true
+      const expandedRows = new Set<string>()
 
       data.forEach((row) => {
         expandRow<typeof row>(row)
@@ -40,7 +38,7 @@ export function Root<T extends TData>({
 
       setExpandedRows(expandedRows)
     }
-  }, [data, mounted])
+  }, [data, expandRow])
 
   const state = React.useMemo<TableState<T>>(
     () => ({
@@ -51,8 +49,10 @@ export function Root<T extends TData>({
       onExpandRow: (rowId: string) => {
         setExpandedRows((prev) => {
           const next = new Set(prev)
+
           if (next.has(rowId)) {
             next.delete(rowId)
+            console.log('delete', rowId, next)
           } else {
             next.add(rowId)
           }
@@ -65,17 +65,5 @@ export function Root<T extends TData>({
     [columns, expandedRows, data, error, headerElementsSize, setHeaderElementsSize]
   )
 
-  if (isLoading) {
-    return <ExpandableTableSkeleton columns={columns} />
-  }
-
-  return (
-    <TableContext.Provider value={state as unknown as TableState<TData>}>
-      <div className={cn('relative overflow-auto shadow-[0_0_0px_1px] shadow-neutral-50 text-sm', className)}>
-        <div>
-          <table className="w-full border-separate border-spacing-0">{children}</table>
-        </div>
-      </div>
-    </TableContext.Provider>
-  )
+  return <TableContext.Provider value={state as unknown as TableState<TData>}>{children}</TableContext.Provider>
 }

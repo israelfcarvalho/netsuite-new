@@ -23,27 +23,22 @@ const ExpandableTable = createExpandableTable<BudgetNode>()
 
 const GRAND_TOTAL_ID = 'grand-total'
 
-export function BudgetTable({
+function BudgetTableComponent({
   data,
   isLoading,
   isSaving,
-  error,
   onAddNew,
-  onUpdate,
-  onDelete,
   onSave,
   state,
   levels,
   hasBlockLevel = false,
   setBlockFilter,
   onRefresh,
+  columns,
 }: BudgetTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const searchParamsString = useSearchParams('string')
   const searchParamsBoolean = useSearchParams('boolean')
 
-  const blockEC = searchParamsString.getAll('blockEC')
-  const blockRR = !!searchParamsBoolean.get('blockRR')
   const blockNL = !!searchParamsBoolean.get('blockNL')
 
   const {
@@ -56,6 +51,99 @@ export function BudgetTable({
     resetFilters,
     filteredData,
   } = useBudgetTableFilters(data, hasBlockLevel)
+
+  const onlyGrandTotal = filteredData?.length === 1 && filteredData[0]?.id === GRAND_TOTAL_ID
+
+  return (
+    <div className="size-full flex flex-col gap-4 overflow-visible relative">
+      {isSaving && <BudgetTableLoading />}
+
+      <div className="flex gap-2 px-2">
+        {onAddNew && !blockNL && (
+          <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
+            Add New Cost Line
+          </Button>
+        )}
+        <Button variant="default" size="sm" onClick={onSave} disabled={isLoading}>
+          Save
+        </Button>
+        <Button variant="secondary" size="sm" onClick={onRefresh} disabled={isLoading}>
+          Refresh
+        </Button>
+        <BudgetTableExport isLoading={isLoading} />
+      </div>
+
+      <div className="flex flex-col flex-1 overflow-auto py-2 px-2">
+        <div className="grid grid-rows-[1fr] grid-cols-[auto_1fr] mb-2 gap-x-1 gap-y-1 overflow-visible">
+          <div
+            className={cn(
+              'w-fit row-span-2 flex items-center text-[12px] font-semibold text-neutral-100 rounded-l-lg px-2 py-1 bg-neutral-10 shadow-neutral-40 shadow-[-2px_0px_2px_1px]',
+              {
+                'row-span-1': !hasBlockLevel,
+              }
+            )}
+          >
+            <Filter className="size-2.5 mr-2 text-gray-500" />
+            Filters
+          </div>
+          {hasBlockLevel && <BudgetTableBlockFilters onChange={setBlockFilter} />}
+          <BudgetTableFilters
+            divisionId={divisionId}
+            costCodeId={costCodeId}
+            costTypeId={costTypeId}
+            setDivisionId={setDivisionId}
+            setCostCodeId={setCostCodeId}
+            setCostTypeId={setCostTypeId}
+            resetFilters={resetFilters}
+            hasBlockLevel={hasBlockLevel}
+          />
+        </div>
+        <ExpandableTable.Table isLoading={isLoading}>
+          <ExpandableTable.Header />
+          <ExpandableTable.Body
+            className={
+              levels > 3
+                ? cn(
+                    'data-[level=0]:data-[has-children=true]:bg-pine-light data-[level=0]:data-[has-children=true]:shadow',
+                    'data-[level=1]:data-[has-children=true]:bg-brand-40',
+                    'data-[level=2]:data-[has-children=true]:bg-neutral-20'
+                  )
+                : cn(
+                    'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
+                    'data-[level=1]:data-[has-children=true]:bg-neutral-20'
+                  )
+            }
+          />
+          {onlyGrandTotal && (
+            <tbody>
+              <tr>
+                <td colSpan={columns.length} className="text-center py-4 text-neutral-60 border-t bg-neutral-5">
+                  No matching data found. Try adjusting your filters to see more results.
+                </td>
+              </tr>
+            </tbody>
+          )}
+        </ExpandableTable.Table>
+        {isModalOpen && onAddNew && (
+          <BudgetTableAddModal
+            state={{ ...state, tree: data }}
+            onAddNew={onAddNew}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
+  const { data, hasBlockLevel, onUpdate, onDelete, error } = props
+
+  const searchParamsString = useSearchParams('string')
+  const searchParamsBoolean = useSearchParams('boolean')
+
+  const blockEC = searchParamsString.getAll('blockEC')
+  const blockRR = !!searchParamsBoolean.get('blockRR')
 
   const columns = useMemo(() => {
     const columns = [
@@ -75,7 +163,7 @@ export function BudgetTable({
                     className="opacity-0 group-hover:opacity-100 transition-opacity p-0"
                     variant="destructive"
                     size="sm"
-                    onClick={() => onDelete(row.original.rowId)}
+                    onClick={() => onDelete?.(row.original.rowId)}
                   >
                     <Trash2 className="text-bg-danger-40 size-4" />
                   </Button>
@@ -318,93 +406,11 @@ export function BudgetTable({
     }
 
     return columns
-  }, [onUpdate, onDelete, blockEC, blockRR, hasBlockLevel])
-
-  const onlyGrandTotal = filteredData?.length === 1 && filteredData[0]?.id === GRAND_TOTAL_ID
+  }, [blockRR, blockEC, onUpdate, onDelete, hasBlockLevel])
 
   return (
-    <div className="size-full flex flex-col gap-4 overflow-visible relative">
-      {isSaving && <BudgetTableLoading />}
-
-      <div className="flex gap-2 px-2">
-        {onAddNew && !blockNL && (
-          <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
-            Add New Cost Line
-          </Button>
-        )}
-        <Button variant="default" size="sm" onClick={onSave} disabled={isLoading}>
-          Save
-        </Button>
-        <Button variant="secondary" size="sm" onClick={onRefresh} disabled={isLoading}>
-          Refresh
-        </Button>
-        <BudgetTableExport isLoading={isLoading} />
-      </div>
-
-      <div className="flex flex-col flex-1 overflow-auto py-2 px-2">
-        <div className="grid grid-rows-[1fr] grid-cols-[auto_1fr] mb-2 gap-x-1 gap-y-1 overflow-visible">
-          <div
-            className={cn(
-              'w-fit row-span-2 flex items-center text-[12px] font-semibold text-neutral-100 rounded-l-lg px-2 py-1 bg-neutral-10 shadow-neutral-40 shadow-[-2px_0px_2px_1px]',
-              {
-                'row-span-1': !hasBlockLevel,
-              }
-            )}
-          >
-            <Filter className="size-2.5 mr-2 text-gray-500" />
-            Filters
-          </div>
-          {hasBlockLevel && <BudgetTableBlockFilters onChange={setBlockFilter} />}
-          <BudgetTableFilters
-            divisionId={divisionId}
-            costCodeId={costCodeId}
-            costTypeId={costTypeId}
-            setDivisionId={setDivisionId}
-            setCostCodeId={setCostCodeId}
-            setCostTypeId={setCostTypeId}
-            resetFilters={resetFilters}
-            hasBlockLevel={hasBlockLevel}
-          />
-        </div>
-        <ExpandableTable.Root
-          data={filteredData ?? []}
-          columns={columns as unknown as TableColumn<BudgetNode>[]}
-          error={error}
-          isLoading={isLoading}
-        >
-          <ExpandableTable.Header />
-          <ExpandableTable.Body
-            className={
-              levels > 3
-                ? cn(
-                    'data-[level=0]:data-[has-children=true]:bg-pine-light data-[level=0]:data-[has-children=true]:shadow',
-                    'data-[level=1]:data-[has-children=true]:bg-brand-40',
-                    'data-[level=2]:data-[has-children=true]:bg-neutral-20'
-                  )
-                : cn(
-                    'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
-                    'data-[level=1]:data-[has-children=true]:bg-neutral-20'
-                  )
-            }
-          />
-          {onlyGrandTotal && (
-            <tbody>
-              <tr>
-                <td colSpan={columns.length} className="text-center py-4 text-neutral-60 border-t bg-neutral-5">
-                  No matching data found. Try adjusting your filters to see more results.
-                </td>
-              </tr>
-            </tbody>
-          )}
-        </ExpandableTable.Root>
-        {isModalOpen && onAddNew && (
-          <BudgetTableAddModal
-            state={{ ...state, tree: data }}
-            onAddNew={onAddNew}
-            onClose={() => setIsModalOpen(false)}
-          />
-        )}
-      </div>
-    </div>
+    <ExpandableTable.Root data={data ?? []} columns={columns as unknown as TableColumn<BudgetNode>[]} error={error}>
+      <BudgetTableComponent {...props} columns={columns as unknown as TableColumn<BudgetNode>[]} />
+    </ExpandableTable.Root>
   )
 }
