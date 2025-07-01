@@ -1,12 +1,12 @@
 'use client'
 
-import { Trash2, Filter } from 'lucide-react'
+import { Trash2, Filter, PanelBottomClose, PanelBottomOpen } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
 
 import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
 import { formatCurrency } from '@workspace/ui/components/form/input/text'
-import { createExpandableTable, createColumn, TableColumn } from '@workspace/ui/components/table'
+import { createExpandableTable, createColumn, TableColumn, useTableContext } from '@workspace/ui/components/table'
 import { useSearchParams } from '@workspace/ui/lib/navigation'
 import { cn } from '@workspace/ui/lib/utils'
 
@@ -34,8 +34,9 @@ function BudgetTableComponent({
   hasBlockLevel = false,
   setBlockFilter,
   onRefresh,
-  columns,
 }: BudgetTableProps) {
+  const { columns } = useTableContext<BudgetNode>()
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const searchParamsBoolean = useSearchParams('boolean')
 
@@ -149,7 +150,28 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
     const columns = [
       createColumn<BudgetNode>(
         'id',
-        '',
+        ({ expandLevel }) => (
+          <div className="flex flex-row items-start gap-1 w-fit">
+            <Button
+              title="Expand"
+              className="text-start"
+              variant="outline"
+              size="sm"
+              onClick={() => expandLevel('down')}
+            >
+              <PanelBottomClose className="size-4 text-neutral-100" />
+            </Button>
+            <Button
+              title="Collapse"
+              className="text-start"
+              variant="outline"
+              size="sm"
+              onClick={() => expandLevel('up')}
+            >
+              <PanelBottomOpen className="size-4 text-neutral-100" />
+            </Button>
+          </div>
+        ),
         ({ row }) => {
           const isLastChild = row.original.parentRowId && !row.original.children?.length
           const blockRemoveRow = blockRR
@@ -382,7 +404,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
             <span className="text-right w-full inline-block text-warning-100/70 font-semibold">Not Allocated Cost</span>
           ),
           ({ row }) => {
-            const value = (row.original as unknown as BudgetNode).actualCost
+            const value = (row.original as unknown as BudgetNode).notAllocatedCost ?? 0
             const canEdit = false
             if (canEdit) {
               return (
@@ -410,7 +432,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
 
   return (
     <ExpandableTable.Root data={data ?? []} columns={columns as unknown as TableColumn<BudgetNode>[]} error={error}>
-      <BudgetTableComponent {...props} columns={columns as unknown as TableColumn<BudgetNode>[]} />
+      <BudgetTableComponent {...props} />
     </ExpandableTable.Root>
   )
 }
