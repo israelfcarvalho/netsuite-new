@@ -17,28 +17,77 @@ export function Root<T extends TData>({
     Map<string, { clientWidth: number; offsetWidth: number; scrollWidth: number }>
   >(new Map())
 
-  const expandRow = React.useCallback(
-    <T extends TData | null>(row: T) => {
-      if (row?.children?.length) {
-        expandedRows.add(row.rowId)
-        row.children.forEach((child) => expandRow<typeof child>(child))
+  const [levelToExpand, setLevelToExpand] = React.useState<number>(0)
+
+  const expandLevelRows = React.useCallback(
+    (rows: T[], expandedRows = new Set<string>(), currentLevel: number, endLevel: number): boolean => {
+      if (currentLevel === endLevel || rows.length === 0) {
+        return !!rows.length
+      }
+
+      let levelExists = true
+
+      rows.forEach((row) => {
+        if (row) {
+          expandedRows.add(row.rowId)
+          levelExists =
+            levelExists &&
+            expandLevelRows((row.children as unknown as T[]) ?? [], expandedRows, currentLevel + 1, endLevel)
+        }
+      })
+
+      return levelExists
+    },
+    []
+  )
+
+  const expandLevel = React.useCallback(
+    (direction: 'up' | 'down') => {
+      const nextLevel = direction === 'up' ? levelToExpand - 1 : levelToExpand + 1
+
+      if (nextLevel >= 0) {
+        setLevelToExpand(nextLevel)
+        const expandedRows = new Set<string>()
+        const levelExists = expandLevelRows(data as T[], expandedRows, 0, nextLevel)
+
+        if (levelExists) {
+          setExpandedRows(expandedRows)
+        } else {
+          setLevelToExpand(nextLevel - 1)
+        }
       }
     },
-    [expandedRows]
+    [data, expandLevelRows, levelToExpand]
+  )
+
+  const expandAll = React.useCallback(
+    (rows = data, expandedRows = new Set<string>(), level = 0) => {
+      const nextLevel = level + 1
+      rows.forEach((row) => {
+        if (row) {
+          expandedRows.add(row.rowId)
+          if (row.children?.length) {
+            level = expandAll(row.children as unknown as T[], expandedRows, nextLevel)
+          }
+        }
+      })
+
+      if (rows === data) {
+        setLevelToExpand(level)
+        setExpandedRows(expandedRows)
+      }
+
+      return level
+    },
+    [data]
   )
 
   React.useEffect(() => {
     if (data.length && !mounted.current) {
       mounted.current = true
-      const expandedRows = new Set<string>()
-
-      data.forEach((row) => {
-        expandRow<typeof row>(row)
-      })
-
-      setExpandedRows(expandedRows)
+      expandAll()
     }
-  }, [data, expandRow])
+  }, [data.length, expandAll])
 
   const state = React.useMemo<TableState<T>>(
     () => ({
@@ -46,23 +95,26 @@ export function Root<T extends TData>({
       expandedRows,
       data,
       error,
-      onExpandRow: (rowId: string) => {
+      onExpandRow: (rowIds: string[]) => {
         setExpandedRows((prev) => {
           const next = new Set(prev)
 
-          if (next.has(rowId)) {
-            next.delete(rowId)
-            console.log('delete', rowId, next)
-          } else {
-            next.add(rowId)
-          }
+          rowIds.forEach((rowId) => {
+            if (next.has(rowId)) {
+              next.delete(rowId)
+            } else {
+              next.add(rowId)
+            }
+          })
+
           return next
         })
       },
+      expandLevel,
       headerElementsSize,
       setHeaderElementsSize,
     }),
-    [columns, expandedRows, data, error, headerElementsSize, setHeaderElementsSize]
+    [columns, expandedRows, data, error, headerElementsSize, setHeaderElementsSize, expandLevel]
   )
 
   return <TableContext.Provider value={state as unknown as TableState<TData>}>{children}</TableContext.Provider>

@@ -5,7 +5,8 @@ import { TData, TableColumn } from './types'
 export interface TableState<T extends TData> {
   columns: TableColumn<T>[]
   expandedRows: Set<string>
-  onExpandRow: (id: string) => void
+  onExpandRow: (ids: string[]) => void
+  expandLevel: (direction: 'up' | 'down') => void
   data: (T | null)[]
   error?: string
   headerElementsSize: Map<string, { clientWidth: number; offsetWidth: number; scrollWidth: number }>

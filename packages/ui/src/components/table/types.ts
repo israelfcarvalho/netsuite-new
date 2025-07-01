@@ -14,7 +14,9 @@ export interface TData {
 
 export interface TableColumn<T extends TData> {
   accessorKey: keyof T
-  header: string | ((props: { column: TableColumn<T> }) => React.ReactNode)
+  header:
+    | string
+    | ((props: { column: TableColumn<T>; expandLevel: (direction: 'up' | 'down') => void }) => React.ReactNode)
   cell?: <D extends TData = T>(props: { row: { original: D }; getValue: () => unknown }) => React.ReactNode
   options?: TColumnOptions
 }

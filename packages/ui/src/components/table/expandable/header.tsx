@@ -9,7 +9,7 @@ import { getFixedColumnLeftPosition } from './_common/utils/layout'
 
 export const Header = <T extends TData>() => {
   useWindowResize()
-  const { columns, setHeaderElementsSize, headerElementsSize } = useTableContext<T>()
+  const { columns, setHeaderElementsSize, headerElementsSize, expandLevel } = useTableContext<T>()
 
   function referenceHeaderElements(el: HTMLTableCellElement | null, header: string) {
     const headerElementSize = headerElementsSize.get(header)
@@ -48,7 +48,7 @@ export const Header = <T extends TData>() => {
                 ),
               }}
             >
-              {typeof column.header === 'function' ? column.header({ column }) : column.header}
+              {typeof column.header === 'function' ? column.header({ column, expandLevel }) : column.header}
             </th>
           )
         })}

@@ -49,7 +49,7 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
                     {rowHasChildren ? (
                       <Button
                         variant="ghost"
-                        onClick={() => onExpandRow(row.rowId)}
+                        onClick={() => onExpandRow([row.rowId])}
                         className="mr-1 pr-1 hover:bg-inherit hover:inset-shadow hover:shadow-[0_0_4px_0_inset] active:shadow-[0_0_16px_0_inset]  rounded flex-none cursor-pointer"
                       >
                         {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
