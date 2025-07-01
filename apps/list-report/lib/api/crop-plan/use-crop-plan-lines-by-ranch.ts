@@ -1,3 +1,5 @@
+import { useSearchParams } from '@workspace/ui/lib/navigation'
+
 import {
   CropPlanApiResponse,
   CropPlanLinesQueryParams,
@@ -21,18 +23,28 @@ const {
 const initialData: CropPlanApiResponse['data'] = []
 
 export function useGetCropPlanLinesByRanch({ cropPlanId, block }: GetCropPlanLinesParams) {
+  const queryParams = useSearchParams('string')
+
+  const subsidiaryId = queryParams.get('subsidiaryId')
+
+  const requestQueryParams: CropPlanLinesQueryParams = {
+    script,
+    deploy,
+    block,
+    action: ACTION,
+    cropPlanId: cropPlanId,
+  }
+
+  if (typeof subsidiaryId === 'string') {
+    requestQueryParams['subsidiaryId'] = subsidiaryId
+  }
+
   const { data, error, isLoading, refetch, isFetching } = useListReportApiGet<
     CropPlanApiResponse,
     CropPlanLinesQueryParams
   >(route, {
     queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
-    queryParams: {
-      script,
-      deploy,
-      block,
-      action: ACTION,
-      cropPlanId: cropPlanId,
-    },
+    queryParams: requestQueryParams,
   })
 
   return {
