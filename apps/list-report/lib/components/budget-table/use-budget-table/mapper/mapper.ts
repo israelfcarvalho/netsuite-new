@@ -27,6 +27,20 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
     const node = createNode(item, parentRowId)
 
     node.children = item.children?.map((child) => processNode(child, node.rowId))
+
+    node.children?.forEach((child) => {
+      node.originalEstimate += child.originalEstimate
+      node.originalEstimatePerAcre += child.originalEstimatePerAcre
+      node.currentEstimate += child.currentEstimate
+      node.projectedEstimate += child.projectedEstimate
+      node.committedCost += child.committedCost
+      node.actualCost += child.actualCost
+
+      if (child.notAllocatedCost !== undefined && node.notAllocatedCost !== undefined) {
+        node.notAllocatedCost += child.notAllocatedCost
+      }
+    })
+
     nodes.set(node.rowId, node)
 
     return node
