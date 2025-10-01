@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/
 import { FormInputText } from '@workspace/ui/components/form'
 import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { useSearchParams } from '@workspace/ui/lib/navigation'
 
 import { CostCode, CostType, Division, useGetDivisions } from '../../api'
 import { BudgetNode, BudgetState } from './use-budget-table/types'
@@ -37,6 +38,10 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
   const [originalEstimate, setOriginalEstimate] = useState(0)
   const [currentEstimate, setCurrentEstimate] = useState(0)
   const [projectedEstimate, setProjectedEstimate] = useState(0)
+
+  const searchParamsString = useSearchParams('string')
+  const blockEC = searchParamsString.getAll('blockEC')
+  const blockCurrentEstimate = blockEC.includes('currentEstimate')
 
   const { data: divisions } = useGetDivisions()
   const { data: costCodes } = useGetCostCodes({ divisionId: selectedDivisionId })
@@ -183,7 +188,7 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
               onChange={(value) => setCurrentEstimate(value)}
               placeholder="Enter current plan"
               required
-              disabled={disabled}
+              disabled={disabled || blockCurrentEstimate}
             />
           </div>
 
