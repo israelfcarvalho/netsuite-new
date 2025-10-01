@@ -37,6 +37,7 @@ export const BlockBudgetTable = () => {
           costTypeId: Number(costType.id),
           ranchId: Number(ranch?.id),
           originalEstimate: item.originalEstimate,
+          originalEstimatePerAcre: item.originalEstimatePerAcre,
           currentEstimate: item.currentEstimate,
           projectedEstimate: item.projectedEstimate,
         }
