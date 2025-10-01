@@ -10,7 +10,7 @@ export const defaultCurrencyOptions: FormatNumberOptions = {
   minimumIntegerDigits: 1,
 }
 
-export const formatCurrency = (value: number, options?: FormatNumberOptions): string => {
+export const formatCurrency = (value?: number, options?: FormatNumberOptions): string => {
   return formatNumber(value, {
     ...defaultCurrencyOptions,
     ...options,

@@ -49,7 +49,7 @@ export const changeCurrency = (
   props: FormInputTextCurrencyProps,
   stateManager: FormInputTextStateManager
 ) => {
-  const { onChange, value } = props
+  const { onChange, value = 0 } = props
   const minimumFractionDigits = props.options?.minimumFractionDigits ?? defaultCurrencyOptions.minimumFractionDigits
   const prevValue = value.toFixed(minimumFractionDigits)
 

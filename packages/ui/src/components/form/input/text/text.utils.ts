@@ -20,7 +20,7 @@ const currency = {
 }
 
 const normal = {
-  format: (value: string) => value,
+  format: (value?: string) => value,
   handleChange: (onChange: FormInputTextNormalProps['onChange']) => (e: ChangeEvent<HTMLInputElement>) =>
     onChange(e.target.value),
 }
