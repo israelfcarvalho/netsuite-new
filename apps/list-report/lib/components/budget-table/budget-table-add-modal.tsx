@@ -48,6 +48,9 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
   const blockOriginalEstimatePerAcre = blockEC.includes('originalEstimatePerAcre')
   const blockProjectedEstimate = blockEC.includes('projectedEstimate')
 
+  const searchParamsNumber = useSearchParams('number')
+  const totalAcresOfCrop = searchParamsNumber.get('totalAcresOfCrop')
+
   const { data: divisions } = useGetDivisions()
   const { data: costCodes } = useGetCostCodes({ divisionId: selectedDivisionId })
   const { data: costTypes } = useGetCostTypes({ costCodeId: selectedCostCodeId })
@@ -177,7 +180,14 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
               id="originalEstimatePerAcre"
               variant="currency"
               value={originalEstimatePerAcre}
-              onChange={(value) => setOriginalEstimatePerAcre(value)}
+              onChange={(value) => {
+                setOriginalEstimatePerAcre(value)
+                if (totalAcresOfCrop) {
+                  setOriginalEstimate(value * totalAcresOfCrop)
+                } else {
+                  setOriginalEstimate(value)
+                }
+              }}
               placeholder="Enter Original Plan Total Acres"
               required
               disabled={disabled || blockOriginalEstimatePerAcre}
@@ -191,7 +201,15 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
               id="originalEstimate"
               variant="currency"
               value={originalEstimate}
-              onChange={(value) => setOriginalEstimate(value)}
+              onChange={(value) => {
+                setOriginalEstimate(value)
+
+                if (totalAcresOfCrop) {
+                  setOriginalEstimatePerAcre(value / totalAcresOfCrop)
+                } else {
+                  setOriginalEstimatePerAcre(value)
+                }
+              }}
               placeholder="Enter Original Plan Total Acres"
               required
               disabled={disabled || blockOriginalEstimate}
