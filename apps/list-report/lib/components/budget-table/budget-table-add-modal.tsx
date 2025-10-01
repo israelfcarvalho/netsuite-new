@@ -165,14 +165,14 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="originalEstimate">Original Plan</Label>
+            <Label htmlFor="originalEstimate">Original Plan Total Acres</Label>
             <FormInputText
               className="w-full text-right"
               id="originalEstimate"
               variant="currency"
               value={originalEstimate}
               onChange={(value) => setOriginalEstimate(value)}
-              placeholder="Enter original plan"
+              placeholder="Enter Original Plan Total Acres"
               required
               disabled={disabled}
             />

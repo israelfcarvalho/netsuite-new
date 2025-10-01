@@ -199,7 +199,11 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
       ),
       createColumn<BudgetNode>(
         'originalEstimate',
-        () => <span className="text-right w-full inline-block text-brand-100/70 font-semibold">Original Plan</span>,
+        () => (
+          <span className="text-right w-full inline-block text-brand-100/70 font-semibold">
+            Original Plan Total Acres
+          </span>
+        ),
         ({ row }) => {
           const value = (row.original as unknown as BudgetNode).originalEstimate
           const hasChildren = row.original.children?.length
