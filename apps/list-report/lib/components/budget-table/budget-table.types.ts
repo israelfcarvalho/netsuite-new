@@ -7,15 +7,15 @@ import { CostType } from '@/lib/api'
 import { CostCode } from '@/lib/api'
 import { BlockFilter } from '@/lib/components/budget-table/budget-table-block-filters'
 
+interface AddNodePayload
+  extends Pick<BudgetNode, 'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'projectedEstimate'> {
+  division: Division
+  costCode: CostCode
+  costType: CostType
+}
+
 interface OnBudgetTableAddNew {
-  (node: {
-    division: Division
-    costCode: CostCode
-    costType: CostType
-    originalEstimate: number
-    currentEstimate: number
-    projectedEstimate: number
-  }): void
+  (node: AddNodePayload): void
 }
 
 export interface BudgetTableProps {

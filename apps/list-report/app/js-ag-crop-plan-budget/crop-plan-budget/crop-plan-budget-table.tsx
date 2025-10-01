@@ -9,6 +9,14 @@ import { useCropPlanBudgetTable } from './use-crop-plan-budget-table'
 import { CostCode, Division, CostType } from '@/lib/api'
 import { useSaveCropPlanLines } from '@/lib/api/crop-plan/use-crop-plan-lines'
 import { BudgetTable } from '@/lib/components/budget-table/budget-table'
+import { BudgetNode } from '@/lib/components/budget-table/use-budget-table/types'
+
+interface AddNodePayload
+  extends Pick<BudgetNode, 'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'projectedEstimate'> {
+  division: Division
+  costCode: CostCode
+  costType: CostType
+}
 
 export const CropPlanBudgetTable = () => {
   const { toast } = useToast()
@@ -18,17 +26,18 @@ export const CropPlanBudgetTable = () => {
 
   const { updateNode, addNode, deleteNode, state, data, isLoading, error, levels, refresh } = useCropPlanBudgetTable()
 
-  const handleAddNew = (newItem: {
-    division: Division
-    costCode: CostCode
-    costType: CostType
-    originalEstimate: number
-    currentEstimate: number
-    projectedEstimate: number
-  }) => {
-    const { division, costCode, costType, originalEstimate, currentEstimate, projectedEstimate } = newItem
+  const handleAddNew = (newItem: AddNodePayload) => {
+    const {
+      division,
+      costCode,
+      costType,
+      originalEstimate,
+      currentEstimate,
+      projectedEstimate,
+      originalEstimatePerAcre,
+    } = newItem
 
-    addNode(division, costCode, costType, originalEstimate, currentEstimate, projectedEstimate)
+    addNode(division, costCode, costType, originalEstimate, currentEstimate, projectedEstimate, originalEstimatePerAcre)
   }
 
   const handleSave = () => {
@@ -44,6 +53,7 @@ export const CropPlanBudgetTable = () => {
           costCodeId: Number(costCode?.id),
           costTypeId: Number(costType.id),
           originalEstimate: item.originalEstimate,
+          originalEstimatePerAcre: item.originalEstimatePerAcre,
           currentEstimate: item.currentEstimate,
           projectedEstimate: item.projectedEstimate,
         }
