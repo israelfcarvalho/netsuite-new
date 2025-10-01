@@ -2,6 +2,7 @@ export interface CropPlanLine {
   id: string
   name: string
   originalEstimate: number
+  originalEstimatePerAcre: number
   currentEstimate: number
   projectedEstimate: number
   committedCost: number

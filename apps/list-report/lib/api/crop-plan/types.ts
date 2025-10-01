@@ -45,6 +45,7 @@ export interface UpdateCropPlanLinesPayload {
     costCodeId: number
     costTypeId: number
     originalEstimate: number
+    originalEstimatePerAcre: number
     currentEstimate: number
     projectedEstimate: number
   }[]
@@ -64,6 +65,7 @@ export interface UpdateCropPlanLinesByRanchPayload {
     costCodeId: number
     costTypeId: number
     originalEstimate: number
+    originalEstimatePerAcre: number
     currentEstimate: number
     projectedEstimate: number
   }[]

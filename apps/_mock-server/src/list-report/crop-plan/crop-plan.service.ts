@@ -56,12 +56,13 @@ export class CropPlanService {
             id: division.id,
             name: division.name,
             originalEstimate: 0,
+            originalEstimatePerAcre: 0,
             currentEstimate: 0,
             projectedEstimate: 0,
             children: [],
             committedCost: 0,
             actualCost: 0,
-            notAllocatedCost: 0 ,
+            notAllocatedCost: 0,
           }
         }
 
@@ -74,6 +75,7 @@ export class CropPlanService {
                 id: costCode.id,
                 name: costCode.name,
                 originalEstimate: 0,
+                originalEstimatePerAcre: 0,
                 currentEstimate: 0,
                 projectedEstimate: 0,
                 children: [],
@@ -88,6 +90,7 @@ export class CropPlanService {
               id: costType.id,
               name: costType.name,
               originalEstimate: Math.floor(Math.random() * 100000) + 50000,
+              originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
               currentEstimate: Math.floor(Math.random() * 120000) + 60000,
               projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
               children: [],
@@ -101,12 +104,16 @@ export class CropPlanService {
               id: costCode.id,
               name: costCode.name,
               originalEstimate: 0,
+              originalEstimatePerAcre: 0,
               currentEstimate: 0,
               projectedEstimate: 0,
               children: costTypeNodes,
               committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
               actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
-              notAllocatedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + (node.notAllocatedCost ?? 0), 0),
+              notAllocatedCost: costTypeNodes.reduce(
+                (sum: number, node: CropPlanLine) => sum + (node.notAllocatedCost ?? 0),
+                0
+              ),
             }
 
             return costCodeNode
@@ -118,12 +125,16 @@ export class CropPlanService {
           id: division.id,
           name: division.name,
           originalEstimate: 0,
+          originalEstimatePerAcre: 0,
           currentEstimate: 0,
           projectedEstimate: 0,
           children: costCodeNodes,
           committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
           actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
-          notAllocatedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + (node.notAllocatedCost ?? 0), 0),
+          notAllocatedCost: costCodeNodes.reduce(
+            (sum: number, node: CropPlanLine) => sum + (node.notAllocatedCost ?? 0),
+            0
+          ),
         }
 
         return divisionNode
@@ -144,17 +155,18 @@ export class CropPlanService {
     if (!cropPlanId) {
       return {
         status: 400,
-        message: 'TypeError: Cannot read property \'sort\' of undefined [at orderByAcresAscending (/SuiteScripts/projects/js_ag_solution/js_ag_service/js-ag-crop-plan.service.js:109:24)]',
+        message:
+          "TypeError: Cannot read property 'sort' of undefined [at orderByAcresAscending (/SuiteScripts/projects/js_ag_solution/js_ag_service/js-ag-crop-plan.service.js:109:24)]",
         data: [],
       }
     }
 
-    if(cropPlanId == 1){
+    if (cropPlanId == 1) {
       return
     }
 
     console.log('Starting update with 5 second delay...')
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise((resolve) => setTimeout(resolve, 5000))
     console.log('Delay completed, updating data...')
 
     this.mockDataStore[cropPlanId] = lines
@@ -189,6 +201,7 @@ export class CropPlanService {
         id: '9',
         name: 'Ranch',
         originalEstimate: 0,
+        originalEstimatePerAcre: 0,
         currentEstimate: 0,
         projectedEstimate: 0,
         children: [],
@@ -199,6 +212,7 @@ export class CropPlanService {
         id: '10',
         name: 'Ranch : Field A',
         originalEstimate: 0,
+        originalEstimatePerAcre: 0,
         currentEstimate: 0,
         projectedEstimate: 0,
         children: [],
@@ -209,6 +223,7 @@ export class CropPlanService {
         id: '27',
         name: 'Ranch : Field B',
         originalEstimate: 0,
+        originalEstimatePerAcre: 0,
         currentEstimate: 0,
         projectedEstimate: 0,
         children: [],
@@ -219,6 +234,7 @@ export class CropPlanService {
         id: '28',
         name: 'Ranch : Field C',
         originalEstimate: 0,
+        originalEstimatePerAcre: 0,
         currentEstimate: 0,
         projectedEstimate: 0,
         children: [],
@@ -250,6 +266,7 @@ export class CropPlanService {
                 id: division.id,
                 name: division.name,
                 originalEstimate: 0,
+                originalEstimatePerAcre: 0,
                 currentEstimate: 0,
                 projectedEstimate: 0,
                 children: [],
@@ -267,6 +284,7 @@ export class CropPlanService {
                     id: costCode.id,
                     name: costCode.name,
                     originalEstimate: 0,
+                    originalEstimatePerAcre: 0,
                     currentEstimate: 0,
                     projectedEstimate: 0,
                     children: [],
@@ -280,6 +298,7 @@ export class CropPlanService {
                   id: costType.id,
                   name: costType.name,
                   originalEstimate: Math.floor(Math.random() * 100000) + 50000,
+                  originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
                   currentEstimate: Math.floor(Math.random() * 120000) + 60000,
                   projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
                   children: [],
@@ -292,6 +311,7 @@ export class CropPlanService {
                   id: costCode.id,
                   name: costCode.name,
                   originalEstimate: 0,
+                  originalEstimatePerAcre: 0,
                   currentEstimate: 0,
                   projectedEstimate: 0,
                   children: costTypeNodes,
@@ -308,6 +328,7 @@ export class CropPlanService {
               id: division.id,
               name: division.name,
               originalEstimate: 0,
+              originalEstimatePerAcre: 0,
               currentEstimate: 0,
               projectedEstimate: 0,
               children: costCodeNodes,
@@ -324,6 +345,7 @@ export class CropPlanService {
           id: ranch.id,
           name: ranch.name,
           originalEstimate: 0,
+          originalEstimatePerAcre: 0,
           currentEstimate: 0,
           projectedEstimate: 0,
           children: divisionNodes,
@@ -345,7 +367,10 @@ export class CropPlanService {
     }
   }
 
-  async updateCropPlanLinesByRanch(cropPlanId: number, lines: CropPlanLine[]): Promise<CropPlanApiResponse | undefined> {
+  async updateCropPlanLinesByRanch(
+    cropPlanId: number,
+    lines: CropPlanLine[]
+  ): Promise<CropPlanApiResponse | undefined> {
     if (!cropPlanId) {
       return {
         status: 400,
@@ -355,7 +380,7 @@ export class CropPlanService {
     }
 
     console.log('Starting ranch update with 5 second delay...')
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise((resolve) => setTimeout(resolve, 5000))
     console.log('Delay completed, updating ranch data...')
 
     this.mockDataStore[cropPlanId] = lines
