@@ -1,4 +1,4 @@
-import { BudgetState } from '../../types'
+import { BudgetNode, BudgetState } from '../../types'
 
 export function updateParents(state: BudgetState, parentRowId?: string): BudgetState {
   if (!parentRowId) return state
@@ -9,21 +9,39 @@ export function updateParents(state: BudgetState, parentRowId?: string): BudgetS
   const children =
     node.children?.map((child) => state.nodes.get(child.rowId)).filter((child) => child !== undefined) ?? []
 
-  const { originalEstimate, currentEstimate, projectedEstimate, committedCost, actualCost } = children.reduce(
-    (acc, child) => ({
-      originalEstimate: acc.originalEstimate + child.originalEstimate,
-      currentEstimate: acc.currentEstimate + child.currentEstimate,
-      projectedEstimate: acc.projectedEstimate + child.projectedEstimate,
-      committedCost: acc.committedCost + child.committedCost,
-      actualCost: acc.actualCost + child.actualCost,
-    }),
-    { originalEstimate: 0, currentEstimate: 0, projectedEstimate: 0, committedCost: 0, actualCost: 0 }
-  )
+  const { originalEstimate, originalEstimatePerAcre, currentEstimate, projectedEstimate, committedCost, actualCost } =
+    children.reduce(
+      (acc, child) => ({
+        originalEstimate: acc.originalEstimate + child.originalEstimate,
+        originalEstimatePerAcre: acc.originalEstimatePerAcre + child.originalEstimatePerAcre,
+        currentEstimate: acc.currentEstimate + child.currentEstimate,
+        projectedEstimate: acc.projectedEstimate + child.projectedEstimate,
+        committedCost: acc.committedCost + child.committedCost,
+        actualCost: acc.actualCost + child.actualCost,
+      }),
+      {
+        originalEstimate: 0,
+        originalEstimatePerAcre: 0,
+        currentEstimate: 0,
+        projectedEstimate: 0,
+        committedCost: 0,
+        actualCost: 0,
+      } as Pick<
+        BudgetNode,
+        | 'originalEstimate'
+        | 'originalEstimatePerAcre'
+        | 'currentEstimate'
+        | 'projectedEstimate'
+        | 'committedCost'
+        | 'actualCost'
+      >
+    )
 
   // Update the current node's values based on its children
-  const updatedNode = {
+  const updatedNode: BudgetNode = {
     ...node,
     originalEstimate,
+    originalEstimatePerAcre,
     currentEstimate,
     projectedEstimate,
     committedCost,
