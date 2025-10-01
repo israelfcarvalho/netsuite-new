@@ -1,5 +1,7 @@
 'use client'
 
+import { useSearchParams } from '@workspace/ui/lib/navigation'
+
 import { RanchBlockApiResponse, RanchBlockQueryParams } from './types'
 import { environments } from '../../environments'
 
@@ -14,13 +16,23 @@ const {
 const GET_RANCH_BLOCKS_ACTION = 'by-hierarchy'
 
 export function useGetRanchBlocks(parentId?: string) {
+  const queryParams = useSearchParams('string')
+
+  const subsidiaryId = queryParams.get('subsidiaryId')
+
+  const requestQueryParams: RanchBlockQueryParams = {
+    script,
+    deploy,
+    parentId,
+    action: GET_RANCH_BLOCKS_ACTION,
+  }
+
+  if (typeof subsidiaryId === 'string') {
+    requestQueryParams['subsidiaryId'] = subsidiaryId
+  }
+
   const { data, error, isLoading, refetch } = useListReportApiGet<RanchBlockApiResponse, RanchBlockQueryParams>(route, {
-    queryParams: {
-      script,
-      deploy,
-      parentId,
-      action: GET_RANCH_BLOCKS_ACTION,
-    },
+    queryParams: requestQueryParams,
   })
 
   return {

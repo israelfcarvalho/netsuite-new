@@ -22,4 +22,5 @@ export interface RanchBlockQueryParams extends QueryParams {
   script: string
   deploy: string
   parentId?: string
+  subsidiaryId?: string
 }
