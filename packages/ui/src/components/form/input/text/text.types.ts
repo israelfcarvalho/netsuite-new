@@ -13,13 +13,15 @@ export interface FormInputTextBaseProps {
 
 export interface FormInputTextNormalProps extends FormInputTextBaseProps {
   variant: 'normal'
-  value: string
+  value?: string
+  initialValue?: string
   onChange: (value: string) => void
 }
 
 export interface FormInputTextCurrencyProps extends FormInputTextBaseProps {
   variant: 'currency'
-  value: number
+  value?: number
+  initialValue?: number
   onChange: (value: number) => void
   options?: FormatNumberOptions
 }

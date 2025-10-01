@@ -1,4 +1,4 @@
-import { KeyboardEvent, useState } from 'react'
+import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { Input } from '../input'
 import { FormInputTextProps, FormInputTextStateManager } from './text.types'
@@ -6,8 +6,8 @@ import { getInputHandlers } from './text.utils'
 
 export function FormInputText(props: FormInputTextProps) {
   const _props = { ...props }
-  const { onChange: onChangeOriginal, value: valueOriginal } = props
-  const [valueLocal, setValueLocal] = useState(valueOriginal)
+  const { onChange: onChangeOriginal, value: incomingValue, initialValue } = props
+  const [valueLocal, setValueLocal] = useState(incomingValue || initialValue)
   const [state, setState] = useState<FormInputTextStateManager['state']>({
     currentSelectionRange: {
       start: 0,
@@ -15,6 +15,10 @@ export function FormInputText(props: FormInputTextProps) {
     },
     prevCursorPosition: 0,
   })
+
+  useEffect(() => {
+    setValueLocal(incomingValue)
+  }, [incomingValue])
 
   const onChangeLocal = (value: string) => {
     setValueLocal(value)
