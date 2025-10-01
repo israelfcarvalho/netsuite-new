@@ -140,9 +140,11 @@ function BudgetTableComponent({
 export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
   const { data, hasBlockLevel, onUpdate, onDelete, error } = props
 
+  const searchParamsNumber = useSearchParams('number')
   const searchParamsString = useSearchParams('string')
   const searchParamsBoolean = useSearchParams('boolean')
 
+  const totalAcresOfCrop = searchParamsNumber.get('totalAcresOfCrop')
   const blockEC = searchParamsString.getAll('blockEC')
   const blockRR = !!searchParamsBoolean.get('blockRR')
 
@@ -218,6 +220,10 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
                   value={value}
                   onChange={(value) => {
                     onUpdate(row.original.rowId, { originalEstimatePerAcre: value })
+
+                    if (totalAcresOfCrop) {
+                      onUpdate(row.original.rowId, { originalEstimate: value * totalAcresOfCrop })
+                    }
                   }}
                   changeOnBlur
                 />
@@ -251,6 +257,10 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
                   value={value}
                   onChange={(value) => {
                     onUpdate(row.original.rowId, { originalEstimate: value })
+
+                    if (totalAcresOfCrop) {
+                      onUpdate(row.original.rowId, { originalEstimatePerAcre: value / totalAcresOfCrop })
+                    }
                   }}
                   changeOnBlur
                 />
@@ -463,7 +473,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
     }
 
     return columns
-  }, [blockRR, blockEC, onUpdate, onDelete, hasBlockLevel])
+  }, [blockRR, blockEC, onUpdate, onDelete, hasBlockLevel, totalAcresOfCrop])
 
   return (
     <ExpandableTable.Root data={data ?? []} columns={columns as unknown as TableColumn<BudgetNode>[]} error={error}>
