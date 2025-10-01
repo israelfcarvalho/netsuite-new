@@ -1,16 +1,22 @@
 import { QueryParams } from '@workspace/core/api/_common/types'
 
-export interface CropPlanLineItem {
+import { BudgetNode } from '@/lib/components/budget-table/use-budget-table/types'
+
+export interface CropPlanLineItem
+  extends Pick<
+    BudgetNode,
+    | 'originalEstimate'
+    | 'originalEstimatePerAcre'
+    | 'currentEstimate'
+    | 'projectedEstimate'
+    | 'committedCost'
+    | 'actualCost'
+    | 'notAllocatedCost'
+  > {
   id: string // Assuming ID is always a string, adjust if it can be a number
   name: string
   unitCost: number
-  originalEstimate: number
-  currentEstimate: number
-  projectedEstimate: number
   children?: CropPlanLineItem[] // Optional children for hierarchy
-  committedCost: number
-  actualCost: number
-  notAllocatedCost?: number
 }
 
 export interface CropPlanApiResponse {

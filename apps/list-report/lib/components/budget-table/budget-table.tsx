@@ -198,6 +198,37 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
         { isFixed: true }
       ),
       createColumn<BudgetNode>(
+        'originalEstimatePerAcre',
+        () => (
+          <span className="text-right w-full inline-block text-brand-100/70 font-semibold">Original Plan Per Acre</span>
+        ),
+        ({ row }) => {
+          const value = (row.original as unknown as BudgetNode).originalEstimatePerAcre
+          const hasChildren = row.original.children?.length
+          const isBlockEC = blockEC.includes('originalEstimatePerAcre')
+
+          const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
+
+          if (canEdit) {
+            return (
+              <div className="relative">
+                <FormInputText
+                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                  variant="currency"
+                  value={value}
+                  onChange={(value) => {
+                    onUpdate(row.original.rowId, { originalEstimatePerAcre: value })
+                  }}
+                  changeOnBlur
+                />
+              </div>
+            )
+          }
+          return <span className="text-right">{formatCurrency(value)}</span>
+        },
+        { isFixed: true }
+      ),
+      createColumn<BudgetNode>(
         'originalEstimate',
         () => (
           <span className="text-right w-full inline-block text-brand-100/70 font-semibold">

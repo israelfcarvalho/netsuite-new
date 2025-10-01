@@ -12,16 +12,16 @@ export type UpdateNodeAction = {
   payload: { rowId: string; updates: Partial<BudgetNode> }
 }
 
+interface AddNodePayload
+  extends Pick<BudgetNode, 'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'projectedEstimate'> {
+  division: Division
+  costCode: CostCode
+  costType: CostType
+}
+
 export type AddNodeAction = {
   type: 'ADD_NODE'
-  payload: {
-    division: Division
-    costCode: CostCode
-    costType: CostType
-    originalEstimate: number
-    currentEstimate: number
-    projectedEstimate: number
-  }
+  payload: AddNodePayload
 }
 
 export type DeleteNodeAction = {

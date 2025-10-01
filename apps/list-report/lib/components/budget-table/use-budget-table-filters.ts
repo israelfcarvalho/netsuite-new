@@ -117,6 +117,7 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
       rowId: 'grand-total',
       name: 'Grand Total',
       originalEstimate: 0,
+      originalEstimatePerAcre: 0,
       currentEstimate: 0,
       projectedEstimate: 0,
       committedCost: 0,

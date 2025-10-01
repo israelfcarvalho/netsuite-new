@@ -14,15 +14,15 @@ import { BudgetNode, BudgetState } from './use-budget-table/types'
 import { useGetCostCodes } from '../../api/cost-code/useGetCostCodes'
 import { useGetCostTypes } from '../../api/cost-type/useGetCostTypes'
 
+interface AddNodePayload
+  extends Pick<BudgetNode, 'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'projectedEstimate'> {
+  division: Division
+  costCode: CostCode
+  costType: CostType
+}
+
 interface BudgetTableAddModalProps {
-  onAddNew: (data: {
-    division: Division
-    costCode: CostCode
-    costType: CostType
-    originalEstimate: number
-    currentEstimate: number
-    projectedEstimate: number
-  }) => void
+  onAddNew: (data: AddNodePayload) => void
   onClose: () => void
   state: BudgetState
 }
@@ -35,13 +35,18 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>('')
   const [selectedCostCodeId, setSelectedCostCodeId] = useState<string>('')
   const [selectedCostTypeId, setSelectedCostTypeId] = useState<string>('')
+
   const [originalEstimate, setOriginalEstimate] = useState(0)
+  const [originalEstimatePerAcre, setOriginalEstimatePerAcre] = useState(0)
   const [currentEstimate, setCurrentEstimate] = useState(0)
   const [projectedEstimate, setProjectedEstimate] = useState(0)
 
   const searchParamsString = useSearchParams('string')
   const blockEC = searchParamsString.getAll('blockEC')
   const blockCurrentEstimate = blockEC.includes('currentEstimate')
+  const blockOriginalEstimate = blockEC.includes('originalEstimate')
+  const blockOriginalEstimatePerAcre = blockEC.includes('originalEstimatePerAcre')
+  const blockProjectedEstimate = blockEC.includes('projectedEstimate')
 
   const { data: divisions } = useGetDivisions()
   const { data: costCodes } = useGetCostCodes({ divisionId: selectedDivisionId })
@@ -60,6 +65,7 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
         costCode,
         costType,
         originalEstimate: Number(originalEstimate),
+        originalEstimatePerAcre: Number(originalEstimatePerAcre),
         currentEstimate: Number(currentEstimate),
         projectedEstimate: Number(projectedEstimate),
       })
@@ -165,6 +171,20 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="originalEstimatePerAcre">Original Plan Per Acre</Label>
+            <FormInputText
+              className="w-full text-right"
+              id="originalEstimatePerAcre"
+              variant="currency"
+              value={originalEstimatePerAcre}
+              onChange={(value) => setOriginalEstimatePerAcre(value)}
+              placeholder="Enter Original Plan Total Acres"
+              required
+              disabled={disabled || blockOriginalEstimatePerAcre}
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="originalEstimate">Original Plan Total Acres</Label>
             <FormInputText
               className="w-full text-right"
@@ -174,7 +194,7 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
               onChange={(value) => setOriginalEstimate(value)}
               placeholder="Enter Original Plan Total Acres"
               required
-              disabled={disabled}
+              disabled={disabled || blockOriginalEstimate}
             />
           </div>
 
@@ -202,7 +222,7 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
               onChange={(value) => setProjectedEstimate(value)}
               placeholder="Enter projected plan"
               required
-              disabled={disabled}
+              disabled={disabled || blockProjectedEstimate}
             />
           </div>
 

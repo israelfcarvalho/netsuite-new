@@ -10,6 +10,7 @@ export function createNode(item: CropPlanLineItem, parentRowId: string = ''): Bu
     rowId,
     name: item.name,
     originalEstimate: item.originalEstimate,
+    originalEstimatePerAcre: item.originalEstimatePerAcre,
     currentEstimate: item.currentEstimate,
     projectedEstimate: item.projectedEstimate,
     committedCost: item.committedCost,
