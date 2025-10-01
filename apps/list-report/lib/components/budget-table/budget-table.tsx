@@ -205,11 +205,12 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
           <span className="text-right w-full inline-block text-brand-100/70 font-semibold">Original Plan Per Acre</span>
         ),
         ({ row }) => {
-          const value = (row.original as unknown as BudgetNode).originalEstimatePerAcre
-          const hasChildren = row.original.children?.length
+          const originalRow = row.original as unknown as BudgetNode
+          const value = originalRow.originalEstimatePerAcre
+          const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('originalEstimatePerAcre')
 
-          const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
+          const canEdit = !hasChildren && originalRow.id !== GRAND_TOTAL_ID && !isBlockEC
 
           if (canEdit) {
             return (
@@ -219,13 +220,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    onUpdate(row.original.rowId, { originalEstimatePerAcre: value })
+                    onUpdate(originalRow.rowId, { originalEstimatePerAcre: value })
 
                     if (totalAcresOfCrop) {
-                      onUpdate(row.original.rowId, { originalEstimate: value * totalAcresOfCrop })
+                      onUpdate(originalRow.rowId, { originalEstimate: value * totalAcresOfCrop })
                     }
                   }}
-                  changeOnBlur
+                  changeOnBlur={
+                    !totalAcresOfCrop ||
+                    originalRow.originalEstimate * totalAcresOfCrop !== originalRow.originalEstimatePerAcre
+                  }
                 />
               </div>
             )
@@ -242,11 +246,12 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
           </span>
         ),
         ({ row }) => {
-          const value = (row.original as unknown as BudgetNode).originalEstimate
-          const hasChildren = row.original.children?.length
+          const originalRow = row.original as unknown as BudgetNode
+          const value = originalRow.originalEstimate
+          const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('originalEstimate')
 
-          const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
+          const canEdit = !hasChildren && originalRow.id !== GRAND_TOTAL_ID && !isBlockEC
 
           if (canEdit) {
             return (
@@ -256,13 +261,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    onUpdate(row.original.rowId, { originalEstimate: value })
+                    onUpdate(originalRow.rowId, { originalEstimate: value })
 
                     if (totalAcresOfCrop) {
-                      onUpdate(row.original.rowId, { originalEstimatePerAcre: value / totalAcresOfCrop })
+                      onUpdate(originalRow.rowId, { originalEstimatePerAcre: value / totalAcresOfCrop })
                     }
                   }}
-                  changeOnBlur
+                  changeOnBlur={
+                    !totalAcresOfCrop ||
+                    originalRow.originalEstimate * totalAcresOfCrop !== originalRow.originalEstimatePerAcre
+                  }
                 />
               </div>
             )
