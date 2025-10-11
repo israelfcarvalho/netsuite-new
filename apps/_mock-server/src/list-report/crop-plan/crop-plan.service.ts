@@ -110,10 +110,6 @@ export class CropPlanService {
               children: costTypeNodes,
               committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
               actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
-              notAllocatedCost: costTypeNodes.reduce(
-                (sum: number, node: CropPlanLine) => sum + (node.notAllocatedCost ?? 0),
-                0
-              ),
             }
 
             return costCodeNode
@@ -131,10 +127,6 @@ export class CropPlanService {
           children: costCodeNodes,
           committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
           actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
-          notAllocatedCost: costCodeNodes.reduce(
-            (sum: number, node: CropPlanLine) => sum + (node.notAllocatedCost ?? 0),
-            0
-          ),
         }
 
         return divisionNode

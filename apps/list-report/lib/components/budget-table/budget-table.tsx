@@ -138,7 +138,7 @@ function BudgetTableComponent({
 }
 
 export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
-  const { data, hasBlockLevel, onUpdate, onDelete, error } = props
+  const { data, onUpdate, onDelete, error } = props
 
   const searchParamsNumber = useSearchParams('number')
   const searchParamsString = useSearchParams('string')
@@ -202,7 +202,9 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
       createColumn<BudgetNode>(
         'originalEstimatePerAcre',
         () => (
-          <span className="text-right w-full inline-block text-brand-100/70 font-semibold">Original Plan Per Acre</span>
+          <span className="inline-flex flex-col items-center w-full text-brand-100/70 font-semibold">
+            <span>Original Plan</span> <span>Per Acre</span>
+          </span>
         ),
         ({ row }) => {
           const originalRow = row.original as unknown as BudgetNode
@@ -241,8 +243,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
       createColumn<BudgetNode>(
         'originalEstimate',
         () => (
-          <span className="text-right w-full inline-block text-brand-100/70 font-semibold">
-            Original Plan Total Acres
+          <span className="inline-flex flex-col items-center w-full text-brand-100/70 font-semibold">
+            <span>Original Plan</span> <span>Total Acres</span>
           </span>
         ),
         ({ row }) => {
@@ -447,41 +449,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
       ),
     ]
 
-    if (!hasBlockLevel) {
-      columns.splice(
-        5,
-        0,
-        createColumn<BudgetNode>(
-          'notAllocatedCost',
-          () => (
-            <span className="text-right w-full inline-block text-warning-100/70 font-semibold">Not Allocated Cost</span>
-          ),
-          ({ row }) => {
-            const value = (row.original as unknown as BudgetNode).notAllocatedCost ?? 0
-            const canEdit = false
-            if (canEdit) {
-              return (
-                <div className="relative">
-                  <FormInputText
-                    className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                    variant="currency"
-                    value={value}
-                    onChange={(value) => {
-                      onUpdate(row.original.rowId, { notAllocatedCost: value })
-                    }}
-                    changeOnBlur
-                  />
-                </div>
-              )
-            }
-            return <span className="text-right">{formatCurrency(value)}</span>
-          }
-        )
-      )
-    }
-
     return columns
-  }, [blockRR, blockEC, onUpdate, onDelete, hasBlockLevel, totalAcresOfCrop])
+  }, [blockRR, blockEC, onUpdate, onDelete, totalAcresOfCrop])
 
   return (
     <ExpandableTable.Root data={data ?? []} columns={columns as unknown as TableColumn<BudgetNode>[]} error={error}>

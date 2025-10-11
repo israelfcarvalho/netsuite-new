@@ -23,7 +23,6 @@ const createNode = (
     parentRowId,
     committedCost: 0,
     actualCost: 0,
-    notAllocatedCost: 0,
   }
 }
 

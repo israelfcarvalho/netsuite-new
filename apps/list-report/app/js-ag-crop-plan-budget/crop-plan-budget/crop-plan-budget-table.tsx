@@ -18,6 +18,10 @@ interface AddNodePayload
   costType: CostType
 }
 
+const ENABLE_ADD_NEW = false
+
+const ENABLE_DELETE = false
+
 export const CropPlanBudgetTable = () => {
   const { toast } = useToast()
   const searchParams = useSearchParams()
@@ -84,9 +88,9 @@ export const CropPlanBudgetTable = () => {
       isLoading={isLoading}
       isSaving={isPending}
       error={error}
-      onAddNew={handleAddNew}
+      onAddNew={ENABLE_ADD_NEW ? handleAddNew : undefined}
       onUpdate={updateNode}
-      onDelete={deleteNode}
+      onDelete={ENABLE_DELETE ? deleteNode : undefined}
       onSave={handleSave}
       state={state}
       levels={levels}

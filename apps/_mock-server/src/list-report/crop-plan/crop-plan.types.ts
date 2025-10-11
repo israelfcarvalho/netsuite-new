@@ -7,7 +7,6 @@ export interface CropPlanLine {
   projectedEstimate: number
   committedCost: number
   actualCost: number
-  notAllocatedCost?: number
   children?: CropPlanLine[]
 }
 
