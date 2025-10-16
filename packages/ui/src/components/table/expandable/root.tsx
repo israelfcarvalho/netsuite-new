@@ -25,18 +25,15 @@ export function Root<T extends TData>({
         return !!rows.length
       }
 
-      let levelExists = true
-
-      rows.forEach((row) => {
+      const levelExists = rows.map((row) => {
         if (row) {
           expandedRows.add(row.rowId)
-          levelExists =
-            levelExists &&
-            expandLevelRows((row.children as unknown as T[]) ?? [], expandedRows, currentLevel + 1, endLevel)
+          return expandLevelRows((row.children as unknown as T[]) ?? [], expandedRows, currentLevel + 1, endLevel)
         }
+        return false
       })
 
-      return levelExists
+      return levelExists.some((exists) => exists)
     },
     []
   )
@@ -49,6 +46,8 @@ export function Root<T extends TData>({
         setLevelToExpand(nextLevel)
         const expandedRows = new Set<string>()
         const levelExists = expandLevelRows(data as T[], expandedRows, 0, nextLevel)
+
+        console.log('levelExists', levelExists)
 
         if (levelExists) {
           setExpandedRows(expandedRows)
