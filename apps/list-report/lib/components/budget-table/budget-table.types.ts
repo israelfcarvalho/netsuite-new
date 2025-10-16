@@ -32,4 +32,14 @@ export interface BudgetTableProps {
   hasBlockLevel?: boolean
   setBlockFilter?: Dispatch<SetStateAction<BlockFilter | undefined>>
   onRefresh: () => void
+  filteredData: {
+    data: BudgetNode[]
+    divisionId: string
+    costCodeId: string
+    costTypeId: string
+    setDivisionId: React.Dispatch<React.SetStateAction<string>>
+    setCostCodeId: React.Dispatch<React.SetStateAction<string>>
+    setCostTypeId: React.Dispatch<React.SetStateAction<string>>
+    resetFilters: () => void
+  }
 }

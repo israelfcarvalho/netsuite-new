@@ -34,6 +34,7 @@ function BudgetTableComponent({
   hasBlockLevel = false,
   setBlockFilter,
   onRefresh,
+  filteredData,
 }: BudgetTableProps) {
   const { columns } = useTableContext<BudgetNode>()
 
@@ -42,18 +43,7 @@ function BudgetTableComponent({
 
   const blockNL = !!searchParamsBoolean.get('blockNL')
 
-  const {
-    divisionId,
-    costCodeId,
-    costTypeId,
-    setDivisionId,
-    setCostCodeId,
-    setCostTypeId,
-    resetFilters,
-    filteredData,
-  } = useBudgetTableFilters(data, hasBlockLevel)
-
-  const onlyGrandTotal = filteredData?.length === 1 && filteredData[0]?.id === GRAND_TOTAL_ID
+  const onlyGrandTotal = filteredData?.data?.length === 1 && filteredData?.data[0]?.id === GRAND_TOTAL_ID
 
   return (
     <div className="size-full flex flex-col gap-4 overflow-visible relative">
@@ -89,13 +79,13 @@ function BudgetTableComponent({
           </div>
           {hasBlockLevel && <BudgetTableBlockFilters onChange={setBlockFilter} />}
           <BudgetTableFilters
-            divisionId={divisionId}
-            costCodeId={costCodeId}
-            costTypeId={costTypeId}
-            setDivisionId={setDivisionId}
-            setCostCodeId={setCostCodeId}
-            setCostTypeId={setCostTypeId}
-            resetFilters={resetFilters}
+            divisionId={filteredData.divisionId}
+            costCodeId={filteredData.costCodeId}
+            costTypeId={filteredData.costTypeId}
+            setDivisionId={filteredData.setDivisionId}
+            setCostCodeId={filteredData.setCostCodeId}
+            setCostTypeId={filteredData.setCostTypeId}
+            resetFilters={filteredData.resetFilters}
             hasBlockLevel={hasBlockLevel}
           />
         </div>
@@ -137,8 +127,10 @@ function BudgetTableComponent({
   )
 }
 
-export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
-  const { data, onUpdate, onDelete, error } = props
+export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredData'>) => {
+  const { data, onUpdate, onDelete, error, hasBlockLevel } = props
+
+  const { filteredData, ...filteredDataProps } = useBudgetTableFilters(data, hasBlockLevel)
 
   const searchParamsNumber = useSearchParams('number')
   const searchParamsString = useSearchParams('string')
@@ -453,8 +445,12 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns'>) => {
   }, [blockRR, blockEC, onUpdate, onDelete, totalAcresOfCrop])
 
   return (
-    <ExpandableTable.Root data={data ?? []} columns={columns as unknown as TableColumn<BudgetNode>[]} error={error}>
-      <BudgetTableComponent {...props} />
+    <ExpandableTable.Root
+      data={filteredData ?? []}
+      columns={columns as unknown as TableColumn<BudgetNode>[]}
+      error={error}
+    >
+      <BudgetTableComponent {...props} filteredData={{ ...filteredDataProps, data: filteredData ?? [] }} />
     </ExpandableTable.Root>
   )
 }

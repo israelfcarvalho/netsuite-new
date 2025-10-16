@@ -12,6 +12,7 @@ function sumBudgetNodeValues(node: BudgetNode, children: BudgetNode[]): BudgetNo
     projectedEstimate: children.reduce((acc, child) => acc + child.projectedEstimate, 0),
     committedCost: children.reduce((acc, child) => acc + child.committedCost, 0),
     actualCost: children.reduce((acc, child) => acc + child.actualCost, 0),
+    originalEstimatePerAcre: children.reduce((acc, child) => acc + child.originalEstimatePerAcre, 0),
     children: node.children ? [...children] : undefined,
   }
 }
