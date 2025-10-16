@@ -139,6 +139,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
   const totalAcresOfCrop = searchParamsNumber.get('totalAcresOfCrop')
   const blockEC = searchParamsString.getAll('blockEC')
   const blockRR = !!searchParamsBoolean.get('blockRR')
+  const hideColumn = searchParamsString.getAll('hideColumn')
 
   const columns = useMemo(() => {
     const columns = [
@@ -194,7 +195,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'originalEstimatePerAcre',
         () => (
-          <span className="inline-flex flex-col items-center w-full text-brand-100/70 font-semibold">
+          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
             <span>Original Plan</span> <span>Per Acre</span>
           </span>
         ),
@@ -235,7 +236,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'originalEstimate',
         () => (
-          <span className="inline-flex flex-col items-center w-full text-brand-100/70 font-semibold">
+          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
             <span>Original Plan</span> <span>Total Acres</span>
           </span>
         ),
@@ -441,8 +442,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       ),
     ]
 
-    return columns
-  }, [blockRR, blockEC, onUpdate, onDelete, totalAcresOfCrop])
+    return columns.filter((column) => !hideColumn.includes(column.accessorKey))
+  }, [blockRR, blockEC, onUpdate, onDelete, totalAcresOfCrop, hideColumn])
 
   return (
     <ExpandableTable.Root
