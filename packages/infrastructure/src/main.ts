@@ -3,6 +3,7 @@ import fs from "fs";
 import zipper from "zip-local";
 
 const nextPublicPath = "/_next/";
+const nextImagesAssetsPath = "/assets/images/";
 const fileExtensions: (string | undefined)[] = ["js", "css", "html", "txt"];
 
 const replaceEnvVariables = (content: string, envVars: Record<string, string>): string => {
@@ -29,6 +30,7 @@ export const main = async () => {
   const publicPath = envVars["NEXT_PUBLIC_BASE_PATH"];
   const zipBundle = envVars["NETSUITE_ZIP_BUNDLE"];
   const netsuitePublicPath = `${publicPath}&resource=/_next/`;
+  const netsuiteImagesAssetsPath = `${publicPath}&resource=/assets/images/`;
 
   filePaths.forEach((path) => {
     if (path.isFile()) {
@@ -41,6 +43,7 @@ export const main = async () => {
 
         // First replace the _next path
         content = content.replaceAll(nextPublicPath, netsuitePublicPath);
+        content = content.replaceAll(nextImagesAssetsPath, netsuiteImagesAssetsPath);
         
         // Then replace any environment variables
         content = replaceEnvVariables(content, envVars);
