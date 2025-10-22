@@ -13,13 +13,11 @@ export class CostCodeService {
         id: '1',
         name: 'Cost Code 1',
         cost_code: 'CC001',
-        costTypes: ['1', '2'],
       },
       {
         id: '2',
         name: 'Cost Code 2',
         cost_code: 'CC002',
-        costTypes: ['3', '4'],
       },
     ],
     '2': [
@@ -27,13 +25,11 @@ export class CostCodeService {
         id: '3',
         name: 'Cost Code 3',
         cost_code: 'CC003',
-        costTypes: ['5', '6'],
       },
       {
         id: '4',
         name: 'Cost Code 4',
         cost_code: 'CC004',
-        costTypes: ['7', '8'],
       },
     ],
     '3': [
@@ -41,13 +37,11 @@ export class CostCodeService {
         id: '5',
         name: 'Cost Code 5',
         cost_code: 'CC005',
-        costTypes: ['9', '10'],
       },
       {
         id: '6',
         name: 'Cost Code 6',
         cost_code: 'CC006',
-        costTypes: ['11', '12'],
       },
     ],
     '4': [
@@ -55,13 +49,11 @@ export class CostCodeService {
         id: '7',
         name: 'Cost Code 7',
         cost_code: 'CC007',
-        costTypes: ['13', '14'],
       },
       {
         id: '8',
         name: 'Cost Code 8',
         cost_code: 'CC008',
-        costTypes: ['15', '16'],
       },
     ],
   }

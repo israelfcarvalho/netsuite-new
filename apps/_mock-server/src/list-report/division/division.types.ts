@@ -1,16 +1,2 @@
-export interface Division {
-  id: string
-  name: string
-  costCodes?: string[]
-}
-
-export interface DivisionApiResponse {
-  status: number
-  message: string
-  data: Division[]
-}
-
-export interface DivisionQueryParams {
-  script: string
-  deploy: string
-}
+// Re-export types from the main list-report app
+export type { Division, DivisionApiResponse, DivisionQueryParams } from '../../../../list-report/lib/api/division/types'

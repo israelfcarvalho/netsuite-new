@@ -48,7 +48,7 @@ export class CropPlanService {
 
     // Build the crop plan hierarchy
     const cropPlanLines: CropPlanLine[] = await Promise.all(
-      divisions.slice(0, 1).map(async (division: Division) => {
+      divisions.slice(0, 1).map<Promise<CropPlanLine>>(async (division: Division) => {
         // Get cost codes for this division
         const { data: costCodes } = await this.costCodeService.getCostCodes(division.id)
         if (!costCodes.length) {
@@ -62,7 +62,7 @@ export class CropPlanService {
             children: [],
             committedCost: 0,
             actualCost: 0,
-            notAllocatedCost: 0,
+            unitCost: 0,
           }
         }
 
@@ -81,7 +81,7 @@ export class CropPlanService {
                 children: [],
                 committedCost: 0,
                 actualCost: 0,
-                notAllocatedCost: 0,
+                unitCost: 0,
               }
             }
 
@@ -96,7 +96,7 @@ export class CropPlanService {
               children: [],
               committedCost: Math.floor(Math.random() * 80000) + 40000,
               actualCost: Math.floor(Math.random() * 70000) + 35000,
-              notAllocatedCost: Math.floor(Math.random() * 20000) + 10000,
+              unitCost: Math.floor(Math.random() * 100) + 50,
             }))
 
             // Calculate cost code values from its cost types
@@ -110,6 +110,7 @@ export class CropPlanService {
               children: costTypeNodes,
               committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
               actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+              unitCost: 0,
             }
 
             return costCodeNode
@@ -127,6 +128,7 @@ export class CropPlanService {
           children: costCodeNodes,
           committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
           actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+          unitCost: 0,
         }
 
         return divisionNode
@@ -250,7 +252,7 @@ export class CropPlanService {
       ranchNodes.map(async (ranch) => {
         // For each ranch, build the division hierarchy
         const divisionNodes = await Promise.all(
-          divisions.slice(0, 1).map(async (division: Division) => {
+          divisions.slice(0, 1).map<Promise<CropPlanLine>>(async (division: Division) => {
             // Get cost codes for this division
             const { data: costCodes } = await this.costCodeService.getCostCodes(division.id)
             if (!costCodes.length) {
@@ -264,12 +266,13 @@ export class CropPlanService {
                 children: [],
                 committedCost: 0,
                 actualCost: 0,
+                unitCost: 0,
               }
             }
 
             // Get cost types for each cost code
             const costCodeNodes = await Promise.all(
-              costCodes.slice(0, 1).map(async (costCode: CostCode) => {
+              costCodes.slice(0, 1).map<Promise<CropPlanLine>>(async (costCode: CostCode) => {
                 const { data: costTypes } = await this.costTypeService.getCostTypes(costCode.id)
                 if (!costTypes.length) {
                   return {
@@ -282,11 +285,12 @@ export class CropPlanService {
                     children: [],
                     committedCost: 0,
                     actualCost: 0,
+                    unitCost: 0,
                   }
                 }
 
                 // Create cost type nodes
-                const costTypeNodes = costTypes.map((costType: CostType) => ({
+                const costTypeNodes = costTypes.map<CropPlanLine>((costType: CostType) => ({
                   id: costType.id,
                   name: costType.name,
                   originalEstimate: Math.floor(Math.random() * 100000) + 50000,
@@ -296,6 +300,7 @@ export class CropPlanService {
                   children: [],
                   committedCost: Math.floor(Math.random() * 80000) + 40000,
                   actualCost: Math.floor(Math.random() * 70000) + 35000,
+                  unitCost: 0,
                 }))
 
                 // Calculate cost code values from its cost types
@@ -309,6 +314,7 @@ export class CropPlanService {
                   children: costTypeNodes,
                   committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
                   actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+                  unitCost: 0,
                 }
 
                 return costCodeNode
@@ -326,6 +332,7 @@ export class CropPlanService {
               children: costCodeNodes,
               committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
               actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+              unitCost: 0,
             }
 
             return divisionNode
@@ -343,6 +350,7 @@ export class CropPlanService {
           children: divisionNodes,
           committedCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
           actualCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+          unitCost: 0,
         }
 
         return ranchNode
