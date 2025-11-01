@@ -60,11 +60,11 @@ export class CropPlanController {
     }
 
     if (action === 'update-lines') {
-      return await this.cropPlanService.updateCropPlanLines(cropPlanId, lines) as any
+      return (await this.cropPlanService.updateCropPlanLines(cropPlanId, lines)) as CropPlanApiResponse
     }
 
     if (action === 'update-lines-by-ranch') {
-      return await this.cropPlanService.updateCropPlanLinesByRanch(cropPlanId, lines) as any
+      return (await this.cropPlanService.updateCropPlanLinesByRanch(cropPlanId, lines)) as CropPlanApiResponse
     }
 
     return {

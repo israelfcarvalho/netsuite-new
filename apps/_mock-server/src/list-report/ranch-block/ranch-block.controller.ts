@@ -25,4 +25,4 @@ export class RanchBlockController {
 
     return this.ranchBlockService.getRanchBlocks(parentId)
   }
-} 
+}

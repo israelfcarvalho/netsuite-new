@@ -1,7 +1,22 @@
-// Re-export types from the main list-report app
-export type {
-  CostType,
-  CostTypeApiResponse,
-  CostTypeQueryParams,
-  UseGetCostTypesProps,
-} from '../../../../list-report/lib/api/cost-type/types'
+// Copy exact interfaces from list-report app
+export interface CostType {
+  id: string
+  name: string
+  costCodeId?: string
+}
+
+export interface CostTypeApiResponse {
+  status: number
+  message: string
+  data: CostType[]
+}
+
+export interface CostTypeQueryParams {
+  script: string
+  deploy: string
+  costCodeId?: string
+}
+
+export interface UseGetCostTypesProps {
+  costCodeId?: string
+}

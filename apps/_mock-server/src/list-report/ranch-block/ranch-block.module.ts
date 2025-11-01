@@ -7,4 +7,4 @@ import { RanchBlockService } from './ranch-block.service'
   controllers: [RanchBlockController],
   providers: [RanchBlockService],
 })
-export class RanchBlockModule {} 
+export class RanchBlockModule {}
