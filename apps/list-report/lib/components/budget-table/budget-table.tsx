@@ -275,14 +275,19 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         { isFixed: true }
       ),
       createColumn<BudgetNode>(
-        'currentEstimate',
-        () => <span className="text-right w-full inline-block text-brand-100/70 font-semibold">Current Plan</span>,
+        'currentEstimatePerAcre',
+        () => (
+          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
+            <span>Current Plan</span> <span>Per Acre</span>
+          </span>
+        ),
         ({ row }) => {
-          const value = (row.original as unknown as BudgetNode).currentEstimate
-          const hasChildren = row.original.children?.length
-          const isBlockEC = blockEC.includes('currentEstimate')
+          const originalRow = row.original as unknown as BudgetNode
+          const value = originalRow.currentEstimatePerAcre
+          const hasChildren = originalRow.children?.length
+          const isBlockEC = blockEC.includes('currentEstimatePerAcre')
 
-          const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
+          const canEdit = !hasChildren && originalRow.id !== GRAND_TOTAL_ID && !isBlockEC
 
           if (canEdit) {
             return (
@@ -292,9 +297,53 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    onUpdate(row.original.rowId, {
+                    onUpdate(originalRow.rowId, {
+                      currentEstimatePerAcre: value,
+                    })
+
+                    if (totalAcresOfCrop) {
+                      onUpdate(originalRow.rowId, { currentEstimate: value * totalAcresOfCrop })
+                    }
+                  }}
+                  changeOnBlur
+                />
+              </div>
+            )
+          }
+          return <span className="text-right">{formatCurrency(value)}</span>
+        },
+        { isFixed: true }
+      ),
+      createColumn<BudgetNode>(
+        'currentEstimate',
+        () => (
+          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
+            <span>Current Plan</span> <span>Total Acres</span>
+          </span>
+        ),
+        ({ row }) => {
+          const originalRow = row.original as unknown as BudgetNode
+          const value = originalRow.currentEstimate
+          const hasChildren = originalRow.children?.length
+          const isBlockEC = blockEC.includes('currentEstimate')
+
+          const canEdit = !hasChildren && originalRow.id !== GRAND_TOTAL_ID && !isBlockEC
+
+          if (canEdit) {
+            return (
+              <div className="relative">
+                <FormInputText
+                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
+                  variant="currency"
+                  value={value}
+                  onChange={(value) => {
+                    onUpdate(originalRow.rowId, {
                       currentEstimate: value,
                     })
+
+                    if (totalAcresOfCrop) {
+                      onUpdate(originalRow.rowId, { currentEstimatePerAcre: value / totalAcresOfCrop })
+                    }
                   }}
                   changeOnBlur
                 />

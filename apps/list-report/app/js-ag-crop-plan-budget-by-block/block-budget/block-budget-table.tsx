@@ -7,6 +7,7 @@ import { useToast } from '@workspace/ui/components/toast'
 
 import { useBlockBudget } from './use-block-budget'
 
+import { UpdateCropPlanLinesByRanch } from '@/lib/api/crop-plan/types'
 import { useSaveCropPlanLinesByRanch } from '@/lib/api/crop-plan/use-crop-plan-lines-by-ranch'
 import { BudgetTable } from '@/lib/components/budget-table/budget-table'
 import { BlockFilter } from '@/lib/components/budget-table/budget-table-block-filters'
@@ -25,7 +26,7 @@ export const BlockBudgetTable = () => {
   const handleSave = () => {
     const lines = Array.from(state.nodes.values())
       .filter((item) => !item.children && item.id !== 'grand-total')
-      .map((item) => {
+      .map<UpdateCropPlanLinesByRanch>((item) => {
         const costType = item
         const costCode = state.nodes.get(costType.parentRowId ?? '')
         const division = state.nodes.get(costCode?.parentRowId ?? '')
@@ -39,6 +40,7 @@ export const BlockBudgetTable = () => {
           originalEstimate: item.originalEstimate,
           originalEstimatePerAcre: item.originalEstimatePerAcre,
           currentEstimate: item.currentEstimate,
+          currentEstimatePerAcre: item.currentEstimatePerAcre,
           projectedEstimate: item.projectedEstimate,
         }
       })

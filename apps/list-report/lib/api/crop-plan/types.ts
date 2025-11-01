@@ -8,6 +8,7 @@ export interface CropPlanLineItem
     | 'originalEstimate'
     | 'originalEstimatePerAcre'
     | 'currentEstimate'
+    | 'currentEstimatePerAcre'
     | 'projectedEstimate'
     | 'committedCost'
     | 'actualCost'
@@ -36,18 +37,20 @@ export interface GetCropPlanLinesParams {
   block?: string
 }
 
+export interface UpdateCropPlanLines
+  extends Pick<
+    CropPlanLineItem,
+    'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
+  > {
+  divisionId: number
+  costCodeId: number
+  costTypeId: number
+}
+
 export interface UpdateCropPlanLinesPayload {
   action: string
   cropPlanId: number
-  lines: {
-    divisionId: number
-    costCodeId: number
-    costTypeId: number
-    originalEstimate: number
-    originalEstimatePerAcre: number
-    currentEstimate: number
-    projectedEstimate: number
-  }[]
+  lines: UpdateCropPlanLines[]
 }
 
 export interface UpdateCropPlanLinesParams extends QueryParams {
@@ -55,17 +58,12 @@ export interface UpdateCropPlanLinesParams extends QueryParams {
   deploy: string
 }
 
+export interface UpdateCropPlanLinesByRanch extends UpdateCropPlanLines {
+  ranchId: number
+}
+
 export interface UpdateCropPlanLinesByRanchPayload {
   action: string
   cropPlanId: number
-  lines: {
-    ranchId: number
-    divisionId: number
-    costCodeId: number
-    costTypeId: number
-    originalEstimate: number
-    originalEstimatePerAcre: number
-    currentEstimate: number
-    projectedEstimate: number
-  }[]
+  lines: UpdateCropPlanLinesByRanch[]
 }

@@ -15,7 +15,10 @@ import { useGetCostCodes } from '../../api/cost-code/useGetCostCodes'
 import { useGetCostTypes } from '../../api/cost-type/useGetCostTypes'
 
 interface AddNodePayload
-  extends Pick<BudgetNode, 'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'projectedEstimate'> {
+  extends Pick<
+    BudgetNode,
+    'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
+  > {
   division: Division
   costCode: CostCode
   costType: CostType
@@ -26,6 +29,12 @@ interface BudgetTableAddModalProps {
   onClose: () => void
   state: BudgetState
 }
+
+/**
+ * @deprecated This component is deprecated and may be removed in a future release.
+ * Consider migrating any necessary functionality to a futures directory if needed.
+ * Do not use in new development.
+ */
 
 export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: BudgetTableAddModalProps) {
   const [stateTree] = useState(initialState.tree.filter((node: BudgetNode) => node.id !== 'grand-total'))
@@ -39,11 +48,13 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
   const [originalEstimate, setOriginalEstimate] = useState(0)
   const [originalEstimatePerAcre, setOriginalEstimatePerAcre] = useState(0)
   const [currentEstimate, setCurrentEstimate] = useState(0)
+  const [currentEstimatePerAcre, setCurrentEstimatePerAcre] = useState(0)
   const [projectedEstimate, setProjectedEstimate] = useState(0)
 
   const searchParamsString = useSearchParams('string')
   const blockEC = searchParamsString.getAll('blockEC')
   const blockCurrentEstimate = blockEC.includes('currentEstimate')
+  const blockCurrentEstimatePerAcre = blockEC.includes('currentEstimatePerAcre')
   const blockOriginalEstimate = blockEC.includes('originalEstimate')
   const blockOriginalEstimatePerAcre = blockEC.includes('originalEstimatePerAcre')
   const blockProjectedEstimate = blockEC.includes('projectedEstimate')
@@ -70,6 +81,7 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
         originalEstimate: Number(originalEstimate),
         originalEstimatePerAcre: Number(originalEstimatePerAcre),
         currentEstimate: Number(currentEstimate),
+        currentEstimatePerAcre: Number(currentEstimatePerAcre),
         projectedEstimate: Number(projectedEstimate),
       })
     }
@@ -78,7 +90,9 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
     setSelectedCostCodeId('')
     setSelectedCostTypeId('')
     setOriginalEstimate(0)
+    setOriginalEstimatePerAcre(0)
     setCurrentEstimate(0)
+    setCurrentEstimatePerAcre(0)
     setProjectedEstimate(0)
     setIsOpen(false)
     onClose()
@@ -217,14 +231,43 @@ export function BudgetTableAddModal({ onAddNew, onClose, state: initialState }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currentEstimate">Current Plan</Label>
+            <Label htmlFor="currentEstimatePerAcre">Current Plan Per Acre</Label>
+            <FormInputText
+              className="w-full text-right"
+              id="currentEstimatePerAcre"
+              variant="currency"
+              value={currentEstimatePerAcre}
+              onChange={(value) => {
+                setCurrentEstimatePerAcre(value)
+
+                if (totalAcresOfCrop) {
+                  setCurrentEstimate(value * totalAcresOfCrop)
+                } else {
+                  setCurrentEstimate(value)
+                }
+              }}
+              placeholder="Enter Current Plan Per Acre"
+              required
+              disabled={disabled || blockCurrentEstimatePerAcre}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="currentEstimate">Current Plan Total Acres</Label>
             <FormInputText
               className="w-full text-right"
               id="currentEstimate"
               variant="currency"
               value={currentEstimate}
-              onChange={(value) => setCurrentEstimate(value)}
-              placeholder="Enter current plan"
+              onChange={(value) => {
+                setCurrentEstimate(value)
+                if (totalAcresOfCrop) {
+                  setCurrentEstimatePerAcre(value / totalAcresOfCrop)
+                } else {
+                  setCurrentEstimatePerAcre(value)
+                }
+              }}
+              placeholder="Enter Current Plan Total Acres"
               required
               disabled={disabled || blockCurrentEstimate}
             />

@@ -12,6 +12,7 @@ export function createNode(item: CropPlanLineItem, parentRowId: string = ''): Bu
     originalEstimate: item.originalEstimate,
     originalEstimatePerAcre: item.originalEstimatePerAcre,
     currentEstimate: item.currentEstimate,
+    currentEstimatePerAcre: item.currentEstimatePerAcre,
     projectedEstimate: item.projectedEstimate,
     committedCost: item.committedCost,
     actualCost: item.actualCost,
@@ -31,6 +32,7 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
       node.originalEstimate = 0
       node.originalEstimatePerAcre = 0
       node.currentEstimate = 0
+      node.currentEstimatePerAcre = 0
       node.projectedEstimate = 0
       node.committedCost = 0
       node.actualCost = 0
@@ -40,6 +42,7 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
       node.originalEstimate += child.originalEstimate
       node.originalEstimatePerAcre += child.originalEstimatePerAcre
       node.currentEstimate += child.currentEstimate
+      node.currentEstimatePerAcre += child.currentEstimatePerAcre
       node.projectedEstimate += child.projectedEstimate
       node.committedCost += child.committedCost
       node.actualCost += child.actualCost

@@ -7,6 +7,7 @@ export interface BudgetNode extends TData {
   originalEstimate: number
   originalEstimatePerAcre: number
   currentEstimate: number
+  currentEstimatePerAcre: number
   projectedEstimate: number
   committedCost: number
   actualCost: number

@@ -13,7 +13,10 @@ export type UpdateNodeAction = {
 }
 
 interface AddNodePayload
-  extends Pick<BudgetNode, 'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'projectedEstimate'> {
+  extends Pick<
+    BudgetNode,
+    'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
+  > {
   division: Division
   costCode: CostCode
   costType: CostType

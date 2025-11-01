@@ -11,6 +11,7 @@ const createNode = (
     | 'parentRowId'
     | 'originalEstimate'
     | 'currentEstimate'
+    | 'currentEstimatePerAcre'
     | 'projectedEstimate'
     | 'originalEstimatePerAcre'
   >,
@@ -32,9 +33,10 @@ export function addNodeReducer(state: BudgetState, action: AddNodeAction): Budge
     costCode,
     costType,
     originalEstimate,
-    currentEstimate,
-    projectedEstimate,
     originalEstimatePerAcre,
+    currentEstimate,
+    currentEstimatePerAcre,
+    projectedEstimate,
   } = action.payload
   const newNodes = new Map(state.nodes)
 
@@ -47,12 +49,13 @@ export function addNodeReducer(state: BudgetState, action: AddNodeAction): Budge
   let costTypeNode = state.nodes.get(costTypeRowId)
   const partialNode: Pick<
     BudgetNode,
-    'originalEstimate' | 'currentEstimate' | 'projectedEstimate' | 'originalEstimatePerAcre'
+    'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
   > = {
     originalEstimate,
     currentEstimate,
     projectedEstimate,
     originalEstimatePerAcre,
+    currentEstimatePerAcre,
   }
 
   if (!divisionNode) {

@@ -12,7 +12,10 @@ import { BudgetTable } from '@/lib/components/budget-table/budget-table'
 import { BudgetNode } from '@/lib/components/budget-table/use-budget-table/types'
 
 interface AddNodePayload
-  extends Pick<BudgetNode, 'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'projectedEstimate'> {
+  extends Pick<
+    BudgetNode,
+    'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
+  > {
   division: Division
   costCode: CostCode
   costType: CostType
@@ -39,9 +42,19 @@ export const CropPlanBudgetTable = () => {
       currentEstimate,
       projectedEstimate,
       originalEstimatePerAcre,
+      currentEstimatePerAcre,
     } = newItem
 
-    addNode(division, costCode, costType, originalEstimate, currentEstimate, projectedEstimate, originalEstimatePerAcre)
+    addNode(
+      division,
+      costCode,
+      costType,
+      originalEstimate,
+      originalEstimatePerAcre,
+      currentEstimate,
+      currentEstimatePerAcre,
+      projectedEstimate
+    )
   }
 
   const handleSave = () => {
@@ -59,6 +72,7 @@ export const CropPlanBudgetTable = () => {
           originalEstimate: item.originalEstimate,
           originalEstimatePerAcre: item.originalEstimatePerAcre,
           currentEstimate: item.currentEstimate,
+          currentEstimatePerAcre: item.currentEstimatePerAcre,
           projectedEstimate: item.projectedEstimate,
         }
       })
