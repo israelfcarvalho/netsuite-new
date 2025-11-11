@@ -15,6 +15,7 @@ function sumBudgetNodeValues(node: BudgetNode, children: BudgetNode[]): BudgetNo
     committedCost: children.reduce((acc, child) => acc + child.committedCost, 0),
     originalEstimatePerAcre: children.reduce((acc, child) => acc + child.originalEstimatePerAcre, 0),
     children: node.children ? [...children] : undefined,
+    wipBalance: node.wipBalance ? node.wipBalance : children.reduce((acc, child) => acc + (child.wipBalance || 0), 0),
   }
 }
 
@@ -124,6 +125,7 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
       projectedEstimate: 0,
       committedCost: 0,
       actualCost: 0,
+      wipBalance: 0,
     }
     return sumBudgetNodeValues(grandTotal, filteredData)
   }, [filteredData])

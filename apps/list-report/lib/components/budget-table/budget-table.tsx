@@ -402,6 +402,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           return <span className="text-right">{formatCurrency(value)}</span>
         }
       ),
+      hasBlockLevel
+        ? createColumn<BudgetNode>(
+            'wipBalance',
+            () => <span className="text-right w-full inline-block text-black/70 font-semibold">WIP Balance</span>,
+            ({ row }) => {
+              const value = (row.original as unknown as BudgetNode).wipBalance
+              return <span className="text-right">{formatCurrency(value)}</span>
+            }
+          )
+        : null,
       createColumn<BudgetNodeCalculated>(
         'totalCost',
         () => <span className="text-right w-full inline-block text-lilac font-semibold">Total Cost</span>,
@@ -491,8 +501,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       ),
     ]
 
-    return columns.filter((column) => !hideColumn.includes(column.accessorKey))
-  }, [blockRR, blockEC, onUpdate, onDelete, totalAcresOfCrop, hideColumn])
+    return columns.filter((column) => column && !hideColumn.includes(column.accessorKey))
+  }, [blockRR, blockEC, onUpdate, onDelete, totalAcresOfCrop, hideColumn, hasBlockLevel])
 
   return (
     <ExpandableTable.Root

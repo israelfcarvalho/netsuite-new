@@ -10,6 +10,7 @@ export interface CropPlanLineItem {
   projectedEstimate: number
   committedCost: number
   actualCost: number
+  wipBalance?: number // Only present in by-block context
   children?: CropPlanLineItem[]
 }
 

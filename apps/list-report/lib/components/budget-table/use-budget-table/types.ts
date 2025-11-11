@@ -11,6 +11,7 @@ export interface BudgetNode extends TData {
   projectedEstimate: number
   committedCost: number
   actualCost: number
+  wipBalance?: number
   children?: BudgetNode[]
   parentRowId?: string
 }

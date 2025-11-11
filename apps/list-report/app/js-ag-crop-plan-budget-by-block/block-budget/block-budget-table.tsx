@@ -42,6 +42,7 @@ export const BlockBudgetTable = () => {
           currentEstimate: item.currentEstimate,
           currentEstimatePerAcre: item.currentEstimatePerAcre,
           projectedEstimate: item.projectedEstimate,
+          wipBalance: item.wipBalance,
         }
       })
 

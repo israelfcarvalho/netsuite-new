@@ -206,6 +206,7 @@ export class CropPlanService {
         children: [],
         committedCost: 0,
         actualCost: 0,
+        wipBalance: 0,
       },
       {
         id: '10',
@@ -217,6 +218,7 @@ export class CropPlanService {
         children: [],
         committedCost: 0,
         actualCost: 0,
+        wipBalance: 0,
       },
       {
         id: '27',
@@ -228,6 +230,7 @@ export class CropPlanService {
         children: [],
         committedCost: 0,
         actualCost: 0,
+        wipBalance: 0,
       },
       {
         id: '28',
@@ -239,6 +242,7 @@ export class CropPlanService {
         children: [],
         committedCost: 0,
         actualCost: 0,
+        wipBalance: 0,
       },
     ]
 
@@ -273,6 +277,7 @@ export class CropPlanService {
                 committedCost: 0,
                 actualCost: 0,
                 unitCost: 0,
+                wipBalance: 0,
               }
             }
 
@@ -293,6 +298,7 @@ export class CropPlanService {
                     committedCost: 0,
                     actualCost: 0,
                     unitCost: 0,
+                    wipBalance: 0,
                   }
                 }
 
@@ -362,6 +368,7 @@ export class CropPlanService {
           committedCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
           actualCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
           unitCost: 0,
+          wipBalance: 999999,
         }
 
         return ranchNode
