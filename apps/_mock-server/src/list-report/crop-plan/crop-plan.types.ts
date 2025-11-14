@@ -1,5 +1,5 @@
 // Copy exact interfaces from list-report app
-export interface CropPlanLineItem {
+export interface CropPlanLine {
   id: string
   name: string
   unitCost: number
@@ -10,14 +10,15 @@ export interface CropPlanLineItem {
   projectedEstimate: number
   committedCost: number
   actualCost: number
+  totalAcres: number
   wipBalance?: number // Only present in by-block context
-  children?: CropPlanLineItem[]
+  children?: CropPlanLine[]
 }
 
 export interface CropPlanApiResponse {
   status: number
   message: string
-  data: CropPlanLineItem[]
+  data: CropPlanLine[]
 }
 
 export interface CropPlanLinesQueryParams {
@@ -25,6 +26,7 @@ export interface CropPlanLinesQueryParams {
   deploy: string
   action: string
   cropPlanId?: number
+  block?: string
 }
 
 export interface GetCropPlanLinesParams {
@@ -32,19 +34,20 @@ export interface GetCropPlanLinesParams {
   block?: string
 }
 
+interface UpdateCropPlanLine
+  extends Pick<
+    CropPlanLine,
+    'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
+  > {
+  divisionId: number
+  costCodeId: number
+  costTypeId: number
+}
+
 export interface UpdateCropPlanLinesPayload {
   action: string
   cropPlanId: number
-  lines: {
-    divisionId: number
-    costCodeId: number
-    costTypeId: number
-    originalEstimate: number
-    originalEstimatePerAcre: number
-    currentEstimate: number
-    currentEstimatePerAcre: number
-    projectedEstimate: number
-  }[]
+  lines: UpdateCropPlanLine[]
 }
 
 export interface UpdateCropPlanLinesParams {
@@ -52,22 +55,15 @@ export interface UpdateCropPlanLinesParams {
   deploy: string
 }
 
+interface UpdateCropPlanLinesByRanchLine extends UpdateCropPlanLine {
+  ranchId: number
+}
+
 export interface UpdateCropPlanLinesByRanchPayload {
   action: string
   cropPlanId: number
-  lines: {
-    ranchId: number
-    divisionId: number
-    costCodeId: number
-    costTypeId: number
-    originalEstimate: number
-    originalEstimatePerAcre: number
-    currentEstimate: number
-    currentEstimatePerAcre: number
-    projectedEstimate: number
-  }[]
+  lines: UpdateCropPlanLinesByRanchLine[]
 }
 
 // Alias for compatibility
-export type CropPlanLine = CropPlanLineItem
 export type CropPlanQueryParams = CropPlanLinesQueryParams

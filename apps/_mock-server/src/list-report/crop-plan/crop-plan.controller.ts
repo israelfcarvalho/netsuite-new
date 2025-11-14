@@ -15,7 +15,7 @@ export class CropPlanController {
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 404, description: 'Not Found' })
   async getCropPlanLines(@Query() query: CropPlanQueryParams): Promise<CropPlanApiResponse> {
-    const { script, deploy, action, cropPlanId } = query
+    const { script, deploy, action, cropPlanId, block } = query
 
     if (!script || !deploy) {
       return {
@@ -30,7 +30,7 @@ export class CropPlanController {
     }
 
     if (action === 'get-lines-by-ranch-id') {
-      return this.cropPlanService.getCropPlanLinesByRanch(cropPlanId)
+      return this.cropPlanService.getCropPlanLinesByRanch(cropPlanId, block)
     }
 
     return {

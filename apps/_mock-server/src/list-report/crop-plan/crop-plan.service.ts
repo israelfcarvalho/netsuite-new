@@ -63,6 +63,7 @@ export class CropPlanService {
             children: [],
             committedCost: 0,
             actualCost: 0,
+            totalAcres: 0,
             unitCost: 0,
           }
         }
@@ -84,6 +85,7 @@ export class CropPlanService {
                 committedCost: 0,
                 actualCost: 0,
                 unitCost: 0,
+                totalAcres: 0,
               }
             }
 
@@ -100,6 +102,7 @@ export class CropPlanService {
               committedCost: Math.floor(Math.random() * 80000) + 40000,
               actualCost: Math.floor(Math.random() * 70000) + 35000,
               unitCost: Math.floor(Math.random() * 100) + 50,
+              totalAcres: (Math.floor(Math.random() * 10) % 3) + 1,
             }))
 
             // Calculate cost code values from its cost types
@@ -115,6 +118,7 @@ export class CropPlanService {
               committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
               actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
               unitCost: 0,
+              totalAcres: 0,
             }
 
             return costCodeNode
@@ -134,6 +138,7 @@ export class CropPlanService {
           committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
           actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
           unitCost: 0,
+          totalAcres: 0,
         }
 
         return divisionNode
@@ -176,7 +181,7 @@ export class CropPlanService {
     }
   }
 
-  async getCropPlanLinesByRanch(cropPlanId?: number): Promise<CropPlanApiResponse> {
+  async getCropPlanLinesByRanch(cropPlanId?: number, block?: string): Promise<CropPlanApiResponse> {
     if (cropPlanId === undefined) {
       return {
         status: 400,
@@ -186,7 +191,7 @@ export class CropPlanService {
     }
 
     // If we already have data for this crop plan, return it
-    if (this.mockDataStore[cropPlanId]) {
+    if (this.mockDataStore[cropPlanId] && !block) {
       return {
         status: 200,
         message: 'Success',
@@ -258,35 +263,72 @@ export class CropPlanService {
 
     // Build the crop plan hierarchy with ranch as first level
     const cropPlanLines: CropPlanLine[] = await Promise.all(
-      ranchNodes.map(async (ranch) => {
-        // For each ranch, build the division hierarchy
-        const divisionNodes = await Promise.all(
-          divisions.slice(0, 1).map<Promise<CropPlanLine>>(async (division: Division) => {
-            // Get cost codes for this division
-            const { data: costCodes } = await this.costCodeService.getCostCodes(division.id)
-            if (!costCodes.length) {
-              return {
-                id: division.id,
-                name: division.name,
-                originalEstimate: 0,
-                originalEstimatePerAcre: 0,
-                currentEstimate: 0,
-                currentEstimatePerAcre: 0,
-                projectedEstimate: 0,
-                children: [],
-                committedCost: 0,
-                actualCost: 0,
-                unitCost: 0,
-                wipBalance: 0,
+      ranchNodes
+        .filter((ranch) => (block ? ranch.id === block : true))
+        .map(async (ranch) => {
+          // For each ranch, build the division hierarchy
+          const divisionNodes = await Promise.all(
+            divisions.slice(0, 1).map<Promise<CropPlanLine>>(async (division: Division) => {
+              // Get cost codes for this division
+              const { data: costCodes } = await this.costCodeService.getCostCodes(division.id)
+              if (!costCodes.length) {
+                return {
+                  id: division.id,
+                  name: division.name,
+                  originalEstimate: 0,
+                  originalEstimatePerAcre: 0,
+                  currentEstimate: 0,
+                  currentEstimatePerAcre: 0,
+                  projectedEstimate: 0,
+                  children: [],
+                  committedCost: 0,
+                  actualCost: 0,
+                  unitCost: 0,
+                  totalAcres: 0,
+                  wipBalance: 0,
+                }
               }
-            }
 
-            // Get cost types for each cost code
-            const costCodeNodes = await Promise.all(
-              costCodes.slice(0, 1).map<Promise<CropPlanLine>>(async (costCode: CostCode) => {
-                const { data: costTypes } = await this.costTypeService.getCostTypes(costCode.id)
-                if (!costTypes.length) {
-                  return {
+              // Get cost types for each cost code
+              const costCodeNodes = await Promise.all(
+                costCodes.slice(0, 1).map<Promise<CropPlanLine>>(async (costCode: CostCode) => {
+                  const { data: costTypes } = await this.costTypeService.getCostTypes(costCode.id)
+                  if (!costTypes.length) {
+                    return {
+                      id: costCode.id,
+                      name: costCode.name,
+                      originalEstimate: 0,
+                      originalEstimatePerAcre: 0,
+                      currentEstimate: 0,
+                      currentEstimatePerAcre: 0,
+                      projectedEstimate: 0,
+                      children: [],
+                      committedCost: 0,
+                      actualCost: 0,
+                      unitCost: 0,
+                      totalAcres: 0,
+                      wipBalance: 0,
+                    }
+                  }
+
+                  // Create cost type nodes
+                  const costTypeNodes = costTypes.map<CropPlanLine>((costType: CostType) => ({
+                    id: costType.id,
+                    name: costType.name,
+                    originalEstimate: Math.floor(Math.random() * 100000) + 50000,
+                    originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
+                    currentEstimate: Math.floor(Math.random() * 120000) + 60000,
+                    currentEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
+                    projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
+                    children: [],
+                    committedCost: Math.floor(Math.random() * 80000) + 40000,
+                    actualCost: Math.floor(Math.random() * 70000) + 35000,
+                    unitCost: 0,
+                    totalAcres: (Math.floor(Math.random() * 10) % 3) + 1,
+                  }))
+
+                  // Calculate cost code values from its cost types
+                  const costCodeNode: CropPlanLine = {
                     id: costCode.id,
                     name: costCode.name,
                     originalEstimate: 0,
@@ -294,85 +336,59 @@ export class CropPlanService {
                     currentEstimate: 0,
                     currentEstimatePerAcre: 0,
                     projectedEstimate: 0,
-                    children: [],
-                    committedCost: 0,
-                    actualCost: 0,
+                    children: costTypeNodes,
+                    committedCost: costTypeNodes.reduce(
+                      (sum: number, node: CropPlanLine) => sum + node.committedCost,
+                      0
+                    ),
+                    actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
                     unitCost: 0,
-                    wipBalance: 0,
+                    totalAcres: 0,
                   }
-                }
 
-                // Create cost type nodes
-                const costTypeNodes = costTypes.map<CropPlanLine>((costType: CostType) => ({
-                  id: costType.id,
-                  name: costType.name,
-                  originalEstimate: Math.floor(Math.random() * 100000) + 50000,
-                  originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
-                  currentEstimate: Math.floor(Math.random() * 120000) + 60000,
-                  currentEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
-                  projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
-                  children: [],
-                  committedCost: Math.floor(Math.random() * 80000) + 40000,
-                  actualCost: Math.floor(Math.random() * 70000) + 35000,
-                  unitCost: 0,
-                }))
+                  return costCodeNode
+                })
+              )
 
-                // Calculate cost code values from its cost types
-                const costCodeNode: CropPlanLine = {
-                  id: costCode.id,
-                  name: costCode.name,
-                  originalEstimate: 0,
-                  originalEstimatePerAcre: 0,
-                  currentEstimate: 0,
-                  currentEstimatePerAcre: 0,
-                  projectedEstimate: 0,
-                  children: costTypeNodes,
-                  committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
-                  actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
-                  unitCost: 0,
-                }
+              // Calculate division values from its cost codes
+              const divisionNode: CropPlanLine = {
+                id: division.id,
+                name: division.name,
+                originalEstimate: 0,
+                originalEstimatePerAcre: 0,
+                currentEstimate: 0,
+                currentEstimatePerAcre: 0,
+                projectedEstimate: 0,
+                children: costCodeNodes,
+                committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
+                actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+                unitCost: 0,
+                totalAcres: 0,
+              }
 
-                return costCodeNode
-              })
-            )
+              return divisionNode
+            })
+          )
 
-            // Calculate division values from its cost codes
-            const divisionNode: CropPlanLine = {
-              id: division.id,
-              name: division.name,
-              originalEstimate: 0,
-              originalEstimatePerAcre: 0,
-              currentEstimate: 0,
-              currentEstimatePerAcre: 0,
-              projectedEstimate: 0,
-              children: costCodeNodes,
-              committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
-              actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
-              unitCost: 0,
-            }
+          // Calculate ranch values from its divisions
+          const ranchNode: CropPlanLine = {
+            id: ranch.id,
+            name: ranch.name,
+            originalEstimate: 0,
+            originalEstimatePerAcre: 0,
+            currentEstimate: 0,
+            currentEstimatePerAcre: 0,
+            projectedEstimate: 0,
+            children: divisionNodes,
+            committedCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
+            actualCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+            unitCost: 0,
+            wipBalance: 999999,
+            totalAcres: 0,
+          }
 
-            return divisionNode
-          })
-        )
-
-        // Calculate ranch values from its divisions
-        const ranchNode: CropPlanLine = {
-          id: ranch.id,
-          name: ranch.name,
-          originalEstimate: 0,
-          originalEstimatePerAcre: 0,
-          currentEstimate: 0,
-          currentEstimatePerAcre: 0,
-          projectedEstimate: 0,
-          children: divisionNodes,
-          committedCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
-          actualCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
-          unitCost: 0,
-          wipBalance: 999999,
-        }
-
-        return ranchNode
-      })
+          return ranchNode
+        })
     )
 
     // Store the generated data
