@@ -19,6 +19,16 @@ export class CostTypeService {
         name: 'Cost Type 2',
         costCodeId: '1',
       },
+      {
+        id: '3',
+        name: 'Cost Type 3',
+        costCodeId: '1',
+      },
+      {
+        id: '4',
+        name: 'Cost Type 4',
+        costCodeId: '1',
+      },
     ],
     '2': [
       {
