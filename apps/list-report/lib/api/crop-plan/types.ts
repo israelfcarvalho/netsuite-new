@@ -13,6 +13,7 @@ export interface CropPlanLineItem
     | 'committedCost'
     | 'actualCost'
     | 'wipBalance'
+    | 'wipInput'
     | 'totalAcres'
   > {
   id: string // Assuming ID is always a string, adjust if it can be a number

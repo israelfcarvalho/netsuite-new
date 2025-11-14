@@ -412,6 +412,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
             }
           )
         : null,
+      !hasBlockLevel
+        ? createColumn<BudgetNode>(
+            'wipInput',
+            () => <span className="text-right w-full inline-block text-black/70 font-semibold">WIP Input</span>,
+            ({ row }) => {
+              const value = (row.original as unknown as BudgetNode).wipInput
+              return <span className="text-right">{formatCurrency(value)}</span>
+            }
+          )
+        : null,
       createColumn<BudgetNodeCalculated>(
         'totalCost',
         () => <span className="text-right w-full inline-block text-lilac font-semibold">Projected Cost</span>,

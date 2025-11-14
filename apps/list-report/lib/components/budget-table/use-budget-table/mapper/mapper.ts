@@ -17,6 +17,7 @@ export function createNode(item: CropPlanLineItem, parentRowId: string = ''): Bu
     committedCost: item.committedCost,
     actualCost: item.actualCost,
     wipBalance: item.wipBalance,
+    wipInput: item.wipInput,
     totalAcres: item.totalAcres,
     parentRowId,
   }
@@ -51,6 +52,9 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
       node.actualCost += child.actualCost
       if (node.wipBalance) {
         node.wipBalance += child.wipBalance ?? 0
+      }
+      if (node.wipInput) {
+        node.wipInput += child.wipInput ?? 0
       }
     })
 

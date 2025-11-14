@@ -12,6 +12,7 @@ export interface CropPlanLine {
   actualCost: number
   totalAcres: number
   wipBalance?: number // Only present in by-block context
+  wipInput?: number // Only present in no-block context
   children?: CropPlanLine[]
 }
 

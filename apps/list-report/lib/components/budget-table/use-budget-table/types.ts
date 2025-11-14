@@ -12,7 +12,8 @@ export interface BudgetNode extends TData {
   projectedEstimate: number
   committedCost: number
   actualCost: number
-  wipBalance?: number
+  wipBalance?: number // only used in by-block context
+  wipInput?: number // only used in no-block context
   children?: BudgetNode[]
   parentRowId?: string
 }

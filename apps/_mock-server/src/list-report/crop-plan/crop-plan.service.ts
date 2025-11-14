@@ -48,7 +48,7 @@ export class CropPlanService {
 
     // Build the crop plan hierarchy
     const cropPlanLines: CropPlanLine[] = await Promise.all(
-      divisions.slice(0, 1).map<Promise<CropPlanLine>>(async (division: Division) => {
+      divisions.slice(0, 2).map<Promise<CropPlanLine>>(async (division: Division) => {
         // Get cost codes for this division
         const { data: costCodes } = await this.costCodeService.getCostCodes(division.id)
         if (!costCodes.length) {
@@ -139,6 +139,7 @@ export class CropPlanService {
           actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
           unitCost: 0,
           totalAcres: 0,
+          wipInput: 999999,
         }
 
         return divisionNode
