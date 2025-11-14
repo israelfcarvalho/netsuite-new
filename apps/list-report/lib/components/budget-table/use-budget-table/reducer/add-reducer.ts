@@ -24,6 +24,7 @@ const createNode = (
     parentRowId,
     committedCost: 0,
     actualCost: 0,
+    totalAcres: 0,
   }
 }
 

@@ -17,6 +17,7 @@ export function createNode(item: CropPlanLineItem, parentRowId: string = ''): Bu
     committedCost: item.committedCost,
     actualCost: item.actualCost,
     wipBalance: item.wipBalance,
+    totalAcres: item.totalAcres,
     parentRowId,
   }
 }
@@ -37,6 +38,7 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
       node.projectedEstimate = 0
       node.committedCost = 0
       node.actualCost = 0
+      node.totalAcres = 0
     }
 
     node.children?.forEach((child) => {
@@ -47,7 +49,6 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
       node.projectedEstimate += child.projectedEstimate
       node.committedCost += child.committedCost
       node.actualCost += child.actualCost
-
       if (node.wipBalance) {
         node.wipBalance += child.wipBalance ?? 0
       }

@@ -21,7 +21,7 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
     return (
       <Fragment key={row.id}>
         <tr
-          className={cn('bg-neutral-10', 'hover:bg-neutral-40', className)}
+          className={cn('odd:bg-neutral-20 even:bg-neutral-40', 'hover:bg-neutral-60', className)}
           data-level={level}
           data-has-children={rowHasChildren}
         >

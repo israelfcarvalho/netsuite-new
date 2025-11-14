@@ -96,12 +96,12 @@ function BudgetTableComponent({
               levels > 3
                 ? cn(
                     'data-[level=0]:data-[has-children=true]:bg-pine-light data-[level=0]:data-[has-children=true]:shadow',
-                    'data-[level=1]:data-[has-children=true]:bg-brand-40',
-                    'data-[level=2]:data-[has-children=true]:bg-neutral-20'
+                    'data-[level=1]:data-[has-children=true]:bg-brand-60',
+                    'data-[level=2]:data-[has-children=true]:bg-brand-40'
                   )
                 : cn(
-                    'data-[level=0]:data-[has-children=true]:bg-brand-40 data-[level=0]:data-[has-children=true]:shadow',
-                    'data-[level=1]:data-[has-children=true]:bg-neutral-20'
+                    'data-[level=0]:data-[has-children=true]:bg-brand-60 data-[level=0]:data-[has-children=true]:shadow',
+                    'data-[level=1]:data-[has-children=true]:bg-brand-40'
                   )
             }
           />
@@ -132,11 +132,9 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
 
   const { filteredData, ...filteredDataProps } = useBudgetTableFilters(data, hasBlockLevel)
 
-  const searchParamsNumber = useSearchParams('number')
   const searchParamsString = useSearchParams('string')
   const searchParamsBoolean = useSearchParams('boolean')
 
-  const totalAcresOfCrop = searchParamsNumber.get('totalAcresOfCrop')
   const blockEC = searchParamsString.getAll('blockEC')
   const blockRR = !!searchParamsBoolean.get('blockRR')
   const hideColumn = searchParamsString.getAll('hideColumn')
@@ -217,13 +215,15 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                   onChange={(value) => {
                     onUpdate(originalRow.rowId, { originalEstimatePerAcre: value })
 
-                    if (totalAcresOfCrop) {
-                      onUpdate(originalRow.rowId, { originalEstimate: value * totalAcresOfCrop })
+                    console.log('originalRow.totalAcres', originalRow.totalAcres, value)
+
+                    if (originalRow.totalAcres) {
+                      onUpdate(originalRow.rowId, { originalEstimate: value * originalRow.totalAcres })
                     }
                   }}
                   changeOnBlur={
-                    !totalAcresOfCrop ||
-                    originalRow.originalEstimate * totalAcresOfCrop !== originalRow.originalEstimatePerAcre
+                    !originalRow.totalAcres ||
+                    originalRow.originalEstimate * originalRow.totalAcres !== originalRow.originalEstimatePerAcre
                   }
                 />
               </div>
@@ -258,13 +258,13 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                   onChange={(value) => {
                     onUpdate(originalRow.rowId, { originalEstimate: value })
 
-                    if (totalAcresOfCrop) {
-                      onUpdate(originalRow.rowId, { originalEstimatePerAcre: value / totalAcresOfCrop })
+                    if (originalRow.totalAcres) {
+                      onUpdate(originalRow.rowId, { originalEstimatePerAcre: value / originalRow.totalAcres })
                     }
                   }}
                   changeOnBlur={
-                    !totalAcresOfCrop ||
-                    originalRow.originalEstimate * totalAcresOfCrop !== originalRow.originalEstimatePerAcre
+                    !originalRow.totalAcres ||
+                    originalRow.originalEstimate * originalRow.totalAcres !== originalRow.originalEstimatePerAcre
                   }
                 />
               </div>
@@ -301,8 +301,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       currentEstimatePerAcre: value,
                     })
 
-                    if (totalAcresOfCrop) {
-                      onUpdate(originalRow.rowId, { currentEstimate: value * totalAcresOfCrop })
+                    if (originalRow.totalAcres) {
+                      onUpdate(originalRow.rowId, { currentEstimate: value * originalRow.totalAcres })
                     }
                   }}
                   changeOnBlur
@@ -341,8 +341,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       currentEstimate: value,
                     })
 
-                    if (totalAcresOfCrop) {
-                      onUpdate(originalRow.rowId, { currentEstimatePerAcre: value / totalAcresOfCrop })
+                    if (originalRow.totalAcres) {
+                      onUpdate(originalRow.rowId, { currentEstimatePerAcre: value / originalRow.totalAcres })
                     }
                   }}
                   changeOnBlur
@@ -414,7 +414,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         : null,
       createColumn<BudgetNodeCalculated>(
         'totalCost',
-        () => <span className="text-right w-full inline-block text-lilac font-semibold">Total Cost</span>,
+        () => <span className="text-right w-full inline-block text-lilac font-semibold">Projected Cost</span>,
         ({ row }) => {
           const { actualCost = 0, committedCost = 0 } = row.original as unknown as BudgetNode
           const totalCost = actualCost + committedCost
@@ -502,7 +502,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
     ]
 
     return columns.filter((column) => column && !hideColumn.includes(column.accessorKey))
-  }, [blockRR, blockEC, onUpdate, onDelete, totalAcresOfCrop, hideColumn, hasBlockLevel])
+  }, [blockRR, blockEC, onUpdate, onDelete, hideColumn, hasBlockLevel])
 
   return (
     <ExpandableTable.Root

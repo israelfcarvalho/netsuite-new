@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
+import { useSearchParams } from '@workspace/ui/lib/navigation'
+
 import { BudgetNode } from './use-budget-table/types'
 
 import { useGetCostCodes, useGetCostTypes } from '@/lib/api'
@@ -26,6 +28,9 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
 
   const { data: costCodes } = useGetCostCodes({ divisionId })
   const { data: costTypes } = useGetCostTypes({ costCodeId })
+
+  const searchParamsNumber = useSearchParams('number')
+  const totalAcresOfCrop = searchParamsNumber.get('totalAcresOfCrop')
 
   const filterCostTypes = useCallback(
     (costTypeChildren: BudgetNode[] = []): BudgetNode[] => {
@@ -114,7 +119,7 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
   }, [data, hasBlockLevel, filterBlocks, filterDivisions])
 
   const grandTotalNode = useMemo<BudgetNode>(() => {
-    const grandTotal = {
+    const initialGrandTotal = {
       id: 'grand-total',
       rowId: 'grand-total',
       name: 'Grand Total',
@@ -126,9 +131,18 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
       committedCost: 0,
       actualCost: 0,
       wipBalance: 0,
+      totalAcres: 0,
     }
-    return sumBudgetNodeValues(grandTotal, filteredData)
-  }, [filteredData])
+
+    const grandTotal = sumBudgetNodeValues(initialGrandTotal, filteredData)
+
+    if (hasBlockLevel && totalAcresOfCrop) {
+      grandTotal.originalEstimatePerAcre = grandTotal.originalEstimate / Number(totalAcresOfCrop)
+      grandTotal.currentEstimatePerAcre = grandTotal.currentEstimate / Number(totalAcresOfCrop)
+    }
+
+    return grandTotal
+  }, [filteredData, hasBlockLevel, totalAcresOfCrop])
 
   const resetFilters = () => {
     setDivisionId('')

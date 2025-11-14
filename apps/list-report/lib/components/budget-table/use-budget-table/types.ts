@@ -4,6 +4,7 @@ export interface BudgetNode extends TData {
   id: string
   rowId: string
   name: string
+  totalAcres: number
   originalEstimate: number
   originalEstimatePerAcre: number
   currentEstimate: number
