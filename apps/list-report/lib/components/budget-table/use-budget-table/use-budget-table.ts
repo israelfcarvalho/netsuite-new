@@ -2,6 +2,7 @@
 
 import { useEffect, useReducer, useCallback, useMemo } from 'react'
 
+import { ActionType } from './reducer/actions'
 import { budgetTableReducer } from './reducer/reducer'
 import { BudgetNode } from './types'
 
@@ -11,12 +12,14 @@ import { Division, CostCode, CostType } from '@/lib/api'
 export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineItem[] }) {
   const [state, dispatch] = useReducer(budgetTableReducer, {
     nodes: new Map<string, BudgetNode>(),
+    initialNodes: new Map<string, BudgetNode>(),
     tree: [],
+    history: {},
   })
 
   useEffect(() => {
     if (cropPlanLines) {
-      dispatch({ type: 'LOAD_NODES', payload: cropPlanLines })
+      dispatch({ type: ActionType.LOAD_NODES, payload: cropPlanLines })
     }
   }, [cropPlanLines])
 
@@ -35,7 +38,7 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
   }, [cropPlanLines])
 
   const updateNode = useCallback((rowId: string, updates: Partial<BudgetNode>) => {
-    dispatch({ type: 'UPDATE_NODE', payload: { rowId, updates } })
+    dispatch({ type: ActionType.UPDATE_NODE, payload: { rowId, updates } })
   }, [])
 
   const addNode = useCallback(
@@ -50,7 +53,7 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
       projectedEstimate: number
     ) => {
       dispatch({
-        type: 'ADD_NODE',
+        type: ActionType.ADD_NODE,
         payload: {
           division,
           costCode,
@@ -67,7 +70,7 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
   )
 
   const deleteNode = useCallback((rowId: string) => {
-    dispatch({ type: 'DELETE_NODE', payload: { rowId } })
+    dispatch({ type: ActionType.DELETE_NODE, payload: { rowId } })
   }, [])
 
   return {

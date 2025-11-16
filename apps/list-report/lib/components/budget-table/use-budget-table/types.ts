@@ -18,9 +18,40 @@ export interface BudgetNode extends TData {
   parentRowId?: string
 }
 
+type BudgetHitoryItem = keyof Pick<
+  BudgetNode,
+  'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
+>
+
+export interface BudgetHistoryDataState<T extends BudgetHitoryItem = BudgetHitoryItem> {
+  rowId: string
+  id: string
+  name: T
+  previousValue: number
+  currentValue: number
+  comment?: string
+}
+
+type LocalBudgetHistoryState = {
+  [K in BudgetHitoryItem]?: BudgetHistoryDataState<K>
+}
+
+export interface RemoteBudgetHistoryDataState<T extends BudgetHitoryItem = BudgetHitoryItem>
+  extends BudgetHistoryDataState<T> {
+  date: string
+  user: string
+}
+
+export type RemoteBudgetHistoryState = { [K in BudgetHitoryItem]?: RemoteBudgetHistoryDataState<K>[] }
+
 export interface BudgetState {
   nodes: Map<string, BudgetNode>
+  initialNodes: Map<string, BudgetNode>
   tree: BudgetNode[]
+  history: {
+    local?: LocalBudgetHistoryState
+    remote?: RemoteBudgetHistoryState
+  }
 }
 
 export interface BudgetNodeCalculated extends BudgetNode {

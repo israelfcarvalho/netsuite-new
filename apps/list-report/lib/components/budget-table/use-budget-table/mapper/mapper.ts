@@ -1,4 +1,4 @@
-import { BudgetNode, BudgetState } from '../types'
+import { BudgetNode } from '../types'
 
 import { CropPlanLineItem } from '@/lib/api/crop-plan/types'
 
@@ -65,13 +65,4 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
 
   data.forEach((item) => processNode(item))
   return nodes
-}
-
-export function buildInitialState(data: CropPlanLineItem[]): BudgetState {
-  const nodes = mapCropPlanToNodes(data)
-
-  return {
-    nodes,
-    tree: Array.from(nodes.values()).filter((node) => !node.parentRowId),
-  }
 }
