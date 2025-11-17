@@ -1,55 +1,41 @@
 import { TData } from '@workspace/ui/components/table'
 
-export interface BudgetNode extends TData {
-  id: string
-  rowId: string
-  name: string
-  totalAcres: number
-  originalEstimate: number
-  originalEstimatePerAcre: number
-  currentEstimate: number
-  currentEstimatePerAcre: number
-  projectedEstimate: number
-  committedCost: number
-  actualCost: number
-  wipBalance?: number // only used in by-block context
-  wipInput?: number // only used in no-block context
+import { CropPlanLineItem, CropPlanLineHistoryItem } from '@/lib/api/crop-plan/types'
+
+interface BudgetNode extends TData, Omit<CropPlanLineItem, 'children'> {
   children?: BudgetNode[]
-  parentRowId?: string
 }
 
-type BudgetHitoryItem = keyof Pick<
-  BudgetNode,
-  'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
->
+type BudgedHistoryDataName = CropPlanLineHistoryItem['name']
+type BudgetHistoryDataItem = Pick<CropPlanLineHistoryItem['data'][number], 'previousValue' | 'currentValue' | 'comment'>
 
-export interface BudgetHistoryDataState<T extends BudgetHitoryItem = BudgetHitoryItem> {
-  rowId: string
-  id: string
+export interface BudgetHistoryLocalDataState<T extends BudgedHistoryDataName = BudgedHistoryDataName>
+  extends Omit<CropPlanLineHistoryItem, 'data'> {
   name: T
-  previousValue: number
-  currentValue: number
-  comment?: string
+  data: BudgetHistoryDataItem[]
 }
 
-type LocalBudgetHistoryState = {
-  [K in BudgetHitoryItem]?: BudgetHistoryDataState<K>
+type BudgetHistoryLocalState = {
+  [rowId in string]?: {
+    [K in BudgedHistoryDataName]: BudgetHistoryLocalDataState<K>
+  }
 }
 
-export interface RemoteBudgetHistoryDataState<T extends BudgetHitoryItem = BudgetHitoryItem>
-  extends BudgetHistoryDataState<T> {
-  date: string
-  user: string
+export interface BudgetHistoryRemoteDataState<T extends BudgedHistoryDataName = BudgedHistoryDataName>
+  extends CropPlanLineHistoryItem {
+  name: T
 }
 
-export type RemoteBudgetHistoryState = { [K in BudgetHitoryItem]?: RemoteBudgetHistoryDataState<K>[] }
+export type RemoteBudgetHistoryState = {
+  [rowId in string]?: { [K in BudgedHistoryDataName]: BudgetHistoryRemoteDataState<K>[] }
+}
 
 export interface BudgetState {
   nodes: Map<string, BudgetNode>
   initialNodes: Map<string, BudgetNode>
   tree: BudgetNode[]
   history: {
-    local?: LocalBudgetHistoryState
+    local?: BudgetHistoryLocalState
     remote?: RemoteBudgetHistoryState
   }
 }

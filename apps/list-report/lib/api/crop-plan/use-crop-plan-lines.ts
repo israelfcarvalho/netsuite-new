@@ -3,6 +3,8 @@
 import {
   CropPlanApiResponse,
   CropPlanLinesQueryParams,
+  GetCropPlanLineHistoryParams,
+  GetCropPlanLinesHistoryResponse,
   GetCropPlanLinesParams,
   UpdateCropPlanLinesParams,
   UpdateCropPlanLinesPayload,
@@ -15,9 +17,7 @@ const ACTION = 'get-lines-hierarchy'
 const UPDATE_ACTION = 'update-lines'
 
 const {
-  api: {
-    cropPlan: { deploy, script, route },
-  },
+  api: { cropPlan },
 } = environments
 
 const initialData: CropPlanApiResponse['data'] = []
@@ -26,13 +26,13 @@ export function useGetCropPlanLines({ cropPlanId }: GetCropPlanLinesParams) {
   const { data, error, isLoading, refetch, isFetching } = useListReportApiGet<
     CropPlanApiResponse,
     CropPlanLinesQueryParams
-  >(route, {
+  >(cropPlan.route, {
     queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
     queryParams: {
-      script,
-      deploy,
+      script: cropPlan.script,
+      deploy: cropPlan.deploy,
       action: ACTION,
-      cropPlanId: cropPlanId,
+      cropPlanId,
     },
   })
 
@@ -45,13 +45,39 @@ export function useGetCropPlanLines({ cropPlanId }: GetCropPlanLinesParams) {
   }
 }
 
-export function useSaveCropPlanLines() {
-  const api = useListReportApiPost<CropPlanApiResponse, UpdateCropPlanLinesPayload, UpdateCropPlanLinesParams>(route, {
+export function useGetCropPlanLinesHistory({ cropPlanId, costTypeId }: GetCropPlanLineHistoryParams) {
+  const { data, error, isLoading, refetch, isFetching } = useListReportApiGet<
+    GetCropPlanLinesHistoryResponse,
+    GetCropPlanLineHistoryParams
+  >(cropPlan.history.route, {
+    queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
     queryParams: {
-      script,
-      deploy,
+      script: cropPlan.history.script,
+      deploy: cropPlan.history.deploy,
+      cropPlanId,
+      costTypeId,
     },
   })
+
+  return {
+    history: data?.history ?? [],
+    error,
+    isLoading,
+    refetch,
+    isFetching,
+  }
+}
+
+export function useSaveCropPlanLines() {
+  const api = useListReportApiPost<CropPlanApiResponse, UpdateCropPlanLinesPayload, UpdateCropPlanLinesParams>(
+    cropPlan.route,
+    {
+      queryParams: {
+        script: cropPlan.script,
+        deploy: cropPlan.deploy,
+      },
+    }
+  )
 
   function updateLines(
     cropPlanId: number,

@@ -7,6 +7,11 @@ export const environments = {
       route: process.env.NEXT_PUBLIC_API_CROP_PLAN_ROUTE ?? '',
       script: process.env.NEXT_PUBLIC_API_CROP_PLAN_SCRIPT_ID ?? '',
       deploy: process.env.NEXT_PUBLIC_API_CROP_PLAN_DEPLOY_ID ?? '',
+      history: {
+        route: process.env.NEXT_PUBLIC_API_CROP_PLAN_HISTORY_ROUTE ?? '',
+        script: process.env.NEXT_PUBLIC_API_CROP_PLAN_HISTORY_SCRIPT_ID ?? '',
+        deploy: process.env.NEXT_PUBLIC_API_CROP_PLAN_HISTORY_DEPLOY_ID ?? '',
+      },
     },
     division: {
       route: process.env.NEXT_PUBLIC_API_DIVISION_ROUTE ?? '',
