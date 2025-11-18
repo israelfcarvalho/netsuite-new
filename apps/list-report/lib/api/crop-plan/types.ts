@@ -34,28 +34,29 @@ export interface GetCropPlanLinesParams {
   block?: string
 }
 
-type CropPlanHistoryItemName = keyof Pick<
-  CropPlanLineItem,
-  'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
->
-
 interface CropPlanLineHistoryItemData {
   previousValue: number
   currentValue: number
   comment?: string
   date: string
 }
-export interface CropPlanLineHistoryItem<T extends CropPlanHistoryItemName = CropPlanHistoryItemName> {
-  id: string
-  user: string
-  name: T
-  data: CropPlanLineHistoryItemData[]
-}
 
 export interface GetCropPlanLineHistoryParams extends QueryParams {
   cropPlanId?: number
   lineId?: string
   enabled?: boolean
+}
+
+type CropPlanHistoryItemName = keyof Pick<
+  CropPlanLineItem,
+  'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
+>
+
+export interface CropPlanLineHistoryItem<T extends CropPlanHistoryItemName = CropPlanHistoryItemName> {
+  id: string
+  user: string
+  name: T
+  data: CropPlanLineHistoryItemData[]
 }
 
 export interface GetCropPlanLinesHistoryResponse {
