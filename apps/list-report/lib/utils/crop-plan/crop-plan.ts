@@ -1,0 +1,15 @@
+export const CropPlanKeysToNames = {
+  originalEstimate: ['Original Estimate'],
+  originalEstimatePerAcre: ['Original Estimate', 'Per Acre'],
+  currentEstimate: ['Current Estimate'],
+  currentEstimatePerAcre: ['Current Estimate', 'Per Acre'],
+  projectedEstimate: ['Projected Estimate'],
+  committedCost: ['Committed Cost'],
+  actualCost: ['Actual Cost'],
+  totalAcres: ['Total Acres'],
+  wipBalance: ['WIP Balance'],
+  wipInput: ['WIP Input'],
+  costsToComplete: ['Costs to Complete'],
+  overUnder: ['Over/Under'],
+  projCostComplete: ['Proj. Cost Complete'],
+}

@@ -6,18 +6,18 @@ export interface BudgetNode extends TData, Omit<CropPlanLineItem, 'children'> {
   children?: BudgetNode[]
 }
 
-type BudgedHistoryDataName = CropPlanLineHistoryItem['name']
+export type BudgedHistoryDataName = CropPlanLineHistoryItem['name']
 type BudgetHistoryDataItem = Pick<CropPlanLineHistoryItem['data'][number], 'previousValue' | 'currentValue' | 'comment'>
 
-export interface BudgetHistoryLocalDataState<T extends BudgedHistoryDataName = BudgedHistoryDataName>
-  extends Omit<CropPlanLineHistoryItem, 'data'> {
+export interface BudgetHistoryLocalDataState<T extends BudgedHistoryDataName>
+  extends Omit<CropPlanLineHistoryItem, 'data' | 'user'> {
   name: T
-  data: BudgetHistoryDataItem[]
+  data: BudgetHistoryDataItem
 }
 
 type BudgetHistoryLocalState = {
   [rowId in string]?: {
-    [K in BudgedHistoryDataName]: BudgetHistoryLocalDataState<K>
+    [K in BudgedHistoryDataName]?: BudgetHistoryLocalDataState<K>
   }
 }
 
@@ -26,8 +26,10 @@ export interface BudgetHistoryRemoteDataState<T extends BudgedHistoryDataName = 
   name: T
 }
 
+export type BudgetHistoryRemoteRowData = { [K in BudgedHistoryDataName]?: BudgetHistoryRemoteDataState<K> }
+
 export type RemoteBudgetHistoryState = {
-  [rowId in string]?: { [K in BudgedHistoryDataName]: BudgetHistoryRemoteDataState<K>[] }
+  [rowId in string]?: BudgetHistoryRemoteRowData
 }
 
 export interface BudgetState {

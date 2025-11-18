@@ -1,4 +1,4 @@
-import { BudgetHistoryDataState, BudgetNode, RemoteBudgetHistoryDataState } from '../types'
+import { BudgetNode, BudgedHistoryDataName, BudgetHistoryRemoteRowData } from '../types'
 
 import { CostCode, CostType, CropPlanLineItem, Division } from '@/lib/api'
 
@@ -10,12 +10,19 @@ export enum ActionType {
   UPDATE_HISTORY = 'use-budget-table/UPDATE_HISTORY',
 }
 
-export interface UpdateLocalHistoryPayload extends BudgetHistoryDataState {
+export interface UpdateLocalHistoryPayload {
   type: 'local'
+  lineId: string
+  rowId: string
+  name: BudgedHistoryDataName
+  newValue: number
+  comment?: string
 }
 
-export interface UpdateRemoteHistoryPayload extends RemoteBudgetHistoryDataState {
+export interface UpdateRemoteHistoryPayload {
   type: 'remote'
+  rowId: string
+  data: BudgetHistoryRemoteRowData
 }
 
 type UpdateHistoryPayload = UpdateLocalHistoryPayload | UpdateRemoteHistoryPayload

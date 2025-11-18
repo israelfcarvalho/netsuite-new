@@ -2,7 +2,7 @@
 
 import { useEffect, useReducer, useCallback, useMemo } from 'react'
 
-import { ActionType } from './reducer/actions'
+import { ActionType, UpdateHistoryAction } from './reducer/actions'
 import { budgetTableReducer } from './reducer/reducer'
 import { BudgetNode } from './types'
 
@@ -73,11 +73,16 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
     dispatch({ type: ActionType.DELETE_NODE, payload: { rowId } })
   }, [])
 
+  const updateLocalHistory = useCallback((payload: UpdateHistoryAction['payload']) => {
+    return dispatch({ type: ActionType.UPDATE_HISTORY, payload })
+  }, [])
+
   return {
     updateNode,
     addNode,
     deleteNode,
     state,
     levels,
+    updateLocalHistory,
   }
 }

@@ -45,22 +45,22 @@ export function useGetCropPlanLines({ cropPlanId }: GetCropPlanLinesParams) {
   }
 }
 
-export function useGetCropPlanLinesHistory({ cropPlanId, costTypeId }: GetCropPlanLineHistoryParams) {
+export function useGetCropPlanLinesHistory({ cropPlanId, lineId, enabled = true }: GetCropPlanLineHistoryParams) {
   const { data, error, isLoading, refetch, isFetching } = useListReportApiGet<
     GetCropPlanLinesHistoryResponse,
     GetCropPlanLineHistoryParams
   >(cropPlan.history.route, {
-    queryOptions: { enabled: cropPlanId !== undefined, gcTime: 0 },
+    queryOptions: { enabled: cropPlanId !== undefined && lineId !== undefined && enabled, gcTime: 0 },
     queryParams: {
       script: cropPlan.history.script,
       deploy: cropPlan.history.deploy,
       cropPlanId,
-      costTypeId,
+      lineId,
     },
   })
 
   return {
-    history: data?.history ?? [],
+    history: data?.history,
     error,
     isLoading,
     refetch,

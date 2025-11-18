@@ -45,20 +45,21 @@ interface CropPlanLineHistoryItemData {
   comment?: string
   date: string
 }
-export interface CropPlanLineHistoryItem {
+export interface CropPlanLineHistoryItem<T extends CropPlanHistoryItemName = CropPlanHistoryItemName> {
   id: string
   user: string
-  name: CropPlanHistoryItemName
+  name: T
   data: CropPlanLineHistoryItemData[]
 }
 
 export interface GetCropPlanLineHistoryParams extends QueryParams {
   cropPlanId?: number
-  costTypeId?: number
+  lineId?: string
+  enabled?: boolean
 }
 
 export interface GetCropPlanLinesHistoryResponse {
-  history: CropPlanLineHistoryItem
+  history: { [K in CropPlanHistoryItemName]?: CropPlanLineHistoryItem<K> }
 }
 
 export interface UpdateCropPlanLines

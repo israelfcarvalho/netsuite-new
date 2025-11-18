@@ -14,13 +14,38 @@ export function updateHistoryReducer(state: BudgetState, action: UpdateHistoryAc
 function updateLocalHistory(state: BudgetState, payload: UpdateLocalHistoryPayload): BudgetState['history'] {
   const selectedNode = state.initialNodes.get(payload.rowId)
   const oldValue = selectedNode?.[payload.name]
-  const remove = oldValue === payload.currentValue
+  const removeRowField = oldValue === payload.newValue
+  let removeRow = false
+
+  if (removeRowField) {
+    removeRow = true
+    Object.keys(state.history.local?.[payload.rowId] ?? {}).forEach((key) => {
+      if (key !== payload.name) {
+        removeRow = false
+      }
+    })
+  }
 
   return {
     ...state.history,
     local: {
       ...state.history.local,
-      [payload.name]: remove ? undefined : payload,
+      [payload.rowId]: removeRow
+        ? undefined
+        : {
+            ...state.history.local?.[payload.rowId],
+            [payload.name]: removeRowField
+              ? undefined
+              : {
+                  data: {
+                    currentValue: payload.newValue,
+                    previousValue: oldValue,
+                    comment: payload.comment,
+                  },
+                  id: payload.lineId,
+                  name: payload.name,
+                },
+          },
     },
   }
 }
@@ -30,7 +55,7 @@ function updateRemoteHistory(state: BudgetState, payload: UpdateRemoteHistoryPay
     ...state.history,
     remote: {
       ...state.history.remote,
-      [payload.name]: payload,
+      [payload.rowId]: payload.data,
     },
   }
 }
