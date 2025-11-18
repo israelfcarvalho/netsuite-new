@@ -1,37 +1,15 @@
 import { Dispatch, SetStateAction } from 'react'
 
-import { BudgetNode, BudgetState } from './use-budget-table/types'
+import { BudgetNode } from './use-budget-table/types'
 
-import { Division } from '@/lib/api'
-import { CostType } from '@/lib/api'
-import { CostCode } from '@/lib/api'
 import { BlockFilter } from '@/lib/components/budget-table/budget-table-block-filters'
-
-interface AddNodePayload
-  extends Pick<
-    BudgetNode,
-    'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
-  > {
-  division: Division
-  costCode: CostCode
-  costType: CostType
-}
-
-interface OnBudgetTableAddNew {
-  (node: AddNodePayload): void
-}
 
 export interface BudgetTableProps {
   data: BudgetNode[]
   isLoading: boolean
   isSaving: boolean
   error?: string
-  onAddNew?: OnBudgetTableAddNew
-  onUpdate: (rowId: string, node: Partial<BudgetNode>) => void
-  onDelete?: (rowId: string) => void
   onSave: () => void
-  state: BudgetState
-  levels: number
   hasBlockLevel?: boolean
   setBlockFilter?: Dispatch<SetStateAction<BlockFilter | undefined>>
   onRefresh: () => void

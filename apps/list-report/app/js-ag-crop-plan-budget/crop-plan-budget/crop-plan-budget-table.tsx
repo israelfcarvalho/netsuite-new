@@ -1,61 +1,37 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
+import { useMemo } from 'react'
 
 import { useToast } from '@workspace/ui/components/toast'
 
-import { useCropPlanBudgetTable } from './use-crop-plan-budget-table'
-
-import { CostCode, Division, CostType } from '@/lib/api'
-import { useSaveCropPlanLines } from '@/lib/api/crop-plan/use-crop-plan-lines'
+import { useGetCropPlanLines, useSaveCropPlanLines } from '@/lib/api/crop-plan/use-crop-plan-lines'
 import { BudgetTable } from '@/lib/components/budget-table/budget-table'
-import { BudgetNode } from '@/lib/components/budget-table/use-budget-table/types'
+import {
+  BudgetTableProvider,
+  useBudgetTableContext,
+} from '@/lib/components/budget-table/use-budget-table/context/budget-table-context'
 
-interface AddNodePayload
-  extends Pick<
-    BudgetNode,
-    'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
-  > {
-  division: Division
-  costCode: CostCode
-  costType: CostType
-}
-
-const ENABLE_ADD_NEW = false
-
-const ENABLE_DELETE = false
-
-export const CropPlanBudgetTable = () => {
+export const CropPlanBudgetTableComponent = ({
+  isLoading,
+  error,
+  refresh,
+}: {
+  isLoading: boolean
+  error: string | undefined
+  refresh: () => void
+}) => {
   const { toast } = useToast()
   const searchParams = useSearchParams()
   const cropPlanId = searchParams.get('cropPlanId')
   const { updateLines, isPending } = useSaveCropPlanLines()
+  const { state } = useBudgetTableContext()
 
-  const { updateNode, addNode, deleteNode, state, data, isLoading, error, levels, refresh } = useCropPlanBudgetTable()
+  const data = useMemo(() => {
+    const nodes = Array.from(state.nodes.values()).filter((node) => !node.parentRowId)
 
-  const handleAddNew = (newItem: AddNodePayload) => {
-    const {
-      division,
-      costCode,
-      costType,
-      originalEstimate,
-      currentEstimate,
-      projectedEstimate,
-      originalEstimatePerAcre,
-      currentEstimatePerAcre,
-    } = newItem
-
-    addNode(
-      division,
-      costCode,
-      costType,
-      originalEstimate,
-      originalEstimatePerAcre,
-      currentEstimate,
-      currentEstimatePerAcre,
-      projectedEstimate
-    )
-  }
+    return nodes
+  }, [state.nodes])
 
   const handleSave = () => {
     const lines = Array.from(state.nodes.values())
@@ -103,13 +79,23 @@ export const CropPlanBudgetTable = () => {
       isLoading={isLoading}
       isSaving={isPending}
       error={error}
-      onAddNew={ENABLE_ADD_NEW ? handleAddNew : undefined}
-      onUpdate={updateNode}
-      onDelete={ENABLE_DELETE ? deleteNode : undefined}
       onSave={handleSave}
-      state={state}
-      levels={levels}
       onRefresh={refresh}
     />
+  )
+}
+
+export function CropPlanBudgetTable() {
+  const queryParams = useSearchParams()
+
+  const cropPlanId = queryParams.get('cropPlanId')
+  const { cropPlanLines, isLoading, error, refetch, isFetching } = useGetCropPlanLines({
+    cropPlanId: Number(cropPlanId),
+  })
+
+  return (
+    <BudgetTableProvider cropPlanLines={cropPlanLines}>
+      <CropPlanBudgetTableComponent isLoading={isLoading || isFetching} error={error?.message} refresh={refetch} />
+    </BudgetTableProvider>
   )
 }

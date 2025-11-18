@@ -2,7 +2,7 @@ import { TData } from '@workspace/ui/components/table'
 
 import { CropPlanLineItem, CropPlanLineHistoryItem } from '@/lib/api/crop-plan/types'
 
-interface BudgetNode extends TData, Omit<CropPlanLineItem, 'children'> {
+export interface BudgetNode extends TData, Omit<CropPlanLineItem, 'children'> {
   children?: BudgetNode[]
 }
 

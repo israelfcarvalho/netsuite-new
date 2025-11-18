@@ -1,7 +1,7 @@
 'use client'
 
-import { Trash2, Filter, PanelBottomClose, PanelBottomOpen } from 'lucide-react'
-import React, { useMemo, useState } from 'react'
+import { Filter, PanelBottomClose, PanelBottomOpen } from 'lucide-react'
+import React, { useMemo } from 'react'
 
 import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
@@ -10,7 +10,6 @@ import { createExpandableTable, createColumn, TableColumn, useTableContext } fro
 import { useSearchParams } from '@workspace/ui/lib/navigation'
 import { cn } from '@workspace/ui/lib/utils'
 
-import { BudgetTableAddModal } from './budget-table-add-modal'
 import { BudgetTableBlockFilters } from './budget-table-block-filters'
 import { BudgetTableExport } from './budget-table-export'
 import { BudgetTableFilters } from './budget-table-filters'
@@ -18,30 +17,24 @@ import { BudgetTableLoading } from './budget-table-loading'
 import { BudgetTableProps } from './budget-table.types'
 import { BudgetNode, BudgetNodeCalculated } from './use-budget-table/types'
 import { useBudgetTableFilters } from './use-budget-table-filters'
+import { BudgetHistoryTableCellWrapper } from '../budget-history/table-cell-wrapper'
+import { useBudgetTableContext } from './use-budget-table/context/budget-table-context'
 
 const ExpandableTable = createExpandableTable<BudgetNode>()
 
 const GRAND_TOTAL_ID = 'grand-total'
 
 function BudgetTableComponent({
-  data,
   isLoading,
   isSaving,
-  onAddNew,
   onSave,
-  state,
-  levels,
   hasBlockLevel = false,
   setBlockFilter,
   onRefresh,
   filteredData,
 }: BudgetTableProps) {
   const { columns } = useTableContext<BudgetNode>()
-
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const searchParamsBoolean = useSearchParams('boolean')
-
-  const blockNL = !!searchParamsBoolean.get('blockNL')
+  const { levels } = useBudgetTableContext()
 
   const onlyGrandTotal = filteredData?.data?.length === 1 && filteredData?.data[0]?.id === GRAND_TOTAL_ID
 
@@ -50,11 +43,6 @@ function BudgetTableComponent({
       {isSaving && <BudgetTableLoading />}
 
       <div className="flex gap-2 px-2">
-        {onAddNew && !blockNL && (
-          <Button variant="default" size="sm" onClick={() => setIsModalOpen(true)} disabled={isLoading}>
-            Add New Cost Line
-          </Button>
-        )}
         <Button variant="default" size="sm" onClick={onSave} disabled={isLoading}>
           Save
         </Button>
@@ -115,28 +103,20 @@ function BudgetTableComponent({
             </tbody>
           )}
         </ExpandableTable.Table>
-        {isModalOpen && onAddNew && (
-          <BudgetTableAddModal
-            state={{ ...state, tree: data }}
-            onAddNew={onAddNew}
-            onClose={() => setIsModalOpen(false)}
-          />
-        )}
       </div>
     </div>
   )
 }
 
 export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredData'>) => {
-  const { data, onUpdate, onDelete, error, hasBlockLevel } = props
+  const { data, error, hasBlockLevel } = props
 
   const { filteredData, ...filteredDataProps } = useBudgetTableFilters(data, hasBlockLevel)
+  const { updateNode } = useBudgetTableContext()
 
   const searchParamsString = useSearchParams('string')
-  const searchParamsBoolean = useSearchParams('boolean')
 
   const blockEC = searchParamsString.getAll('blockEC')
-  const blockRR = !!searchParamsBoolean.get('blockRR')
   const hideColumn = searchParamsString.getAll('hideColumn')
 
   const columns = useMemo(() => {
@@ -166,24 +146,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           </div>
         ),
         ({ row }) => {
-          const isLastChild = row.original.parentRowId && !row.original.children?.length
-          const blockRemoveRow = blockRR
-          const canRemove = !blockRemoveRow && onDelete && isLastChild
-
           return (
             <div className="flex items-center gap-2 min-w-[200px]">
-              {canRemove && (
-                <div className="absolute left-4 group">
-                  <Button
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-0"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => onDelete?.(row.original.rowId)}
-                  >
-                    <Trash2 className="text-bg-danger-40 size-4" />
-                  </Button>
-                </div>
-              )}
               <span>{row.original.name}</span>
             </div>
           )
@@ -203,22 +167,21 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('originalEstimatePerAcre')
 
-          const canEdit = !hasChildren && originalRow.id !== GRAND_TOTAL_ID && !isBlockEC
+          const isEditable = !hasChildren && originalRow.id !== GRAND_TOTAL_ID
+          const canEdit = isEditable && !isBlockEC
 
           if (canEdit) {
             return (
-              <div className="relative">
+              <BudgetHistoryTableCellWrapper name="Original Plan Per Acre">
                 <FormInputText
                   className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    onUpdate(originalRow.rowId, { originalEstimatePerAcre: value })
-
-                    console.log('originalRow.totalAcres', originalRow.totalAcres, value)
+                    updateNode(originalRow.rowId, { originalEstimatePerAcre: value })
 
                     if (originalRow.totalAcres) {
-                      onUpdate(originalRow.rowId, { originalEstimate: value * originalRow.totalAcres })
+                      updateNode(originalRow.rowId, { originalEstimate: value * originalRow.totalAcres })
                     }
                   }}
                   changeOnBlur={
@@ -226,17 +189,23 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     originalRow.originalEstimate * originalRow.totalAcres !== originalRow.originalEstimatePerAcre
                   }
                 />
-              </div>
+              </BudgetHistoryTableCellWrapper>
             )
           }
-          return <span className="text-right">{formatCurrency(value)}</span>
+          return isEditable ? (
+            <BudgetHistoryTableCellWrapper name="Original Plan Per Acre">
+              <span className="text-right">{formatCurrency(value)}</span>
+            </BudgetHistoryTableCellWrapper>
+          ) : (
+            <span className="text-right">{formatCurrency(value)}</span>
+          )
         },
         { isFixed: true }
       ),
       createColumn<BudgetNode>(
         'originalEstimate',
         () => (
-          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
+          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold min-w-[150px]">
             <span>Original Plan</span> <span>Total Acres</span>
           </span>
         ),
@@ -246,20 +215,21 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('originalEstimate')
 
-          const canEdit = !hasChildren && originalRow.id !== GRAND_TOTAL_ID && !isBlockEC
+          const isEditable = !hasChildren && originalRow.id !== GRAND_TOTAL_ID
+          const canEdit = isEditable && !isBlockEC
 
           if (canEdit) {
             return (
-              <div className="relative">
+              <BudgetHistoryTableCellWrapper name="Original Plan Total Acres">
                 <FormInputText
                   className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    onUpdate(originalRow.rowId, { originalEstimate: value })
+                    updateNode(originalRow.rowId, { originalEstimate: value })
 
                     if (originalRow.totalAcres) {
-                      onUpdate(originalRow.rowId, { originalEstimatePerAcre: value / originalRow.totalAcres })
+                      updateNode(originalRow.rowId, { originalEstimatePerAcre: value / originalRow.totalAcres })
                     }
                   }}
                   changeOnBlur={
@@ -267,10 +237,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     originalRow.originalEstimate * originalRow.totalAcres !== originalRow.originalEstimatePerAcre
                   }
                 />
-              </div>
+              </BudgetHistoryTableCellWrapper>
             )
           }
-          return <span className="text-right">{formatCurrency(value)}</span>
+          return isEditable ? (
+            <BudgetHistoryTableCellWrapper name="Original Plan Total Acres">
+              <span className="text-right">{formatCurrency(value)}</span>
+            </BudgetHistoryTableCellWrapper>
+          ) : (
+            <span className="text-right">{formatCurrency(value)}</span>
+          )
         },
         { isFixed: true }
       ),
@@ -287,30 +263,37 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('currentEstimatePerAcre')
 
-          const canEdit = !hasChildren && originalRow.id !== GRAND_TOTAL_ID && !isBlockEC
+          const isEditable = !hasChildren && originalRow.id !== GRAND_TOTAL_ID
+          const canEdit = isEditable && !isBlockEC
 
           if (canEdit) {
             return (
-              <div className="relative">
+              <BudgetHistoryTableCellWrapper name="Current Plan Per Acre">
                 <FormInputText
                   className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    onUpdate(originalRow.rowId, {
+                    updateNode(originalRow.rowId, {
                       currentEstimatePerAcre: value,
                     })
 
                     if (originalRow.totalAcres) {
-                      onUpdate(originalRow.rowId, { currentEstimate: value * originalRow.totalAcres })
+                      updateNode(originalRow.rowId, { currentEstimate: value * originalRow.totalAcres })
                     }
                   }}
                   changeOnBlur
                 />
-              </div>
+              </BudgetHistoryTableCellWrapper>
             )
           }
-          return <span className="text-right">{formatCurrency(value)}</span>
+          return isEditable ? (
+            <BudgetHistoryTableCellWrapper name="Current Plan Per Acre">
+              <span className="text-right">{formatCurrency(value)}</span>
+            </BudgetHistoryTableCellWrapper>
+          ) : (
+            <span className="text-right">{formatCurrency(value)}</span>
+          )
         },
         { isFixed: true }
       ),
@@ -327,30 +310,37 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('currentEstimate')
 
-          const canEdit = !hasChildren && originalRow.id !== GRAND_TOTAL_ID && !isBlockEC
+          const isEditable = !hasChildren && originalRow.id !== GRAND_TOTAL_ID
+          const canEdit = isEditable && !isBlockEC
 
           if (canEdit) {
             return (
-              <div className="relative">
+              <BudgetHistoryTableCellWrapper name="Current Plan Total Acres">
                 <FormInputText
                   className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    onUpdate(originalRow.rowId, {
+                    updateNode(originalRow.rowId, {
                       currentEstimate: value,
                     })
 
                     if (originalRow.totalAcres) {
-                      onUpdate(originalRow.rowId, { currentEstimatePerAcre: value / originalRow.totalAcres })
+                      updateNode(originalRow.rowId, { currentEstimatePerAcre: value / originalRow.totalAcres })
                     }
                   }}
                   changeOnBlur
                 />
-              </div>
+              </BudgetHistoryTableCellWrapper>
             )
           }
-          return <span className="text-right">{formatCurrency(value)}</span>
+          return isEditable ? (
+            <BudgetHistoryTableCellWrapper name="Current Plan Total Acres">
+              <span className="text-right">{formatCurrency(value)}</span>
+            </BudgetHistoryTableCellWrapper>
+          ) : (
+            <span className="text-right">{formatCurrency(value)}</span>
+          )
         },
         { isFixed: true }
       ),
@@ -359,22 +349,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         () => <span className="text-right w-full inline-block text-warning-100/70 font-semibold">Committed Cost</span>,
         ({ row }) => {
           const value = (row.original as unknown as BudgetNode).committedCost
-          const canEdit = false
-          if (canEdit) {
-            return (
-              <div className="relative">
-                <FormInputText
-                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                  variant="currency"
-                  value={value}
-                  onChange={(value) => {
-                    onUpdate(row.original.rowId, { committedCost: value })
-                  }}
-                  changeOnBlur
-                />
-              </div>
-            )
-          }
+
           return <span className="text-right">{formatCurrency(value)}</span>
         }
       ),
@@ -383,22 +358,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         () => <span className="text-right w-full inline-block text-warning-100/70 font-semibold">Actual Cost</span>,
         ({ row }) => {
           const value = (row.original as unknown as BudgetNode).actualCost
-          const canEdit = false
-          if (canEdit) {
-            return (
-              <div className="relative">
-                <FormInputText
-                  className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
-                  variant="currency"
-                  value={value}
-                  onChange={(value) => {
-                    onUpdate(row.original.rowId, { actualCost: value })
-                  }}
-                  changeOnBlur
-                />
-              </div>
-            )
-          }
+
           return <span className="text-right">{formatCurrency(value)}</span>
         }
       ),
@@ -458,24 +418,31 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const hasChildren = row.original.children?.length
           const isBlockEC = blockEC.includes('projectedEstimate')
 
-          const canEdit = !hasChildren && row.original.id !== GRAND_TOTAL_ID && !isBlockEC
+          const isEditable = !hasChildren && row.original.id !== GRAND_TOTAL_ID
+          const canEdit = isEditable && !isBlockEC
 
           if (canEdit) {
             return (
-              <div className="relative">
+              <BudgetHistoryTableCellWrapper name="Projected Plan">
                 <FormInputText
                   className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    onUpdate(row.original.rowId, { projectedEstimate: value })
+                    updateNode(row.original.rowId, { projectedEstimate: value })
                   }}
                   changeOnBlur
                 />
-              </div>
+              </BudgetHistoryTableCellWrapper>
             )
           }
-          return <span className="text-right">{formatCurrency(value)}</span>
+          return isEditable ? (
+            <BudgetHistoryTableCellWrapper name="Projected Plan">
+              <span className="text-right">{formatCurrency(value)}</span>
+            </BudgetHistoryTableCellWrapper>
+          ) : (
+            <span className="text-right">{formatCurrency(value)}</span>
+          )
         }
       ),
       createColumn<BudgetNodeCalculated>(
@@ -512,7 +479,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
     ]
 
     return columns.filter((column) => column && !hideColumn.includes(column.accessorKey))
-  }, [blockRR, blockEC, onUpdate, onDelete, hideColumn, hasBlockLevel])
+  }, [blockEC, updateNode, hideColumn, hasBlockLevel])
 
   return (
     <ExpandableTable.Root

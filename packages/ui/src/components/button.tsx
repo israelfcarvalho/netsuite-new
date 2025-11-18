@@ -14,7 +14,7 @@ const buttonVariants = cva(
           'bg-red text-white shadow-xs hover:bg-oracle focus-visible:ring-red/20 dark:focus-visible:ring-red/40',
         outline: 'border border-neutral-50 bg-white shadow-xs hover:bg-neutral-20 hover:text-neutral-180',
         secondary: 'bg-neutral-20 text-neutral-180 shadow-xs hover:bg-neutral-30',
-        ghost: 'hover:bg-neutral-20 hover:text-neutral-180',
+        ghost: 'inherit hover:text-neutral-130 hover',
         link: 'text-brand-100 underline-offset-4 hover:underline',
       },
       size: {
@@ -46,4 +46,4 @@ function Button({
   return <Comp data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props} />
 }
 
-export { Button, buttonVariants }
+export { Button }

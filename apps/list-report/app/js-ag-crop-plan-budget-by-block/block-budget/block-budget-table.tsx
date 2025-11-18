@@ -1,27 +1,46 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 
 import { useToast } from '@workspace/ui/components/toast'
 
-import { useBlockBudget } from './use-block-budget'
-
 import { UpdateCropPlanLinesByRanch } from '@/lib/api/crop-plan/types'
-import { useSaveCropPlanLinesByRanch } from '@/lib/api/crop-plan/use-crop-plan-lines-by-ranch'
+import {
+  useGetCropPlanLinesByRanch,
+  useSaveCropPlanLinesByRanch,
+} from '@/lib/api/crop-plan/use-crop-plan-lines-by-ranch'
 import { BudgetTable } from '@/lib/components/budget-table/budget-table'
 import { BlockFilter } from '@/lib/components/budget-table/budget-table-block-filters'
+import {
+  BudgetTableProvider,
+  useBudgetTableContext,
+} from '@/lib/components/budget-table/use-budget-table/context/budget-table-context'
 
-export const BlockBudgetTable = () => {
-  const [blockFilter, setBlockFilter] = useState<BlockFilter>()
-
+export const BlockBudgetTableComponent = ({
+  setBlockFilter,
+  isLoading,
+  refresh,
+  error,
+}: {
+  setBlockFilter: Dispatch<SetStateAction<BlockFilter | undefined>>
+  isLoading: boolean
+  refresh: () => void
+  error?: string
+}) => {
   const { toast } = useToast()
 
   const searchParams = useSearchParams()
   const cropPlanId = searchParams.get('cropPlanId')
 
-  const { data, isLoading, error, updateNode, state, levels, refresh } = useBlockBudget(blockFilter)
   const { updateLines, isPending } = useSaveCropPlanLinesByRanch()
+  const { state } = useBudgetTableContext()
+
+  const data = useMemo(() => {
+    const nodes = Array.from(state.nodes.values()).filter((node) => !node.parentRowId)
+
+    return nodes
+  }, [state.nodes])
 
   const handleSave = () => {
     const lines = Array.from(state.nodes.values())
@@ -71,13 +90,32 @@ export const BlockBudgetTable = () => {
       isLoading={isLoading}
       isSaving={isPending}
       error={error}
-      onUpdate={updateNode}
       onSave={handleSave}
-      state={state}
-      levels={levels}
       hasBlockLevel={true}
       setBlockFilter={setBlockFilter}
       onRefresh={refresh}
     />
+  )
+}
+
+export function BlockBudgetTable() {
+  const queryParams = useSearchParams()
+  const [blockFilter, setBlockFilter] = useState<BlockFilter>()
+
+  const cropPlanId = queryParams.get('cropPlanId')
+  const { cropPlanLines, isLoading, error, refetch, isFetching } = useGetCropPlanLinesByRanch({
+    cropPlanId: Number(cropPlanId),
+    block: blockFilter?.id,
+  })
+
+  return (
+    <BudgetTableProvider cropPlanLines={cropPlanLines}>
+      <BlockBudgetTableComponent
+        setBlockFilter={setBlockFilter}
+        isLoading={isLoading || isFetching}
+        refresh={refetch}
+        error={error?.message}
+      />
+    </BudgetTableProvider>
   )
 }
