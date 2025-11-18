@@ -202,6 +202,10 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       newValue: value,
                     })
 
+                    setTimeout(() => {
+                      setSelectedBudgetHistory({ field: 'originalEstimatePerAcre', rowId: originalRow.rowId })
+                    }, 300)
+
                     if (originalRow.totalAcres) {
                       updateNode(originalRow.rowId, { originalEstimate: value * originalRow.totalAcres })
                       updateLocalHistory({
@@ -266,10 +270,6 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                   variant="currency"
                   value={value}
                   onChange={(value) => {
-                    console.log(
-                      !originalRow.totalAcres ||
-                        originalRow.originalEstimate * originalRow.totalAcres !== originalRow.originalEstimatePerAcre
-                    )
                     updateNode(originalRow.rowId, { originalEstimate: value })
                     updateLocalHistory({
                       type: 'local',
@@ -278,6 +278,10 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       name: 'originalEstimate',
                       newValue: value,
                     })
+
+                    setTimeout(() => {
+                      setSelectedBudgetHistory({ field: 'originalEstimate', rowId: originalRow.rowId })
+                    }, 300)
 
                     if (originalRow.totalAcres) {
                       updateNode(originalRow.rowId, { originalEstimatePerAcre: value / originalRow.totalAcres })
@@ -355,6 +359,10 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       newValue: value,
                     })
 
+                    setTimeout(() => {
+                      setSelectedBudgetHistory({ field: 'currentEstimatePerAcre', rowId: originalRow.rowId })
+                    }, 300)
+
                     if (originalRow.totalAcres) {
                       updateNode(originalRow.rowId, { currentEstimate: value * originalRow.totalAcres })
                       updateLocalHistory({
@@ -427,6 +435,11 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       name: 'currentEstimate',
                       newValue: value,
                     })
+
+                    setTimeout(() => {
+                      setSelectedBudgetHistory({ field: 'currentEstimate', rowId: originalRow.rowId })
+                    }, 300)
+
                     if (originalRow.totalAcres) {
                       updateNode(originalRow.rowId, { currentEstimatePerAcre: value / originalRow.totalAcres })
                       updateLocalHistory({
@@ -577,6 +590,11 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                   value={value}
                   onChange={(value) => {
                     updateNode(row.original.rowId, { projectedEstimate: value })
+
+                    setTimeout(() => {
+                      setSelectedBudgetHistory({ field: 'projectedEstimate', rowId: row.original.rowId })
+                    }, 300)
+
                     updateLocalHistory({
                       type: 'local',
                       lineId: row.original.id,
