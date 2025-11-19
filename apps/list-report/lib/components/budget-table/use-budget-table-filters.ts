@@ -122,6 +122,7 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
   const grandTotalNode = useMemo<BudgetNode>(() => {
     const initialGrandTotal = {
       id: 'grand-total',
+      lineId: 'grand-total',
       rowId: 'grand-total',
       name: 'Grand Total',
       originalEstimate: 0,

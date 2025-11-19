@@ -55,6 +55,7 @@ export const BlockBudgetTableComponent = ({
 
         let history: {
           [K in BudgedHistoryDataName]?: {
+            lineId: string
             previousValue: number
             newValue: number
             comment?: string
@@ -67,7 +68,10 @@ export const BlockBudgetTableComponent = ({
           .map((historyItem) => {
             history = {
               ...history,
-              [historyItem.name]: historyItem.data,
+              [historyItem.name]: {
+                lineId: historyItem.id,
+                ...historyItem.data,
+              },
             }
           })
 

@@ -2,6 +2,7 @@ import { QueryParams } from '@workspace/core/api/_common/types'
 
 export interface CropPlanLineItem {
   id: string
+  lineId: string
   name: string
   totalAcres: number
   originalEstimate: number
@@ -74,6 +75,7 @@ export interface UpdateCropPlanLines
   costTypeId: number
   history?: {
     [K in CropPlanHistoryItemName]?: {
+      lineId: string
       previousValue: number
       newValue: number
       comment?: string
@@ -94,13 +96,6 @@ export interface UpdateCropPlanLinesParams extends QueryParams {
 
 export interface UpdateCropPlanLinesByRanch extends UpdateCropPlanLines {
   ranchId: number
-  history?: {
-    [K in CropPlanHistoryItemName]?: {
-      previousValue: number
-      newValue: number
-      comment?: string
-    }
-  }
 }
 
 export interface UpdateCropPlanLinesByRanchPayload {

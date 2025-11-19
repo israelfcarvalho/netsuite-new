@@ -187,7 +187,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                 rowId={originalRow.rowId}
                 name={CropPlanKeysToNames.originalEstimatePerAcre.join(' ')}
                 onClick={() => setSelectedBudgetHistory({ field: 'originalEstimatePerAcre', rowId: originalRow.rowId })}
-                lineId={originalRow.id}
+                lineId={originalRow.lineId}
               >
                 <FormInputText
                   className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
@@ -197,7 +197,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     updateNode(originalRow.rowId, { originalEstimatePerAcre: value })
                     updateLocalHistory({
                       type: 'local',
-                      lineId: originalRow.id,
+                      lineId: originalRow.lineId,
                       rowId: originalRow.rowId,
                       name: 'originalEstimatePerAcre',
                       newValue: value,
@@ -213,7 +213,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       updateNode(originalRow.rowId, { originalEstimate: value * originalRow.totalAcres })
                       updateLocalHistory({
                         type: 'local',
-                        lineId: originalRow.id,
+                        lineId: originalRow.lineId,
                         rowId: originalRow.rowId,
                         name: 'originalEstimate',
                         newValue: value * originalRow.totalAcres,
@@ -229,7 +229,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
             <BudgetHistoryTableCellWrapper
               name={CropPlanKeysToNames.originalEstimatePerAcre.join(' ')}
               onClick={() => setSelectedBudgetHistory({ field: 'originalEstimatePerAcre', rowId: originalRow.rowId })}
-              lineId={originalRow.id}
+              lineId={originalRow.lineId}
               rowId={originalRow.rowId}
               hasBlockLevel={!!hasBlockLevel}
             >
@@ -264,7 +264,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                 hasBlockLevel={!!hasBlockLevel}
                 name={CropPlanKeysToNames.originalEstimate.join(' ')}
                 onClick={() => setSelectedBudgetHistory({ field: 'originalEstimate', rowId: originalRow.rowId })}
-                lineId={originalRow.id}
+                lineId={originalRow.lineId}
                 rowId={originalRow.rowId}
               >
                 <FormInputText
@@ -275,7 +275,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     updateNode(originalRow.rowId, { originalEstimate: value })
                     updateLocalHistory({
                       type: 'local',
-                      lineId: originalRow.id,
+                      lineId: originalRow.lineId,
                       rowId: originalRow.rowId,
                       name: 'originalEstimate',
                       newValue: value,
@@ -291,7 +291,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       updateNode(originalRow.rowId, { originalEstimatePerAcre: value / originalRow.totalAcres })
                       updateLocalHistory({
                         type: 'local',
-                        lineId: originalRow.id,
+                        lineId: originalRow.lineId,
                         rowId: originalRow.rowId,
                         name: 'originalEstimatePerAcre',
                         newValue: value / originalRow.totalAcres,
@@ -308,7 +308,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               hasBlockLevel={!!hasBlockLevel}
               name={CropPlanKeysToNames.originalEstimate.join(' ')}
               onClick={() => setSelectedBudgetHistory({ field: 'originalEstimate', rowId: originalRow.rowId })}
-              lineId={originalRow.id}
+              lineId={originalRow.lineId}
               rowId={originalRow.rowId}
             >
               <span className="text-right">{formatCurrency(originalValue)}</span>
@@ -343,7 +343,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                 hasBlockLevel={!!hasBlockLevel}
                 name={CropPlanKeysToNames.currentEstimatePerAcre.join(' ')}
                 onClick={() => setSelectedBudgetHistory({ field: 'currentEstimatePerAcre', rowId: originalRow.rowId })}
-                lineId={originalRow.id}
+                lineId={originalRow.lineId}
                 rowId={originalRow.rowId}
               >
                 <FormInputText
@@ -356,7 +356,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     })
                     updateLocalHistory({
                       type: 'local',
-                      lineId: originalRow.id,
+                      lineId: originalRow.lineId,
                       rowId: originalRow.rowId,
                       name: 'currentEstimatePerAcre',
                       newValue: value,
@@ -372,7 +372,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       updateNode(originalRow.rowId, { currentEstimate: value * originalRow.totalAcres })
                       updateLocalHistory({
                         type: 'local',
-                        lineId: originalRow.id,
+                        lineId: originalRow.lineId,
                         rowId: originalRow.rowId,
                         name: 'currentEstimate',
                         newValue: value * originalRow.totalAcres,
@@ -389,7 +389,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               hasBlockLevel={!!hasBlockLevel}
               name={CropPlanKeysToNames.currentEstimatePerAcre.join(' ')}
               onClick={() => setSelectedBudgetHistory({ field: 'currentEstimatePerAcre', rowId: originalRow.rowId })}
-              lineId={originalRow.id}
+              lineId={originalRow.lineId}
               rowId={originalRow.rowId}
             >
               <span className="text-right">{formatCurrency(originalValue)}</span>
@@ -424,7 +424,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                 hasBlockLevel={!!hasBlockLevel}
                 name={CropPlanKeysToNames.currentEstimate.join(' ')}
                 onClick={() => setSelectedBudgetHistory({ field: 'currentEstimate', rowId: originalRow.rowId })}
-                lineId={originalRow.id}
+                lineId={originalRow.lineId}
                 rowId={originalRow.rowId}
               >
                 <FormInputText
@@ -437,7 +437,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     })
                     updateLocalHistory({
                       type: 'local',
-                      lineId: originalRow.id,
+                      lineId: originalRow.lineId,
                       rowId: originalRow.rowId,
                       name: 'currentEstimate',
                       newValue: value,
@@ -453,7 +453,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       updateNode(originalRow.rowId, { currentEstimatePerAcre: value / originalRow.totalAcres })
                       updateLocalHistory({
                         type: 'local',
-                        lineId: originalRow.id,
+                        lineId: originalRow.lineId,
                         rowId: originalRow.rowId,
                         name: 'currentEstimatePerAcre',
                         newValue: value / originalRow.totalAcres,
@@ -470,7 +470,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               hasBlockLevel={!!hasBlockLevel}
               name={CropPlanKeysToNames.currentEstimate.join(' ')}
               onClick={() => setSelectedBudgetHistory({ field: 'currentEstimate', rowId: originalRow.rowId })}
-              lineId={originalRow.id}
+              lineId={originalRow.lineId}
               rowId={originalRow.rowId}
             >
               <span className="text-right">{formatCurrency(originalValue)}</span>
@@ -579,11 +579,12 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           </span>
         ),
         ({ row }) => {
-          const originalValue = (row.original as unknown as BudgetNode).projectedEstimate
-          const hasChildren = row.original.children?.length
+          const originalRow = row.original as unknown as BudgetNode
+          const originalValue = originalRow.projectedEstimate
+          const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('projectedEstimate')
 
-          const isEditable = !hasChildren && row.original.id !== GRAND_TOTAL_ID
+          const isEditable = !hasChildren && originalRow.id !== GRAND_TOTAL_ID
           const canEdit = isEditable && !isBlockEC
 
           if (canEdit) {
@@ -591,9 +592,9 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               <BudgetHistoryTableCellWrapper
                 hasBlockLevel={!!hasBlockLevel}
                 name={CropPlanKeysToNames.projectedEstimate.join(' ')}
-                onClick={() => setSelectedBudgetHistory({ field: 'projectedEstimate', rowId: row.original.rowId })}
-                lineId={row.original.id}
-                rowId={row.original.rowId}
+                onClick={() => setSelectedBudgetHistory({ field: 'projectedEstimate', rowId: originalRow.rowId })}
+                lineId={originalRow.lineId}
+                rowId={originalRow.rowId}
               >
                 <FormInputText
                   className="w-full text-right border-0 px-0 rounded-none focus-visible:ring-0 focus-visible:bg-neutral-10"
@@ -603,15 +604,15 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     updateNode(row.original.rowId, { projectedEstimate: value })
                     updateLocalHistory({
                       type: 'local',
-                      lineId: row.original.id,
-                      rowId: row.original.rowId,
+                      lineId: originalRow.lineId,
+                      rowId: originalRow.rowId,
                       name: 'projectedEstimate',
                       newValue: value,
                     })
 
                     if (value !== originalValue) {
                       setTimeout(() => {
-                        setSelectedBudgetHistory({ field: 'projectedEstimate', rowId: row.original.rowId })
+                        setSelectedBudgetHistory({ field: 'projectedEstimate', rowId: originalRow.rowId })
                       }, 300)
                     }
                   }}
@@ -625,8 +626,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               hasBlockLevel={!!hasBlockLevel}
               name={CropPlanKeysToNames.projectedEstimate.join(' ')}
               onClick={() => setSelectedBudgetHistory({ field: 'projectedEstimate', rowId: row.original.rowId })}
-              lineId={row.original.id}
-              rowId={row.original.rowId}
+              lineId={originalRow.lineId}
+              rowId={originalRow.rowId}
             >
               <span className="text-right">{formatCurrency(originalValue)}</span>
             </BudgetHistoryTableCellWrapper>

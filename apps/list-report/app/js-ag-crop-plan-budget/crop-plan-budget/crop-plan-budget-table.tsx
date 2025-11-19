@@ -43,6 +43,7 @@ export const CropPlanBudgetTableComponent = ({
         const division = state.nodes.get(costCode?.parentRowId ?? '')
         let history: {
           [K in BudgedHistoryDataName]?: {
+            lineId: string
             previousValue: number
             newValue: number
             comment?: string
@@ -57,6 +58,7 @@ export const CropPlanBudgetTableComponent = ({
             history = {
               ...history,
               [historyItem.name]: {
+                lineId: item.lineId,
                 previousValue: historyItem.data.previousValue,
                 newValue: historyItem.data.currentValue,
                 comment: historyItem.data.comment,

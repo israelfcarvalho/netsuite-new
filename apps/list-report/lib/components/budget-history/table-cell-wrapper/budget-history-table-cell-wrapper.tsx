@@ -29,6 +29,7 @@ export function BudgetHistoryTableCellWrapper({
     enabled: isHovered,
     action: hasBlockLevel ? 'by-ranch' : 'main',
   })
+
   const { updateLocalHistory } = useBudgetTableContext()
 
   useEffect(() => {

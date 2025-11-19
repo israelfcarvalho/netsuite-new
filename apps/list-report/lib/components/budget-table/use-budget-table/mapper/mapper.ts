@@ -7,6 +7,7 @@ export function createNode(item: CropPlanLineItem, parentRowId: string = ''): Bu
 
   return {
     id: item.id,
+    lineId: item.lineId,
     rowId,
     name: item.name,
     originalEstimate: item.originalEstimate,

@@ -20,6 +20,7 @@ const createNode = (
   const rowId = parentRowId.concat(data.id)
   return {
     ...data,
+    lineId: '',
     rowId,
     parentRowId,
     committedCost: 0,
