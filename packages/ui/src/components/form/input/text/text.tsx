@@ -7,7 +7,7 @@ import { getInputHandlers } from './text.utils'
 export function FormInputText(props: FormInputTextProps) {
   const _props = { ...props }
   const { onChange: onChangeOriginal, value: incomingValue, initialValue } = props
-  const [valueLocal, setValueLocal] = useState(incomingValue || initialValue)
+  const [valueLocal, setValueLocal] = useState(incomingValue ?? initialValue)
   const [state, setState] = useState<FormInputTextStateManager['state']>({
     currentSelectionRange: {
       start: 0,
@@ -25,13 +25,13 @@ export function FormInputText(props: FormInputTextProps) {
   }
 
   const onBlur = () => {
-    if (props.changeOnBlur) {
+    if (props.changeOnBlur && valueLocal !== (incomingValue ?? initialValue)) {
       onChangeOriginal(valueLocal as never)
     }
   }
 
   const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (props.changeOnBlur && e.key === 'Enter') {
+    if (props.changeOnBlur && e.key === 'Enter' && valueLocal !== (incomingValue ?? initialValue)) {
       onChangeOriginal(valueLocal as never)
     }
     handlers.handleKeyUp?.(e)
