@@ -17,12 +17,18 @@ export function BudgetHistoryTableCellWrapper({
   onClick,
   lineId,
   rowId,
+  hasBlockLevel,
 }: BudgetHistoryTableCellWrapperProps) {
   const [isHovered, setIsHovered] = useState(false)
   const queryParams = useSearchParams('number')
   const cropPlanId = queryParams.get('cropPlanId')
 
-  const { history } = useGetCropPlanLinesHistory({ lineId, cropPlanId: Number(cropPlanId), enabled: isHovered })
+  const { history } = useGetCropPlanLinesHistory({
+    lineId,
+    cropPlanId: Number(cropPlanId),
+    enabled: isHovered,
+    action: hasBlockLevel ? 'by-ranch' : 'main',
+  })
   const { updateLocalHistory } = useBudgetTableContext()
 
   useEffect(() => {

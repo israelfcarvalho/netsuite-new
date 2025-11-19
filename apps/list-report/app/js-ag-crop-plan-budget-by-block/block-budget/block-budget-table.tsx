@@ -16,6 +16,7 @@ import {
   BudgetTableProvider,
   useBudgetTableContext,
 } from '@/lib/components/budget-table/use-budget-table/context/budget-table-context'
+import { BudgedHistoryDataName } from '@/lib/components/budget-table/use-budget-table/types'
 
 export const BlockBudgetTableComponent = ({
   setBlockFilter,
@@ -43,6 +44,7 @@ export const BlockBudgetTableComponent = ({
   }, [state.nodes])
 
   const handleSave = () => {
+    console.log('handleSave', state.nodes)
     const lines = Array.from(state.nodes.values())
       .filter((item) => !item.children && item.id !== 'grand-total')
       .map<UpdateCropPlanLinesByRanch>((item) => {
@@ -50,6 +52,24 @@ export const BlockBudgetTableComponent = ({
         const costCode = state.nodes.get(costType.parentRowId ?? '')
         const division = state.nodes.get(costCode?.parentRowId ?? '')
         const ranch = state.nodes.get(division?.parentRowId ?? '')
+
+        let history: {
+          [K in BudgedHistoryDataName]?: {
+            previousValue: number
+            newValue: number
+            comment?: string
+          }
+        } = {}
+
+        const localHistory = state.history.local?.[item.rowId] ?? {}
+        Object.values(localHistory)
+          .filter((historyItem) => !!historyItem)
+          .map((historyItem) => {
+            history = {
+              ...history,
+              [historyItem.name]: historyItem.data,
+            }
+          })
 
         return {
           divisionId: Number(division?.id),
@@ -62,6 +82,7 @@ export const BlockBudgetTableComponent = ({
           currentEstimatePerAcre: item.currentEstimatePerAcre,
           projectedEstimate: item.projectedEstimate,
           wipBalance: item.wipBalance,
+          history,
         }
       })
 

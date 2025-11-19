@@ -45,7 +45,12 @@ export function useGetCropPlanLines({ cropPlanId }: GetCropPlanLinesParams) {
   }
 }
 
-export function useGetCropPlanLinesHistory({ cropPlanId, lineId, enabled = true }: GetCropPlanLineHistoryParams) {
+export function useGetCropPlanLinesHistory({
+  cropPlanId,
+  lineId,
+  enabled = true,
+  action,
+}: GetCropPlanLineHistoryParams) {
   const { data, error, isLoading, refetch, isFetching } = useListReportApiGet<
     GetCropPlanLinesHistoryResponse,
     GetCropPlanLineHistoryParams
@@ -56,6 +61,7 @@ export function useGetCropPlanLinesHistory({ cropPlanId, lineId, enabled = true 
       deploy: cropPlan.history.deploy,
       cropPlanId,
       lineId,
+      action,
     },
   })
 

@@ -5,4 +5,5 @@ export interface BudgetHistoryTableCellWrapperProps {
   onClick: () => void
   lineId: string
   rowId: string
+  hasBlockLevel: boolean
 }

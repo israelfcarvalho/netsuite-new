@@ -45,6 +45,7 @@ export interface GetCropPlanLineHistoryParams extends QueryParams {
   cropPlanId?: number
   lineId?: string
   enabled?: boolean
+  action: 'by-ranch' | 'main'
 }
 
 type CropPlanHistoryItemName = keyof Pick<
@@ -71,6 +72,13 @@ export interface UpdateCropPlanLines
   divisionId: number
   costCodeId: number
   costTypeId: number
+  history?: {
+    [K in CropPlanHistoryItemName]?: {
+      previousValue: number
+      newValue: number
+      comment?: string
+    }
+  }
 }
 
 export interface UpdateCropPlanLinesPayload {
@@ -86,6 +94,13 @@ export interface UpdateCropPlanLinesParams extends QueryParams {
 
 export interface UpdateCropPlanLinesByRanch extends UpdateCropPlanLines {
   ranchId: number
+  history?: {
+    [K in CropPlanHistoryItemName]?: {
+      previousValue: number
+      newValue: number
+      comment?: string
+    }
+  }
 }
 
 export interface UpdateCropPlanLinesByRanchPayload {

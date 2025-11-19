@@ -11,6 +11,7 @@ import {
   BudgetTableProvider,
   useBudgetTableContext,
 } from '@/lib/components/budget-table/use-budget-table/context/budget-table-context'
+import { BudgedHistoryDataName } from '@/lib/components/budget-table/use-budget-table/types'
 
 export const CropPlanBudgetTableComponent = ({
   isLoading,
@@ -40,6 +41,28 @@ export const CropPlanBudgetTableComponent = ({
         const costType = item
         const costCode = state.nodes.get(costType.parentRowId ?? '')
         const division = state.nodes.get(costCode?.parentRowId ?? '')
+        let history: {
+          [K in BudgedHistoryDataName]?: {
+            previousValue: number
+            newValue: number
+            comment?: string
+          }
+        } = {}
+
+        const localHistory = state.history.local?.[item.rowId]
+
+        Object.values(localHistory ?? {})
+          .filter((historyItem) => !!historyItem)
+          .map((historyItem) => {
+            history = {
+              ...history,
+              [historyItem.name]: {
+                previousValue: historyItem.data.previousValue,
+                newValue: historyItem.data.currentValue,
+                comment: historyItem.data.comment,
+              },
+            }
+          })
 
         return {
           divisionId: Number(division?.id),
@@ -51,6 +74,7 @@ export const CropPlanBudgetTableComponent = ({
           currentEstimatePerAcre: item.currentEstimatePerAcre,
           projectedEstimate: item.projectedEstimate,
           wipBalance: item.wipBalance,
+          history,
         }
       })
 
