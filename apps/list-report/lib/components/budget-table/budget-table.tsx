@@ -165,7 +165,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'originalEstimatePerAcre',
         () => (
-          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
+          <span className="min-w-[135px] inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
             {CropPlanKeysToNames.originalEstimatePerAcre.map((key) => (
               <span key={key}>{key}</span>
             ))}
@@ -244,7 +244,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'originalEstimate',
         () => (
-          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold min-w-[150px]">
+          <span className="min-w-[135px] inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
             {CropPlanKeysToNames.originalEstimate.map((key) => (
               <span key={key}>{key}</span>
             ))}
@@ -322,7 +322,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'currentEstimatePerAcre',
         () => (
-          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
+          <span className="min-w-[135px] inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
             {CropPlanKeysToNames.currentEstimatePerAcre.map((key) => (
               <span key={key}>{key}</span>
             ))}
@@ -403,7 +403,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'currentEstimate',
         () => (
-          <span className="inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
+          <span className="min-w-[135px] inline-flex flex-col items-end w-full text-brand-100/70 font-semibold">
             {CropPlanKeysToNames.currentEstimate.map((key) => (
               <span key={key}>{key}</span>
             ))}
@@ -484,7 +484,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'committedCost',
         () => (
-          <span className="text-right w-full inline-block text-warning-100/70 font-semibold">
+          <span className="min-w-[120px] text-right w-full inline-block text-warning-100/70 font-semibold">
             {CropPlanKeysToNames.committedCost.join(' ')}
           </span>
         ),
@@ -497,7 +497,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'actualCost',
         () => (
-          <span className="text-right w-full inline-block text-warning-100/70 font-semibold">
+          <span className="min-w-[120px] text-right w-full inline-block text-warning-100/70 font-semibold">
             {CropPlanKeysToNames.actualCost.join(' ')}
           </span>
         ),
@@ -538,7 +538,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNodeCalculated>(
         'totalCost',
         () => (
-          <span className="text-right w-full inline-block text-lilac font-semibold">
+          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
             {CropPlanKeysToNames.projectedEstimate.join(' ')}
           </span>
         ),
@@ -555,7 +555,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNodeCalculated>(
         'costsToComplete',
         () => (
-          <span className="text-right w-full inline-block text-lilac font-semibold">
+          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
             {CropPlanKeysToNames.costsToComplete.join(' ')}
           </span>
         ),
@@ -574,7 +574,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNode>(
         'projectedEstimate',
         () => (
-          <span className="text-right w-full inline-block text-brand-100/70 font-semibold">
+          <span className="min-w-[135px] text-right w-full inline-block text-brand-100/70 font-semibold">
             {CropPlanKeysToNames.projectedEstimate.join(' ')}
           </span>
         ),
@@ -639,7 +639,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNodeCalculated>(
         'overUnder',
         () => (
-          <span className="text-right w-full inline-block text-lilac font-semibold">
+          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
             {CropPlanKeysToNames.overUnder.join(' ')}
           </span>
         ),
@@ -656,7 +656,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       createColumn<BudgetNodeCalculated>(
         'projCostComplete',
         () => (
-          <span className="text-right w-full inline-block text-lilac font-semibold">
+          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
             {CropPlanKeysToNames.projCostComplete.join(' ')}
           </span>
         ),
