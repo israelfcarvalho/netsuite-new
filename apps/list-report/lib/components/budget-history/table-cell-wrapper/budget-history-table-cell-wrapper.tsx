@@ -23,14 +23,24 @@ export function BudgetHistoryTableCellWrapper({
   const queryParams = useSearchParams('number')
   const cropPlanId = queryParams.get('cropPlanId')
 
-  const { history } = useGetCropPlanLinesHistory({
+  const { history, refetch, isFetching, isLoading } = useGetCropPlanLinesHistory({
     lineId,
     cropPlanId: Number(cropPlanId),
     enabled: isHovered,
     action: hasBlockLevel ? 'by-ranch' : 'main',
   })
 
-  const { updateLocalHistory } = useBudgetTableContext()
+  const { updateLocalHistory, state } = useBudgetTableContext()
+
+  const isLocalHistoryEmpty = !state.history.local || !Object.keys(state.history.local).length
+  const isRemoteHistoryEmpty = !state.history.remote || !Object.keys(state.history.remote).length
+  const isHistoryEmpty = isLocalHistoryEmpty && isRemoteHistoryEmpty
+
+  useEffect(() => {
+    if (isHistoryEmpty && !isHovered && !isFetching && !isLoading) {
+      refetch()
+    }
+  }, [isHistoryEmpty, refetch, history, isHovered, isFetching, isLoading])
 
   useEffect(() => {
     if (history) {

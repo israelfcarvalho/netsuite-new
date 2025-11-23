@@ -26,7 +26,7 @@ export const CropPlanBudgetTableComponent = ({
   const searchParams = useSearchParams()
   const cropPlanId = searchParams.get('cropPlanId')
   const { updateLines, isPending } = useSaveCropPlanLines()
-  const { state } = useBudgetTableContext()
+  const { state, clearHistory } = useBudgetTableContext()
 
   const data = useMemo(() => {
     const nodes = Array.from(state.nodes.values()).filter((node) => !node.parentRowId)
@@ -87,6 +87,7 @@ export const CropPlanBudgetTableComponent = ({
           description: 'Costs saved successfully',
           variant: 'success',
         })
+        clearHistory()
         parent.refreshCalculations()
       },
       onError: (error) => {

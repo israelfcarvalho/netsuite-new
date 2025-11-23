@@ -6,10 +6,10 @@ import { useBudgetTable } from '../use-budget-table'
 export const BudgetTableContext = createContext<BudgetTableContextType | null>(null)
 
 export function BudgetTableProvider({ children, cropPlanLines = [] }: BudgetTableProviderProps) {
-  const { state, updateNode, deleteNode, levels, updateLocalHistory } = useBudgetTable({ cropPlanLines })
+  const { state, updateNode, deleteNode, levels, updateLocalHistory, clearHistory } = useBudgetTable({ cropPlanLines })
 
   return (
-    <BudgetTableContext.Provider value={{ state, updateNode, deleteNode, levels, updateLocalHistory }}>
+    <BudgetTableContext.Provider value={{ state, updateNode, deleteNode, levels, updateLocalHistory, clearHistory }}>
       {children}
     </BudgetTableContext.Provider>
   )

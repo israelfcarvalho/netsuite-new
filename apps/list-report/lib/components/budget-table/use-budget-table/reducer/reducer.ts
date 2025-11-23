@@ -6,7 +6,7 @@ import { deleteNodeReducer } from './delete-reducer'
 import { loadNodesReducer } from './load-reducer'
 import { updateNodeReducer } from './update-reducer'
 import { BudgetState } from '../types'
-import { updateHistoryReducer } from './history-reducer'
+import { updateHistoryReducer, clearHistoryReducer } from './history-reducer'
 
 export function budgetTableReducer(state: BudgetState, action: Action): BudgetState {
   switch (action.type) {
@@ -30,6 +30,10 @@ export function budgetTableReducer(state: BudgetState, action: Action): BudgetSt
 
     case ActionType.UPDATE_HISTORY: {
       return updateHistoryReducer(state, action)
+    }
+
+    case ActionType.CLEAR_HISTORY: {
+      return clearHistoryReducer(state)
     }
 
     default:

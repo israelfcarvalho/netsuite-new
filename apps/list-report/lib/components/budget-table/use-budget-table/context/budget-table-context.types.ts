@@ -9,6 +9,7 @@ export interface BudgetTableContextType {
   deleteNode: (rowId: string) => void
   levels: number
   updateLocalHistory: (payload: UpdateHistoryAction['payload']) => void
+  clearHistory: () => void
 }
 
 export interface BudgetTableProviderProps {

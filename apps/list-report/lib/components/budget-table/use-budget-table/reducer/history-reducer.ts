@@ -59,3 +59,14 @@ function updateRemoteHistory(state: BudgetState, payload: UpdateRemoteHistoryPay
     },
   }
 }
+
+export function clearHistoryReducer(state: BudgetState): BudgetState {
+  return {
+    ...state,
+    history: {
+      ...state.history,
+      local: undefined,
+      remote: undefined,
+    },
+  }
+}

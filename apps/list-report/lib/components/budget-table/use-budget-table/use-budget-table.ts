@@ -77,6 +77,10 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
     return dispatch({ type: ActionType.UPDATE_HISTORY, payload })
   }, [])
 
+  const clearHistory = useCallback(() => {
+    dispatch({ type: ActionType.CLEAR_HISTORY })
+  }, [])
+
   return {
     updateNode,
     addNode,
@@ -84,5 +88,6 @@ export function useBudgetTable({ cropPlanLines }: { cropPlanLines: CropPlanLineI
     state,
     levels,
     updateLocalHistory,
+    clearHistory,
   }
 }

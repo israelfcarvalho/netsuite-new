@@ -8,6 +8,7 @@ export enum ActionType {
   ADD_NODE = 'use-budget-table/ADD_NODE',
   DELETE_NODE = 'use-budget-table/DELETE_NODE',
   UPDATE_HISTORY = 'use-budget-table/UPDATE_HISTORY',
+  CLEAR_HISTORY = 'use-budget-table/CLEAR_HISTORY',
 }
 
 export interface UpdateLocalHistoryPayload {
@@ -30,6 +31,10 @@ type UpdateHistoryPayload = UpdateLocalHistoryPayload | UpdateRemoteHistoryPaylo
 export type UpdateHistoryAction = {
   type: ActionType.UPDATE_HISTORY
   payload: UpdateHistoryPayload
+}
+
+export type ClearHistoryAction = {
+  type: ActionType.CLEAR_HISTORY
 }
 
 export type LoadNodesAction = {
@@ -62,4 +67,10 @@ export type DeleteNodeAction = {
   payload: { rowId: string }
 }
 
-export type Action = LoadNodesAction | UpdateNodeAction | AddNodeAction | DeleteNodeAction | UpdateHistoryAction
+export type Action =
+  | LoadNodesAction
+  | UpdateNodeAction
+  | AddNodeAction
+  | DeleteNodeAction
+  | UpdateHistoryAction
+  | ClearHistoryAction
