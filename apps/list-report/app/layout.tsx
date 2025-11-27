@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 
 import '@workspace/ui/globals.css'
 import { Toaster } from '@workspace/ui/components/toast'
-import { cn } from '@workspace/ui/lib/utils'
+import { cn } from '@workspace/ui/lib/style'
 
 import { Providers } from '@/lib/components/providers'
 import { environments } from '@/lib/environments'

@@ -120,14 +120,12 @@ export function BudgetHistoryModal({ rowId, onClose, field }: BudgetHistoryModal
       <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto flex flex-col">
         <DialogHeader className="border-b border-neutral-40 pb-4">
           <DialogTitle className="text-brand-100 text-2xl font-bold">History</DialogTitle>
-          <DialogDescription className="mt-2">
-            <div className="flex items-center gap-2 text-neutral-120">
-              <span className="font-semibold text-neutral-140">{rowName}</span>
-              <span className="text-neutral-100">
-                <ChevronsRight className="w-4 h-4" />
-              </span>
-              <span className="font-semibold text-neutral-140">{CropPlanKeysToNames[field].join(' ')}</span>
-            </div>
+          <DialogDescription className="mt-2 flex items-center gap-2 text-neutral-120">
+            <span className="font-semibold text-neutral-140">{rowName}</span>
+            <span className="text-neutral-100">
+              <ChevronsRight className="w-4 h-4" />
+            </span>
+            <span className="font-semibold text-neutral-140">{CropPlanKeysToNames[field].join(' ')}</span>
           </DialogDescription>
         </DialogHeader>
 

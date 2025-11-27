@@ -5,10 +5,12 @@ import React, { useMemo, useState } from 'react'
 
 import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
+import { Form } from '@workspace/ui/components/form/form'
 import { formatCurrency } from '@workspace/ui/components/form/input/text'
+import { SelectMultipleSimple } from '@workspace/ui/components/form/select/multiple/simple'
 import { createExpandableTable, createColumn, TableColumn, useTableContext } from '@workspace/ui/components/table'
 import { useSearchParams } from '@workspace/ui/lib/navigation'
-import { cn } from '@workspace/ui/lib/utils'
+import { cn } from '@workspace/ui/lib/style'
 
 import { BudgetTableBlockFilters } from './budget-table-block-filters'
 import { BudgetTableExport } from './budget-table-export'
@@ -19,6 +21,7 @@ import { BudgedHistoryDataName, BudgetNode, BudgetNodeCalculated } from './use-b
 import { useBudgetTableFilters } from './use-budget-table-filters'
 import { BudgetHistoryTableCellWrapper } from '../budget-history/table-cell-wrapper'
 import { useBudgetTableContext } from './use-budget-table/context/budget-table-context'
+import { BudgetTableColumn, useVisibleColumns } from './visible-columns/use-visible-columns'
 import { BudgetHistoryModal } from '../budget-history/modal/budget-history-modal'
 
 import { CropPlanKeysToNames } from '@/lib/utils/crop-plan/crop-plan'
@@ -37,6 +40,7 @@ function BudgetTableComponent({
   filteredData,
 }: BudgetTableProps) {
   const { columns } = useTableContext<BudgetNode>()
+  const { allColumns, visibleColumns, setVisibleColumns } = useVisibleColumns()
   const { levels } = useBudgetTableContext()
 
   const onlyGrandTotal = filteredData?.data?.length === 1 && filteredData?.data[0]?.id === GRAND_TOTAL_ID
@@ -45,15 +49,26 @@ function BudgetTableComponent({
     <div className="size-full flex flex-col gap-4 overflow-visible relative">
       {isSaving && <BudgetTableLoading />}
 
-      <div className="flex gap-2 px-2">
+      <Form className="flex gap-2 px-2 items-center">
         <Button variant="default" size="sm" onClick={onSave} disabled={isLoading}>
           Save
         </Button>
         <Button variant="secondary" size="sm" onClick={onRefresh} disabled={isLoading}>
           Refresh
         </Button>
+        <div className="z-50">
+          <SelectMultipleSimple
+            options={allColumns.map((column) => ({ label: CropPlanKeysToNames[column].join(' '), value: column }))}
+            selectedOptions={visibleColumns.map((column) => ({
+              label: CropPlanKeysToNames[column].join(' '),
+              value: column,
+            }))}
+            onChange={(value) => setVisibleColumns(value.map((v) => v as BudgetTableColumn))}
+            label="Visible Columns"
+          />
+        </div>
         <BudgetTableExport isLoading={isLoading} />
-      </div>
+      </Form>
 
       <div className="flex flex-col flex-1 overflow-auto py-2 px-2">
         <div className="grid grid-rows-[1fr] grid-cols-[auto_1fr] mb-2 gap-x-1 gap-y-1 overflow-visible">
@@ -121,11 +136,10 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
 
   const { filteredData, ...filteredDataProps } = useBudgetTableFilters(data, hasBlockLevel)
   const { updateNode, updateLocalHistory } = useBudgetTableContext()
-
+  const { visibleColumns } = useVisibleColumns()
   const searchParamsString = useSearchParams('string')
 
   const blockEC = searchParamsString.getAll('blockEC')
-  const hideColumn = searchParamsString.getAll('hideColumn')
 
   const columns = useMemo(() => {
     const columns = [
@@ -677,8 +691,10 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
       ),
     ]
 
-    return columns.filter((column) => column && !hideColumn.includes(column.accessorKey))
-  }, [blockEC, updateNode, hideColumn, hasBlockLevel, updateLocalHistory])
+    return columns.filter(
+      (column) => column?.accessorKey === 'id' || visibleColumns.includes(column?.accessorKey as BudgetTableColumn)
+    )
+  }, [blockEC, updateNode, visibleColumns, hasBlockLevel, updateLocalHistory])
 
   return (
     <ExpandableTable.Root

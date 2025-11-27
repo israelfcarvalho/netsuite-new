@@ -1,4 +1,4 @@
-import { cn } from '@workspace/ui/index'
+import { cn } from '@workspace/ui/lib/style'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const deepStyle = <T extends Record<string, unknown>>(style: (...params: any[]) => string, nestedStyle: T) => {

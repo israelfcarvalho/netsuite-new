@@ -17,6 +17,7 @@ import {
   useBudgetTableContext,
 } from '@/lib/components/budget-table/use-budget-table/context/budget-table-context'
 import { BudgedHistoryDataName } from '@/lib/components/budget-table/use-budget-table/types'
+import { VisibleColumnsProvider } from '@/lib/components/budget-table/visible-columns/use-visible-columns'
 
 export const BlockBudgetTableComponent = ({
   setBlockFilter,
@@ -111,16 +112,18 @@ export const BlockBudgetTableComponent = ({
   }
 
   return (
-    <BudgetTable
-      data={data}
-      isLoading={isLoading}
-      isSaving={isPending}
-      error={error}
-      onSave={handleSave}
-      hasBlockLevel={true}
-      setBlockFilter={setBlockFilter}
-      onRefresh={refresh}
-    />
+    <VisibleColumnsProvider hasBlockLevel={true}>
+      <BudgetTable
+        data={data}
+        isLoading={isLoading}
+        isSaving={isPending}
+        error={error}
+        onSave={handleSave}
+        hasBlockLevel={true}
+        setBlockFilter={setBlockFilter}
+        onRefresh={refresh}
+      />
+    </VisibleColumnsProvider>
   )
 }
 

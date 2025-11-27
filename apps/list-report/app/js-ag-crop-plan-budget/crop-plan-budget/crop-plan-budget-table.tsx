@@ -12,6 +12,7 @@ import {
   useBudgetTableContext,
 } from '@/lib/components/budget-table/use-budget-table/context/budget-table-context'
 import { BudgedHistoryDataName } from '@/lib/components/budget-table/use-budget-table/types'
+import { VisibleColumnsProvider } from '@/lib/components/budget-table/visible-columns/use-visible-columns'
 
 export const CropPlanBudgetTableComponent = ({
   isLoading,
@@ -101,14 +102,16 @@ export const CropPlanBudgetTableComponent = ({
   }
 
   return (
-    <BudgetTable
-      data={data}
-      isLoading={isLoading}
-      isSaving={isPending}
-      error={error}
-      onSave={handleSave}
-      onRefresh={refresh}
-    />
+    <VisibleColumnsProvider hasBlockLevel={false}>
+      <BudgetTable
+        data={data}
+        isLoading={isLoading}
+        isSaving={isPending}
+        error={error}
+        onSave={handleSave}
+        onRefresh={refresh}
+      />
+    </VisibleColumnsProvider>
   )
 }
 

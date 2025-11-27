@@ -2,7 +2,7 @@ import { X, RefreshCw } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
 import { Button } from '@workspace/ui/components/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/form/select'
 
 import { useGetRanchBlocks, RanchBlock } from '@/lib/api/ranch-block'
 
