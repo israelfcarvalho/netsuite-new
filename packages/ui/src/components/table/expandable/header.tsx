@@ -1,7 +1,7 @@
 'use client'
 
 import { useWindowResize } from '@workspace/ui/lib/browser'
-import { cn } from '@workspace/ui/lib/utils'
+import { cn } from '@workspace/ui/lib/style'
 
 import { useTableContext } from '../context'
 import { TData } from '../types'

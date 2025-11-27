@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { cn } from '@workspace/ui/lib/utils'
+import { cn } from '@workspace/ui/lib/style'
 
 import { useTableContext } from '../context'
 import { TData, ExpandableTableProps } from '../types'

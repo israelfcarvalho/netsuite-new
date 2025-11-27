@@ -3,7 +3,7 @@
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import React, { Fragment } from 'react'
 
-import { cn } from '@workspace/ui/lib/utils'
+import { cn } from '@workspace/ui/lib/style'
 
 import { Button } from '../../../button'
 import { useTableContext } from '../../context'
