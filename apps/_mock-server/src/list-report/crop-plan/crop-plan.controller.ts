@@ -1,8 +1,14 @@
-import { Controller, Get, Query, Post, Body } from '@nestjs/common'
+import { Controller, Get, Query, Post, Body, BadRequestException } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CropPlanService } from './crop-plan.service'
-import { CropPlanApiResponse, CropPlanQueryParams, CropPlanLine } from './crop-plan.types'
+import {
+  CropPlanApiResponse,
+  CropPlanQueryParams,
+  CropPlanLine,
+  GetCropPlanLineHistoryParams,
+  GetCropPlanLinesHistoryResponse,
+} from './crop-plan.types'
 
 @ApiTags('List Report - Crop Plan')
 @Controller('')
@@ -71,6 +77,26 @@ export class CropPlanController {
       status: 400,
       message: 'Invalid action. Expected: update-lines or update-lines-by-ranch',
       data: [],
+    }
+  }
+
+  @Get('history')
+  @ApiOperation({ summary: 'Get crop plan lines history' })
+  @ApiResponse({ status: 200, description: 'Success' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  async getCropPlanLinesHistory(
+    @Query() query: GetCropPlanLineHistoryParams
+  ): Promise<GetCropPlanLinesHistoryResponse> {
+    const { script, deploy, cropPlanId, lineId } = query
+
+    if (!script || !deploy) {
+      throw new BadRequestException('Script and deploy parameters are required')
+    }
+
+    try {
+      return await this.cropPlanService.getCropPlanLinesHistory(cropPlanId, lineId)
+    } catch (error) {
+      throw new BadRequestException(error instanceof Error ? error.message : 'Failed to get crop plan lines history')
     }
   }
 }

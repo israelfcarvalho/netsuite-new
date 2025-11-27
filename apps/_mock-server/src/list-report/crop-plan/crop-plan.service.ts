@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common'
 
-import { CropPlanApiResponse, CropPlanLine } from './crop-plan.types'
+import {
+  CropPlanApiResponse,
+  CropPlanLine,
+  GetCropPlanLinesHistoryResponse,
+  CropPlanLineHistoryItem,
+} from './crop-plan.types'
 import { CostCodeService } from '../cost-code/cost-code.service'
 import { CostCode } from '../cost-code/cost-code.types'
 import { CostTypeService } from '../cost-type/cost-type.service'
@@ -17,6 +22,7 @@ export class CropPlanService {
   ) {}
 
   private mockDataStore: Record<number, CropPlanLine[]> = {}
+  private mockCostTypeData: Record<number, Record<string, Omit<CropPlanLine, 'children'>>> = {}
 
   async getCropPlanLines(cropPlanId?: number): Promise<CropPlanApiResponse> {
     if (cropPlanId === undefined) {
@@ -92,18 +98,24 @@ export class CropPlanService {
             // Create cost type nodes
             const costTypeNodes = costTypes.map((costType: CostType) => ({
               id: costType.id,
+              lineId: costType.id,
               name: costType.name,
               originalEstimate: Math.floor(Math.random() * 100000) + 50000,
               originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
               currentEstimate: Math.floor(Math.random() * 120000) + 60000,
               currentEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
               projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
-              children: [],
               committedCost: Math.floor(Math.random() * 80000) + 40000,
               actualCost: Math.floor(Math.random() * 70000) + 35000,
               unitCost: Math.floor(Math.random() * 100) + 50,
               totalAcres: (Math.floor(Math.random() * 10) % 3) + 1,
             }))
+
+            this.mockCostTypeData[cropPlanId] = this.mockCostTypeData[cropPlanId] ?? {}
+
+            costTypeNodes.forEach((costType) => {
+              this.mockCostTypeData[cropPlanId]![costType.id] = costType
+            })
 
             // Calculate cost code values from its cost types
             const costCodeNode: CropPlanLine = {
@@ -315,13 +327,13 @@ export class CropPlanService {
                   // Create cost type nodes
                   const costTypeNodes = costTypes.map<CropPlanLine>((costType: CostType) => ({
                     id: costType.id,
+                    lineId: costType.id,
                     name: costType.name,
                     originalEstimate: Math.floor(Math.random() * 100000) + 50000,
                     originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
                     currentEstimate: Math.floor(Math.random() * 120000) + 60000,
                     currentEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
                     projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
-                    children: [],
                     committedCost: Math.floor(Math.random() * 80000) + 40000,
                     actualCost: Math.floor(Math.random() * 70000) + 35000,
                     unitCost: 0,
@@ -423,6 +435,71 @@ export class CropPlanService {
       status: 200,
       message: 'Success',
       data: lines,
+    }
+  }
+
+  async getCropPlanLinesHistory(cropPlanId?: number, lineId?: number): Promise<GetCropPlanLinesHistoryResponse> {
+    if (cropPlanId === undefined) {
+      throw new Error('Crop Plan ID is required')
+    }
+
+    if (lineId === undefined) {
+      throw new Error('Cost Type ID is required')
+    }
+
+    // Select a random field name or use the first one
+    const costType = this.mockCostTypeData[cropPlanId]?.[lineId]
+
+    const fieldNames = [
+      'originalEstimate',
+      'originalEstimatePerAcre',
+      'currentEstimate',
+      'currentEstimatePerAcre',
+      'projectedEstimate',
+    ] satisfies CropPlanLineHistoryItem['name'][]
+
+    // Generate mock history entries
+    const historyData = fieldNames.map((fieldName) => {
+      const currentValue = costType?.[fieldName] ?? NaN
+      const previousValue = Math.floor(Math.random() * 100000) + 50000
+      return {
+        [fieldName]: [
+          {
+            currentValue,
+            previousValue,
+            comment: 'Second budget adjustment',
+            date: new Date(Date.now()).toISOString(),
+          },
+          {
+            currentValue: previousValue,
+            previousValue: Math.floor(Math.random() * 100000) + 50000,
+            comment: 'First budget adjustment',
+            date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days ago
+          },
+        ],
+      }
+    })
+
+    let history: GetCropPlanLinesHistoryResponse['history'] = {}
+
+    historyData.forEach((item) => {
+      Object.entries(item).forEach(([fieldName, data]) => {
+        const key = fieldName as CropPlanLineHistoryItem['name']
+
+        history = {
+          ...history,
+          [key]: {
+            id: lineId?.toString() ?? '1',
+            user: 'John Doe',
+            name: fieldName,
+            data,
+          },
+        }
+      })
+    })
+
+    return {
+      history,
     }
   }
 }

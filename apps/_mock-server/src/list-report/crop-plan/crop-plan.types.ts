@@ -68,3 +68,34 @@ export interface UpdateCropPlanLinesByRanchPayload {
 
 // Alias for compatibility
 export type CropPlanQueryParams = CropPlanLinesQueryParams
+
+// History types
+type CropPlanHistoryItemName = keyof Pick<
+  CropPlanLine,
+  'originalEstimate' | 'originalEstimatePerAcre' | 'currentEstimate' | 'currentEstimatePerAcre' | 'projectedEstimate'
+>
+
+interface CropPlanLineHistoryItemData {
+  previousValue: number
+  currentValue: number
+  comment?: string
+  date: string
+}
+
+export interface CropPlanLineHistoryItem<T extends CropPlanHistoryItemName = CropPlanHistoryItemName> {
+  id: string
+  user: string
+  name: T
+  data: CropPlanLineHistoryItemData[]
+}
+
+export interface GetCropPlanLineHistoryParams {
+  script: string
+  deploy: string
+  cropPlanId?: number
+  lineId?: number
+}
+
+export interface GetCropPlanLinesHistoryResponse {
+  history: { [K in CropPlanHistoryItemName]?: CropPlanLineHistoryItem<K> }
+}
