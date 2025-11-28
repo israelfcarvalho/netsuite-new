@@ -45,7 +45,6 @@ export const BlockBudgetTableComponent = ({
   }, [state.nodes])
 
   const handleSave = () => {
-    console.log('handleSave', state.nodes)
     const lines = Array.from(state.nodes.values())
       .filter((item) => !item.children && item.id !== 'grand-total')
       .map<UpdateCropPlanLinesByRanch>((item) => {
@@ -64,6 +63,7 @@ export const BlockBudgetTableComponent = ({
         } = {}
 
         const localHistory = state.history.local?.[item.rowId] ?? {}
+
         Object.values(localHistory)
           .filter((historyItem) => !!historyItem)
           .map((historyItem) => {

@@ -5,7 +5,6 @@ import React, { useMemo, useState } from 'react'
 
 import { Button } from '@workspace/ui/components/button'
 import { FormInputText } from '@workspace/ui/components/form'
-import { Form } from '@workspace/ui/components/form/form'
 import { formatCurrency } from '@workspace/ui/components/form/input/text'
 import { SelectMultipleSimple } from '@workspace/ui/components/form/select/multiple/simple'
 import { createExpandableTable, createColumn, TableColumn, useTableContext } from '@workspace/ui/components/table'
@@ -49,7 +48,7 @@ function BudgetTableComponent({
     <div className="size-full flex flex-col gap-4 overflow-visible relative">
       {isSaving && <BudgetTableLoading />}
 
-      <Form className="flex gap-2 px-2 items-center">
+      <div className="flex gap-2 px-2 items-center">
         <Button variant="default" size="sm" onClick={onSave} disabled={isLoading}>
           Save
         </Button>
@@ -68,7 +67,7 @@ function BudgetTableComponent({
           />
         </div>
         <BudgetTableExport isLoading={isLoading} />
-      </Form>
+      </div>
 
       <div className="flex flex-col flex-1 overflow-auto py-2 px-2">
         <div className="grid grid-rows-[1fr] grid-cols-[auto_1fr] mb-2 gap-x-1 gap-y-1 overflow-visible">
