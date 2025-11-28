@@ -89,7 +89,7 @@ const calculateCursorPosition = (
   const prevValueNumber = Number(prevValue)
   const prevValueFormatted = formatCurrency(prevValueNumber, formatOptions)
   const valueSelected = prevValueFormatted.slice(currentSelectionRange.start, currentSelectionRange.end)
-  const valueSelectedNumber = Number(valueSelected)
+  const valueSelectedNumber = Number(valueSelected.replace(',', ''))
 
   if (shouldMoveCursorToEnd(newValueNumber, prevValueNumber, valueSelectedNumber)) {
     return newValueFormatted.length

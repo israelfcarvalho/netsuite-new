@@ -38,6 +38,7 @@ export const handleSelectCurrency =
   (stateManager: FormInputTextStateManager) => (event: React.MouseEvent<HTMLInputElement>) => {
     const selectionStart = event.currentTarget.selectionStart ?? 0
     const selectionEnd = event.currentTarget.selectionEnd ?? 0
+
     stateManager.setState((prevState) => ({
       ...prevState,
       currentSelectionRange: {
