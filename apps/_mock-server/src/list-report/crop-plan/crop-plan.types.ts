@@ -9,7 +9,9 @@ export interface CropPlanLine {
   currentEstimatePerAcre: number
   projectedEstimate: number
   committedCost: number
+  committedCostPerAcre: number
   actualCost: number
+  actualCostPerAcre: number
   totalAcres: number
   wipBalance?: number // Only present in by-block context
   wipInput?: number // Only present in no-block context

@@ -68,7 +68,9 @@ export class CropPlanService {
             projectedEstimate: 0,
             children: [],
             committedCost: 0,
+            committedCostPerAcre: 0,
             actualCost: 0,
+            actualCostPerAcre: 0,
             totalAcres: 0,
             unitCost: 0,
           }
@@ -89,27 +91,36 @@ export class CropPlanService {
                 projectedEstimate: 0,
                 children: [],
                 committedCost: 0,
+                committedCostPerAcre: 0,
                 actualCost: 0,
+                actualCostPerAcre: 0,
                 unitCost: 0,
                 totalAcres: 0,
               }
             }
 
             // Create cost type nodes
-            const costTypeNodes = costTypes.map((costType: CostType) => ({
-              id: costType.id,
-              lineId: costType.id,
-              name: costType.name,
-              originalEstimate: Math.floor(Math.random() * 100000) + 50000,
-              originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
-              currentEstimate: Math.floor(Math.random() * 120000) + 60000,
-              currentEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
-              projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
-              committedCost: Math.floor(Math.random() * 80000) + 40000,
-              actualCost: Math.floor(Math.random() * 70000) + 35000,
-              unitCost: Math.floor(Math.random() * 100) + 50,
-              totalAcres: (Math.floor(Math.random() * 10) % 3) + 1,
-            }))
+            const costTypeNodes = costTypes.map((costType: CostType) => {
+              const totalAcres = (Math.floor(Math.random() * 10) % 3) + 1
+              const committedCost = Math.floor(Math.random() * 80000) + 40000
+              const actualCost = Math.floor(Math.random() * 70000) + 35000
+              return {
+                id: costType.id,
+                lineId: costType.id,
+                name: costType.name,
+                originalEstimate: Math.floor(Math.random() * 100000) + 50000,
+                originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
+                currentEstimate: Math.floor(Math.random() * 120000) + 60000,
+                currentEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
+                projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
+                committedCost,
+                committedCostPerAcre: 0,
+                actualCost,
+                actualCostPerAcre: 0,
+                unitCost: Math.floor(Math.random() * 100) + 50,
+                totalAcres,
+              }
+            })
 
             this.mockCostTypeData[cropPlanId] = this.mockCostTypeData[cropPlanId] ?? {}
 
@@ -118,6 +129,18 @@ export class CropPlanService {
             })
 
             // Calculate cost code values from its cost types
+            const costCodeCommittedCost = costTypeNodes.reduce(
+              (sum: number, node: CropPlanLine) => sum + node.committedCost,
+              0
+            )
+            const costCodeActualCost = costTypeNodes.reduce(
+              (sum: number, node: CropPlanLine) => sum + node.actualCost,
+              0
+            )
+            const costCodeTotalAcres = costTypeNodes.reduce(
+              (sum: number, node: CropPlanLine) => sum + node.totalAcres,
+              0
+            )
             const costCodeNode: CropPlanLine = {
               id: costCode.id,
               name: costCode.name,
@@ -127,10 +150,12 @@ export class CropPlanService {
               currentEstimatePerAcre: 0,
               projectedEstimate: 0,
               children: costTypeNodes,
-              committedCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
-              actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+              committedCost: costCodeCommittedCost,
+              committedCostPerAcre: 0,
+              actualCost: costCodeActualCost,
+              actualCostPerAcre: 0,
               unitCost: 0,
-              totalAcres: 0,
+              totalAcres: costCodeTotalAcres,
             }
 
             return costCodeNode
@@ -138,6 +163,12 @@ export class CropPlanService {
         )
 
         // Calculate division values from its cost codes
+        const divisionCommittedCost = costCodeNodes.reduce(
+          (sum: number, node: CropPlanLine) => sum + node.committedCost,
+          0
+        )
+        const divisionActualCost = costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0)
+        const divisionTotalAcres = costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.totalAcres, 0)
         const divisionNode: CropPlanLine = {
           id: division.id,
           name: division.name,
@@ -147,10 +178,12 @@ export class CropPlanService {
           currentEstimatePerAcre: 0,
           projectedEstimate: 0,
           children: costCodeNodes,
-          committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
-          actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+          committedCost: divisionCommittedCost,
+          committedCostPerAcre: 0,
+          actualCost: divisionActualCost,
+          actualCostPerAcre: 0,
           unitCost: 0,
-          totalAcres: 0,
+          totalAcres: divisionTotalAcres,
           wipInput: 999999,
         }
 
@@ -295,7 +328,9 @@ export class CropPlanService {
                   projectedEstimate: 0,
                   children: [],
                   committedCost: 0,
+                  committedCostPerAcre: 0,
                   actualCost: 0,
+                  actualCostPerAcre: 0,
                   unitCost: 0,
                   totalAcres: 0,
                   wipBalance: 0,
@@ -317,7 +352,9 @@ export class CropPlanService {
                       projectedEstimate: 0,
                       children: [],
                       committedCost: 0,
+                      committedCostPerAcre: 0,
                       actualCost: 0,
+                      actualCostPerAcre: 0,
                       unitCost: 0,
                       totalAcres: 0,
                       wipBalance: 0,
@@ -325,22 +362,41 @@ export class CropPlanService {
                   }
 
                   // Create cost type nodes
-                  const costTypeNodes = costTypes.map<CropPlanLine>((costType: CostType) => ({
-                    id: costType.id,
-                    lineId: costType.id,
-                    name: costType.name,
-                    originalEstimate: Math.floor(Math.random() * 100000) + 50000,
-                    originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
-                    currentEstimate: Math.floor(Math.random() * 120000) + 60000,
-                    currentEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
-                    projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
-                    committedCost: Math.floor(Math.random() * 80000) + 40000,
-                    actualCost: Math.floor(Math.random() * 70000) + 35000,
-                    unitCost: 0,
-                    totalAcres: (Math.floor(Math.random() * 10) % 3) + 1,
-                  }))
+                  const costTypeNodes = costTypes.map<CropPlanLine>((costType: CostType) => {
+                    const totalAcres = (Math.floor(Math.random() * 10) % 3) + 1
+                    const committedCost = Math.floor(Math.random() * 80000) + 40000
+                    const actualCost = Math.floor(Math.random() * 70000) + 35000
+                    return {
+                      id: costType.id,
+                      lineId: costType.id,
+                      name: costType.name,
+                      originalEstimate: Math.floor(Math.random() * 100000) + 50000,
+                      originalEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
+                      currentEstimate: Math.floor(Math.random() * 120000) + 60000,
+                      currentEstimatePerAcre: Math.floor(Math.random() * 1000) + 500,
+                      projectedEstimate: Math.floor(Math.random() * 110000) + 55000,
+                      committedCost,
+                      committedCostPerAcre: 0,
+                      actualCost,
+                      actualCostPerAcre: 0,
+                      unitCost: 0,
+                      totalAcres,
+                    }
+                  })
 
                   // Calculate cost code values from its cost types
+                  const costCodeCommittedCost = costTypeNodes.reduce(
+                    (sum: number, node: CropPlanLine) => sum + node.committedCost,
+                    0
+                  )
+                  const costCodeActualCost = costTypeNodes.reduce(
+                    (sum: number, node: CropPlanLine) => sum + node.actualCost,
+                    0
+                  )
+                  const costCodeTotalAcres = costTypeNodes.reduce(
+                    (sum: number, node: CropPlanLine) => sum + node.totalAcres,
+                    0
+                  )
                   const costCodeNode: CropPlanLine = {
                     id: costCode.id,
                     name: costCode.name,
@@ -350,13 +406,12 @@ export class CropPlanService {
                     currentEstimatePerAcre: 0,
                     projectedEstimate: 0,
                     children: costTypeNodes,
-                    committedCost: costTypeNodes.reduce(
-                      (sum: number, node: CropPlanLine) => sum + node.committedCost,
-                      0
-                    ),
-                    actualCost: costTypeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+                    committedCost: costCodeCommittedCost,
+                    committedCostPerAcre: 0,
+                    actualCost: costCodeActualCost,
+                    actualCostPerAcre: 0,
                     unitCost: 0,
-                    totalAcres: 0,
+                    totalAcres: costCodeTotalAcres,
                   }
 
                   return costCodeNode
@@ -364,6 +419,18 @@ export class CropPlanService {
               )
 
               // Calculate division values from its cost codes
+              const divisionCommittedCost = costCodeNodes.reduce(
+                (sum: number, node: CropPlanLine) => sum + node.committedCost,
+                0
+              )
+              const divisionActualCost = costCodeNodes.reduce(
+                (sum: number, node: CropPlanLine) => sum + node.actualCost,
+                0
+              )
+              const divisionTotalAcres = costCodeNodes.reduce(
+                (sum: number, node: CropPlanLine) => sum + node.totalAcres,
+                0
+              )
               const divisionNode: CropPlanLine = {
                 id: division.id,
                 name: division.name,
@@ -373,10 +440,12 @@ export class CropPlanService {
                 currentEstimatePerAcre: 0,
                 projectedEstimate: 0,
                 children: costCodeNodes,
-                committedCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
-                actualCost: costCodeNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+                committedCost: divisionCommittedCost,
+                committedCostPerAcre: 0,
+                actualCost: divisionActualCost,
+                actualCostPerAcre: 0,
                 unitCost: 0,
-                totalAcres: 0,
+                totalAcres: divisionTotalAcres,
               }
 
               return divisionNode
@@ -384,6 +453,12 @@ export class CropPlanService {
           )
 
           // Calculate ranch values from its divisions
+          const ranchCommittedCost = divisionNodes.reduce(
+            (sum: number, node: CropPlanLine) => sum + node.committedCost,
+            0
+          )
+          const ranchActualCost = divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0)
+          const ranchTotalAcres = divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.totalAcres, 0)
           const ranchNode: CropPlanLine = {
             id: ranch.id,
             name: ranch.name,
@@ -393,11 +468,13 @@ export class CropPlanService {
             currentEstimatePerAcre: 0,
             projectedEstimate: 0,
             children: divisionNodes,
-            committedCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.committedCost, 0),
-            actualCost: divisionNodes.reduce((sum: number, node: CropPlanLine) => sum + node.actualCost, 0),
+            committedCost: ranchCommittedCost,
+            committedCostPerAcre: 0,
+            actualCost: ranchActualCost,
+            actualCostPerAcre: 0,
             unitCost: 0,
             wipBalance: 999999,
-            totalAcres: 0,
+            totalAcres: ranchTotalAcres,
           }
 
           return ranchNode
