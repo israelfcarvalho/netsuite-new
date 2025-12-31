@@ -23,6 +23,8 @@ const createNode = (
     lineId: '',
     rowId,
     parentRowId,
+    committedCostPerAcre: 0,
+    actualCostPerAcre: 0,
     committedCost: 0,
     actualCost: 0,
     totalAcres: 0,

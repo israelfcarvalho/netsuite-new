@@ -16,7 +16,9 @@ export function updateParents(state: BudgetState, parentRowId?: string): BudgetS
     currentEstimatePerAcre,
     projectedEstimate,
     committedCost,
+    committedCostPerAcre,
     actualCost,
+    actualCostPerAcre,
   } = children.reduce(
     (acc, child) => ({
       originalEstimate: acc.originalEstimate + child.originalEstimate,
@@ -24,8 +26,10 @@ export function updateParents(state: BudgetState, parentRowId?: string): BudgetS
       currentEstimate: acc.currentEstimate + child.currentEstimate,
       currentEstimatePerAcre: acc.currentEstimatePerAcre + child.currentEstimatePerAcre,
       projectedEstimate: acc.projectedEstimate + child.projectedEstimate,
+      committedCostPerAcre: acc.committedCostPerAcre + child.committedCostPerAcre,
       committedCost: acc.committedCost + child.committedCost,
       actualCost: acc.actualCost + child.actualCost,
+      actualCostPerAcre: acc.actualCostPerAcre + child.actualCostPerAcre,
     }),
     {
       originalEstimate: 0,
@@ -33,8 +37,11 @@ export function updateParents(state: BudgetState, parentRowId?: string): BudgetS
       currentEstimate: 0,
       currentEstimatePerAcre: 0,
       projectedEstimate: 0,
+      projectedEstimatePerAcre: 0,
       committedCost: 0,
+      committedCostPerAcre: 0,
       actualCost: 0,
+      actualCostPerAcre: 0,
     } as Pick<
       BudgetNode,
       | 'originalEstimate'
@@ -42,7 +49,9 @@ export function updateParents(state: BudgetState, parentRowId?: string): BudgetS
       | 'currentEstimate'
       | 'currentEstimatePerAcre'
       | 'projectedEstimate'
+      | 'committedCostPerAcre'
       | 'committedCost'
+      | 'actualCostPerAcre'
       | 'actualCost'
     >
   )
@@ -56,7 +65,9 @@ export function updateParents(state: BudgetState, parentRowId?: string): BudgetS
     currentEstimatePerAcre,
     projectedEstimate,
     committedCost,
+    committedCostPerAcre,
     actualCost,
+    actualCostPerAcre,
     children,
   }
 

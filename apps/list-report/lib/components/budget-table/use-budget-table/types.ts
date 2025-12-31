@@ -44,7 +44,9 @@ export interface BudgetState {
 
 export interface BudgetNodeCalculated extends BudgetNode {
   totalCost: number
+  totalCostPerAcre: number
   costsToComplete: number
+  costsToCompletePerAcre: number
   overUnder: number
   projCostComplete: number
 }

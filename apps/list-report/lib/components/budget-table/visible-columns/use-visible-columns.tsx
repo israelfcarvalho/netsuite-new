@@ -54,15 +54,20 @@ export function VisibleColumnsProvider({
       'currentEstimatePerAcre',
       'projectedEstimate',
       'committedCost',
+      'committedCostPerAcre',
       'actualCost',
+      'actualCostPerAcre',
       'totalCost',
+      'totalCostPerAcre',
       'costsToComplete',
+      'costsToCompletePerAcre',
       'overUnder',
       'projCostComplete',
+      hasBlockLevel ? 'wipBalance' : 'wipInput',
     ] as BudgetTableColumn[]
 
     return columns.filter((column) => !hideColumns.includes(column))
-  }, [hideColumns])
+  }, [hideColumns, hasBlockLevel])
 
   useEffect(() => {
     if (visibleColumns !== initialHiddenColumns) {

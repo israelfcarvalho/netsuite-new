@@ -10,11 +10,13 @@ function sumBudgetNodeValues(node: BudgetNode, children: BudgetNode[]): BudgetNo
   return {
     ...node,
     originalEstimate: children.reduce((acc, child) => acc + child.originalEstimate, 0),
+    actualCostPerAcre: children.reduce((acc, child) => acc + child.actualCostPerAcre, 0),
     actualCost: children.reduce((acc, child) => acc + child.actualCost, 0),
     currentEstimate: children.reduce((acc, child) => acc + child.currentEstimate, 0),
     currentEstimatePerAcre: children.reduce((acc, child) => acc + child.currentEstimatePerAcre, 0),
     projectedEstimate: children.reduce((acc, child) => acc + child.projectedEstimate, 0),
     committedCost: children.reduce((acc, child) => acc + child.committedCost, 0),
+    committedCostPerAcre: children.reduce((acc, child) => acc + child.committedCostPerAcre, 0),
     originalEstimatePerAcre: children.reduce((acc, child) => acc + child.originalEstimatePerAcre, 0),
     children: node.children ? [...children] : undefined,
     wipBalance: node.wipBalance ? node.wipBalance : children.reduce((acc, child) => acc + (child.wipBalance || 0), 0),
@@ -130,6 +132,8 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
       currentEstimate: 0,
       currentEstimatePerAcre: 0,
       projectedEstimate: 0,
+      committedCostPerAcre: 0,
+      actualCostPerAcre: 0,
       committedCost: 0,
       actualCost: 0,
       wipBalance: 0,
@@ -142,6 +146,8 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
     if (hasBlockLevel && totalAcresOfCrop) {
       grandTotal.originalEstimatePerAcre = grandTotal.originalEstimate / Number(totalAcresOfCrop)
       grandTotal.currentEstimatePerAcre = grandTotal.currentEstimate / Number(totalAcresOfCrop)
+      grandTotal.committedCostPerAcre = grandTotal.committedCost / Number(totalAcresOfCrop)
+      grandTotal.actualCostPerAcre = grandTotal.actualCost / Number(totalAcresOfCrop)
     }
 
     return grandTotal

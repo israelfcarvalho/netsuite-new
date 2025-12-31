@@ -301,13 +301,14 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     }
 
                     if (originalRow.totalAcres) {
-                      updateNode(originalRow.rowId, { originalEstimatePerAcre: value / originalRow.totalAcres })
+                      const newOriginalEstimatePerAcre = Math.round((value * 100) / originalRow.totalAcres) / 100
+                      updateNode(originalRow.rowId, { originalEstimatePerAcre: newOriginalEstimatePerAcre })
                       updateLocalHistory({
                         type: 'local',
                         lineId: originalRow.lineId,
                         rowId: originalRow.rowId,
                         name: 'originalEstimatePerAcre',
-                        newValue: value / originalRow.totalAcres,
+                        newValue: newOriginalEstimatePerAcre,
                       })
                     }
                   }}
@@ -463,13 +464,14 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                     }
 
                     if (originalRow.totalAcres) {
-                      updateNode(originalRow.rowId, { currentEstimatePerAcre: value / originalRow.totalAcres })
+                      const newCurrentEstimatePerAcre = Math.round((value * 100) / originalRow.totalAcres) / 100
+                      updateNode(originalRow.rowId, { currentEstimatePerAcre: newCurrentEstimatePerAcre })
                       updateLocalHistory({
                         type: 'local',
                         lineId: originalRow.lineId,
                         rowId: originalRow.rowId,
                         name: 'currentEstimatePerAcre',
-                        newValue: value / originalRow.totalAcres,
+                        newValue: newCurrentEstimatePerAcre,
                       })
                     }
                   }}
@@ -495,29 +497,63 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         { isFixed: true }
       ),
       createColumn<BudgetNode>(
-        'committedCost',
+        'committedCostPerAcre',
         () => (
-          <span className="min-w-[120px] text-right w-full inline-block text-warning-100/70 font-semibold">
-            {CropPlanKeysToNames.committedCost.join(' ')}
+          <span className="min-w-[120px] text-right w-full inline-flex flex-col items-end text-warning-100/70 font-semibold">
+            {CropPlanKeysToNames.committedCostPerAcre.map((key) => (
+              <span key={key}>{key}</span>
+            ))}
           </span>
         ),
         ({ row }) => {
-          const value = (row.original as unknown as BudgetNode).committedCost
+          const { committedCostPerAcre } = row.original as unknown as BudgetNode
 
-          return <span className="text-right">{formatCurrency(value)}</span>
+          return <span className="text-right">{formatCurrency(committedCostPerAcre)}</span>
+        }
+      ),
+      createColumn<BudgetNode>(
+        'committedCost',
+        () => (
+          <span className="min-w-[120px] text-right w-full inline-flex flex-col items-end text-warning-100/70 font-semibold">
+            {CropPlanKeysToNames.committedCost.map((key) => (
+              <span key={key}>{key}</span>
+            ))}
+          </span>
+        ),
+        ({ row }) => {
+          const { committedCost } = row.original as unknown as BudgetNode
+
+          return <span className="text-right">{formatCurrency(committedCost)}</span>
+        }
+      ),
+      createColumn<BudgetNode>(
+        'actualCostPerAcre',
+        () => (
+          <span className="min-w-[120px] text-right w-full inline-flex flex-col items-end text-warning-100/70 font-semibold">
+            {CropPlanKeysToNames.actualCostPerAcre.map((key) => (
+              <span key={key}>{key}</span>
+            ))}
+          </span>
+        ),
+        ({ row }) => {
+          const { actualCostPerAcre } = row.original as unknown as BudgetNode
+
+          return <span className="text-right">{formatCurrency(actualCostPerAcre)}</span>
         }
       ),
       createColumn<BudgetNode>(
         'actualCost',
         () => (
-          <span className="min-w-[120px] text-right w-full inline-block text-warning-100/70 font-semibold">
-            {CropPlanKeysToNames.actualCost.join(' ')}
+          <span className="min-w-[120px] text-right w-full inline-flex flex-col items-end text-warning-100/70 font-semibold">
+            {CropPlanKeysToNames.actualCost.map((key) => (
+              <span key={key}>{key}</span>
+            ))}
           </span>
         ),
         ({ row }) => {
-          const value = (row.original as unknown as BudgetNode).actualCost
+          const { actualCost } = row.original as unknown as BudgetNode
 
-          return <span className="text-right">{formatCurrency(value)}</span>
+          return <span className="text-right">{formatCurrency(actualCost)}</span>
         }
       ),
       hasBlockLevel
@@ -529,8 +565,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               </span>
             ),
             ({ row }) => {
-              const value = (row.original as unknown as BudgetNode).wipBalance
-              return <span className="text-right">{formatCurrency(value)}</span>
+              const { wipBalance } = row.original as unknown as BudgetNode
+              return <span className="text-right">{formatCurrency(wipBalance)}</span>
             }
           )
         : null,
@@ -549,10 +585,27 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           )
         : null,
       createColumn<BudgetNodeCalculated>(
+        'totalCostPerAcre',
+        () => (
+          <span className="min-w-[120px] text-right w-full inline-flex flex-col items-end text-lilac font-semibold">
+            {CropPlanKeysToNames.totalCostPerAcre.map((key) => (
+              <span key={key}>{key}</span>
+            ))}
+          </span>
+        ),
+        ({ row }) => {
+          const { actualCostPerAcre, committedCostPerAcre } = row.original as unknown as BudgetNode
+          const totalCostPerAcre = actualCostPerAcre + committedCostPerAcre
+          return <span className="text-right">{formatCurrency(totalCostPerAcre)}</span>
+        }
+      ),
+      createColumn<BudgetNodeCalculated>(
         'totalCost',
         () => (
-          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
-            {CropPlanKeysToNames.projectedEstimate.join(' ')}
+          <span className="min-w-[120px] text-right w-full inline-flex flex-col items-end text-lilac font-semibold">
+            {CropPlanKeysToNames.totalCost.map((key) => (
+              <span key={key}>{key}</span>
+            ))}
           </span>
         ),
         ({ row }) => {
@@ -566,10 +619,34 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         }
       ),
       createColumn<BudgetNodeCalculated>(
+        'costsToCompletePerAcre',
+        () => (
+          <span className="min-w-[120px] text-right w-full inline-flex flex-col items-end text-lilac font-semibold">
+            {CropPlanKeysToNames.costsToCompletePerAcre.map((key) => (
+              <span key={key}>{key}</span>
+            ))}
+          </span>
+        ),
+        ({ row }) => {
+          const { actualCostPerAcre, committedCostPerAcre, currentEstimatePerAcre } =
+            row.original as unknown as BudgetNode
+          const totalCostPerAcre = actualCostPerAcre + committedCostPerAcre
+          const costsToCompletePerAcre = currentEstimatePerAcre - totalCostPerAcre
+
+          return (
+            <span className={cn('text-right', { 'text-danger-80 font-semibold': costsToCompletePerAcre < 0 })}>
+              {formatCurrency(costsToCompletePerAcre)}
+            </span>
+          )
+        }
+      ),
+      createColumn<BudgetNodeCalculated>(
         'costsToComplete',
         () => (
-          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
-            {CropPlanKeysToNames.costsToComplete.join(' ')}
+          <span className="min-w-[120px] text-right w-full inline-flex flex-col items-end text-lilac font-semibold">
+            {CropPlanKeysToNames.costsToComplete.map((key) => (
+              <span key={key}>{key}</span>
+            ))}
           </span>
         ),
         ({ row }) => {
