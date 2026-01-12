@@ -140,41 +140,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
 
   const blockEC = searchParamsString.getAll('blockEC')
 
-  const columns = useMemo(() => {
-    const columns = [
-      createColumn<BudgetNode>(
-        'id',
-        ({ expandLevel }) => (
-          <div className="flex flex-row items-start gap-1 w-fit">
-            <Button
-              title="Expand"
-              className="text-start"
-              variant="outline"
-              size="sm"
-              onClick={() => expandLevel('down')}
-            >
-              <PanelBottomClose className="size-4 text-neutral-100" />
-            </Button>
-            <Button
-              title="Collapse"
-              className="text-start"
-              variant="outline"
-              size="sm"
-              onClick={() => expandLevel('up')}
-            >
-              <PanelBottomOpen className="size-4 text-neutral-100" />
-            </Button>
-          </div>
-        ),
-        ({ row }) => {
-          return (
-            <div className="flex items-center gap-2 min-w-[200px]">
-              <span>{row.original.name}</span>
-            </div>
-          )
-        },
-        { isFixed: true }
-      ),
+  const firstColumns = useMemo(() => {
+    return [
       createColumn<BudgetNode>(
         'originalEstimatePerAcre',
         () => (
@@ -252,7 +219,17 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
             <span className="text-right">{formatCurrency(originalValue)}</span>
           )
         },
-        { isFixed: true }
+        {
+          isFixed: true,
+          className: () => {
+            const isLastColumn = !visibleColumns.find((column) =>
+              ['originalEstimate', 'currentEstimatePerAcre', 'currentEstimate'].includes(column)
+            )
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
+        }
       ),
       createColumn<BudgetNode>(
         'originalEstimate',
@@ -331,7 +308,17 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
             <span className="text-right">{formatCurrency(originalValue)}</span>
           )
         },
-        { isFixed: true }
+        {
+          isFixed: true,
+          className: () => {
+            const isLastColumn = !visibleColumns.find((column) =>
+              ['currentEstimatePerAcre', 'currentEstimate'].includes(column)
+            )
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
+        }
       ),
       createColumn<BudgetNode>(
         'currentEstimatePerAcre',
@@ -412,7 +399,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
             <span className="text-right">{formatCurrency(originalValue)}</span>
           )
         },
-        { isFixed: true }
+        {
+          isFixed: true,
+          className: () => {
+            const isLastColumn = !visibleColumns.includes('currentEstimate')
+
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
+        }
       ),
       createColumn<BudgetNode>(
         'currentEstimate',
@@ -494,8 +490,13 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
             <span className="text-right">{formatCurrency(originalValue)}</span>
           )
         },
-        { isFixed: true }
+        { isFixed: true, className: ({ column }) => cn('border-r border-neutral-60', column.options?.className) }
       ),
+    ]
+  }, [blockEC, hasBlockLevel, updateLocalHistory, updateNode, visibleColumns])
+
+  const secondColumns = useMemo(() => {
+    return [
       createColumn<BudgetNode>(
         'committedCostPerAcre',
         () => (
@@ -509,6 +510,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const { committedCostPerAcre } = row.original as unknown as BudgetNode
 
           return <span className="text-right">{formatCurrency(committedCostPerAcre)}</span>
+        },
+        {
+          className: () => {
+            const isLastColumn = !visibleColumns.find((column) =>
+              ['committedCost', 'actualCostPerAcre', 'actualCost'].includes(column)
+            )
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
         }
       ),
       createColumn<BudgetNode>(
@@ -524,6 +535,14 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const { committedCost } = row.original as unknown as BudgetNode
 
           return <span className="text-right">{formatCurrency(committedCost)}</span>
+        },
+        {
+          className: () => {
+            const isLastColumn = !visibleColumns.find((column) => ['actualCostPerAcre', 'actualCost'].includes(column))
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
         }
       ),
       createColumn<BudgetNode>(
@@ -539,6 +558,14 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const { actualCostPerAcre } = row.original as unknown as BudgetNode
 
           return <span className="text-right">{formatCurrency(actualCostPerAcre)}</span>
+        },
+        {
+          className: () => {
+            const isLastColumn = !visibleColumns.find((column) => ['actualCost'].includes(column))
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
         }
       ),
       createColumn<BudgetNode>(
@@ -554,8 +581,14 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const { actualCost } = row.original as unknown as BudgetNode
 
           return <span className="text-right">{formatCurrency(actualCost)}</span>
-        }
+        },
+        { className: ({ column }) => cn('border-r border-neutral-60', column.options?.className) }
       ),
+    ]
+  }, [visibleColumns])
+
+  const optionalColumns = useMemo(() => {
+    return [
       hasBlockLevel
         ? createColumn<BudgetNode>(
             'wipBalance',
@@ -567,7 +600,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
             ({ row }) => {
               const { wipBalance } = row.original as unknown as BudgetNode
               return <span className="text-right">{formatCurrency(wipBalance)}</span>
-            }
+            },
+            { className: ({ column }) => cn('border-r border-neutral-60', column.options?.className) }
           )
         : null,
       !hasBlockLevel
@@ -581,9 +615,15 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
             ({ row }) => {
               const value = (row.original as unknown as BudgetNode).wipInput
               return <span className="text-right">{formatCurrency(value)}</span>
-            }
+            },
+            { className: ({ column }) => cn('border-r border-neutral-60', column.options?.className) }
           )
         : null,
+    ]
+  }, [hasBlockLevel])
+
+  const fourthColumns = useMemo(() => {
+    return [
       createColumn<BudgetNodeCalculated>(
         'totalCostPerAcre',
         () => (
@@ -597,6 +637,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           const { actualCostPerAcre, committedCostPerAcre } = row.original as unknown as BudgetNode
           const totalCostPerAcre = actualCostPerAcre + committedCostPerAcre
           return <span className="text-right">{formatCurrency(totalCostPerAcre)}</span>
+        },
+        {
+          className: () => {
+            const isLastColumn = !visibleColumns.find((column) =>
+              ['totalCost', 'costsToCompletePerAcre', 'costsToComplete'].includes(column)
+            )
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
         }
       ),
       createColumn<BudgetNodeCalculated>(
@@ -616,6 +666,16 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               {formatCurrency(totalCost)}
             </span>
           )
+        },
+        {
+          className: () => {
+            const isLastColumn = !visibleColumns.find((column) =>
+              ['costsToCompletePerAcre', 'costsToComplete'].includes(column)
+            )
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
         }
       ),
       createColumn<BudgetNodeCalculated>(
@@ -638,6 +698,14 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               {formatCurrency(costsToCompletePerAcre)}
             </span>
           )
+        },
+        {
+          className: () => {
+            const isLastColumn = !visibleColumns.find((column) => ['costsToComplete'].includes(column))
+            if (isLastColumn) {
+              return cn('border-r border-neutral-60')
+            }
+          },
         }
       ),
       createColumn<BudgetNodeCalculated>(
@@ -659,8 +727,95 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
               {formatCurrency(costsToComplete)}
             </span>
           )
+        },
+        { className: ({ column }) => cn('border-r border-neutral-60', column.options?.className) }
+      ),
+    ]
+  }, [visibleColumns])
+
+  const sixthColumns = useMemo(() => {
+    return [
+      createColumn<BudgetNodeCalculated>(
+        'overUnder',
+        () => (
+          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
+            {CropPlanKeysToNames.overUnder.join(' ')}
+          </span>
+        ),
+        ({ row }) => {
+          const { projectedEstimate, currentEstimate } = row.original as unknown as BudgetNodeCalculated
+          const overUnder = currentEstimate - projectedEstimate
+          return (
+            <span className={cn('text-right', { 'text-danger-80 font-semibold': overUnder < 0 })}>
+              {formatCurrency(overUnder)}
+            </span>
+          )
         }
       ),
+      createColumn<BudgetNodeCalculated>(
+        'projCostComplete',
+        () => (
+          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
+            {CropPlanKeysToNames.projCostComplete.join(' ')}
+          </span>
+        ),
+        ({ row }) => {
+          const { actualCost, committedCost, currentEstimate, projectedEstimate } =
+            row.original as unknown as BudgetNodeCalculated
+          const totalCost = actualCost + committedCost
+          const costsToComplete = currentEstimate - totalCost
+          const overUnder = currentEstimate - projectedEstimate
+          const projCostComplete = costsToComplete - overUnder
+
+          return (
+            <span className={cn('text-right', { 'text-danger-80 font-semibold': projCostComplete < 0 })}>
+              {formatCurrency(projCostComplete)}
+            </span>
+          )
+        }
+      ),
+    ]
+  }, [])
+
+  const columns = useMemo(() => {
+    const columns = [
+      createColumn<BudgetNode>(
+        'id',
+        ({ expandLevel }) => (
+          <div className="flex flex-row items-start gap-1 w-fit">
+            <Button
+              title="Expand"
+              className="text-start"
+              variant="outline"
+              size="sm"
+              onClick={() => expandLevel('down')}
+            >
+              <PanelBottomClose className="size-4 text-neutral-100" />
+            </Button>
+            <Button
+              title="Collapse"
+              className="text-start"
+              variant="outline"
+              size="sm"
+              onClick={() => expandLevel('up')}
+            >
+              <PanelBottomOpen className="size-4 text-neutral-100" />
+            </Button>
+          </div>
+        ),
+        ({ row }) => {
+          return (
+            <div className="flex items-center gap-2 min-w-[200px]">
+              <span>{row.original.name}</span>
+            </div>
+          )
+        },
+        { isFixed: true }
+      ),
+      ...firstColumns,
+      ...secondColumns,
+      ...optionalColumns,
+      ...fourthColumns,
       createColumn<BudgetNode>(
         'projectedEstimate',
         () => (
@@ -724,53 +879,27 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           ) : (
             <span className="text-right">{formatCurrency(originalValue)}</span>
           )
-        }
+        },
+        { className: ({ column }) => cn('border-r border-neutral-60', column.options?.className) }
       ),
-      createColumn<BudgetNodeCalculated>(
-        'overUnder',
-        () => (
-          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
-            {CropPlanKeysToNames.overUnder.join(' ')}
-          </span>
-        ),
-        ({ row }) => {
-          const { projectedEstimate, currentEstimate } = row.original as unknown as BudgetNodeCalculated
-          const overUnder = currentEstimate - projectedEstimate
-          return (
-            <span className={cn('text-right', { 'text-danger-80 font-semibold': overUnder < 0 })}>
-              {formatCurrency(overUnder)}
-            </span>
-          )
-        }
-      ),
-      createColumn<BudgetNodeCalculated>(
-        'projCostComplete',
-        () => (
-          <span className="min-w-[120px] text-right w-full inline-block text-lilac font-semibold">
-            {CropPlanKeysToNames.projCostComplete.join(' ')}
-          </span>
-        ),
-        ({ row }) => {
-          const { actualCost, committedCost, currentEstimate, projectedEstimate } =
-            row.original as unknown as BudgetNodeCalculated
-          const totalCost = actualCost + committedCost
-          const costsToComplete = currentEstimate - totalCost
-          const overUnder = currentEstimate - projectedEstimate
-          const projCostComplete = costsToComplete - overUnder
-
-          return (
-            <span className={cn('text-right', { 'text-danger-80 font-semibold': projCostComplete < 0 })}>
-              {formatCurrency(projCostComplete)}
-            </span>
-          )
-        }
-      ),
+      ...sixthColumns,
     ]
 
     return columns.filter(
       (column) => column?.accessorKey === 'id' || visibleColumns.includes(column?.accessorKey as BudgetTableColumn)
     )
-  }, [blockEC, updateNode, visibleColumns, hasBlockLevel, updateLocalHistory])
+  }, [
+    firstColumns,
+    secondColumns,
+    optionalColumns,
+    fourthColumns,
+    sixthColumns,
+    blockEC,
+    hasBlockLevel,
+    updateNode,
+    updateLocalHistory,
+    visibleColumns,
+  ])
 
   return (
     <ExpandableTable.Root

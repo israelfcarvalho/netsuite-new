@@ -1,7 +1,8 @@
 import React from 'react'
 
-export interface TColumnOptions {
+export interface TableColumnOptions<T extends TData> {
   isFixed?: boolean
+  className?: (props: { column: TableColumn<T> }) => string | undefined
 }
 
 export interface TData {
@@ -18,7 +19,7 @@ export interface TableColumn<T extends TData> {
     | string
     | ((props: { column: TableColumn<T>; expandLevel: (direction: 'up' | 'down') => void }) => React.ReactNode)
   cell?: <D extends TData = T>(props: { row: { original: D }; getValue: () => unknown }) => React.ReactNode
-  options?: TColumnOptions
+  options?: TableColumnOptions<T>
 }
 
 export interface TableProps<T extends TData> extends React.PropsWithChildren {

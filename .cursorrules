@@ -1,0 +1,65 @@
+# Cursor AI Rules for NetSuite Project
+
+## Project Structure
+This is a monorepo using:
+- **pnpm** for package management
+- **Turbo** for build orchestration
+- **Next.js** for the list-report app
+- **TypeScript** throughout
+
+## Design System
+- **UI Package**: `@workspace/ui` - Contains all shared UI components
+- **Design System Location**: `packages/ui/src/components/`
+- **Design Tokens**: Use Tailwind classes with design system colors (brand-100, neutral-40, etc.)
+
+## Component Import Patterns
+- Always import from `@workspace/ui/components/[component-name]` for UI components
+- Use `@workspace/ui/lib/[utility]` for utilities
+- Example: `import { Button } from '@workspace/ui/components/button'`
+
+## Available UI Components
+- **Button**: `@workspace/ui/components/button` - Use variants: default, outline, secondary, ghost, link, destructive
+- **Dialog**: `@workspace/ui/components/dialog` - For modals
+- **Form Components**: `@workspace/ui/components/form` - FormInputText, Select, etc.
+- **Table**: `@workspace/ui/components/table` - Expandable tables
+- **Toast**: `@workspace/ui/components/toast` - Notifications
+
+## Radix UI Components
+We use Radix UI primitives wrapped in our design system:
+- `@radix-ui/react-dialog` - Dialog/Modal
+- `@radix-ui/react-popover` - Popover
+- `@radix-ui/react-select` - Select dropdowns
+- `@radix-ui/react-slot` - Slot component
+- `@radix-ui/react-toast` - Toast notifications
+
+## Code Style
+- Use **functional components** with TypeScript
+- Prefer **named exports** over default exports
+- Use **Tailwind CSS** for styling
+- Follow **ESLint** rules (prettier, import order)
+- Use **cva** (class-variance-authority) for component variants
+
+## Color System
+- Brand colors: `brand-100`, `brand-110`, `brand-40`, `brand-60`
+- Neutral colors: `neutral-10`, `neutral-20`, `neutral-40`, `neutral-100`, `neutral-120`, `neutral-140`
+- Status colors: `success-100`, `danger-100`, `warning-100`
+
+## Component Patterns
+- Use `cn()` utility from `@workspace/ui/lib/style` for className merging
+- Use `formatCurrency()` from `@workspace/ui/components/form/input/text` for currency formatting
+- Use Lucide React icons: `import { IconName } from 'lucide-react'`
+
+## Budget Table Context
+- Budget components are in `apps/list-report/lib/components/budget-table/`
+- History components are in `apps/list-report/lib/components/budget-history/`
+- Use `useBudgetTableContext()` for budget state management
+
+## When suggesting code:
+1. Always use components from `@workspace/ui` design system
+2. Match existing code patterns and structure
+3. Use TypeScript types properly
+4. Follow the import order: external → workspace → internal → relative
+5. Use design system colors and spacing
+6. Prefer Button component over raw `<button>` elements
+7. Use Dialog components for modals
+8. Follow the existing file structure patterns

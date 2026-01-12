@@ -36,7 +36,7 @@ export const Header = <T extends TData>() => {
             <th
               ref={(el) => referenceHeaderElements(el, column.accessorKey.toString())}
               key={column.accessorKey.toString()}
-              className={cn('px-4 py-3 text-neutral-120 font-bold', {
+              className={cn('px-4 py-3 text-neutral-120 font-bold', column.options?.className?.({ column }), {
                 'sticky top-0 bg-neutral-30 z-20': column.options?.isFixed,
               })}
               style={{

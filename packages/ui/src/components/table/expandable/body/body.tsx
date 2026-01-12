@@ -32,9 +32,13 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
               return (
                 <td
                   key={column.accessorKey.toString()}
-                  className={cn('px-4 bg-inherit py-2 text-sm leading-normal h-full', {
-                    'sticky z-10 top-0.5 border-top': column.options?.isFixed,
-                  })}
+                  className={cn(
+                    'px-4 bg-inherit py-2 text-sm leading-normal h-full',
+                    column.options?.className?.({ column }),
+                    {
+                      'sticky z-10 top-0.5 border-top': column.options?.isFixed,
+                    }
+                  )}
                   style={{
                     left: getFixedColumnLeftPosition(
                       column.accessorKey.toString(),
@@ -70,9 +74,13 @@ export const Body = <T extends TData>({ className }: BodyProps) => {
             return (
               <td
                 key={column.accessorKey.toString()}
-                className={cn('px-4 bg-inherit py-2 text-sm leading-normal text-right h-full', {
-                  'sticky z-10': column.options?.isFixed,
-                })}
+                className={cn(
+                  'px-4 bg-inherit py-2 text-sm leading-normal text-right h-full',
+                  column.options?.className?.({ column }),
+                  {
+                    'sticky z-10': column.options?.isFixed,
+                  }
+                )}
                 style={{
                   left: getFixedColumnLeftPosition(
                     column.accessorKey.toString(),
