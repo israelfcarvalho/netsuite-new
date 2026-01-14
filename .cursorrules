@@ -54,6 +54,11 @@ We use Radix UI primitives wrapped in our design system:
 - History components are in `apps/list-report/lib/components/budget-history/`
 - Use `useBudgetTableContext()` for budget state management
 
+## Code Change Policy
+- **DO NOT change code without explicit user permission**
+- Always propose changes first and wait for approval before implementing
+- Save proposals in separate files if needed for review
+
 ## When suggesting code:
 1. Always use components from `@workspace/ui` design system
 2. Match existing code patterns and structure
