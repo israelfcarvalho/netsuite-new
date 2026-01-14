@@ -1,3 +1,4 @@
+import { HTTP_STATUS_CODES } from './constants'
 import { NetSuiteError, RawNetsuiteError } from './error/netsuite'
 import { HeadersMap, QueryParams } from './types'
 
@@ -70,6 +71,14 @@ export const headersMap: HeadersMap = {
 export function responseMiddleware<TData>(res: Response) {
   return new Promise<TData>((resolve, reject) => {
     if (res.ok) {
+      if (res.status === HTTP_STATUS_CODES.CREATED) {
+        const contentLength = res.headers.get('content-length')
+        if (contentLength && parseInt(contentLength) === 0) {
+          resolve(undefined as TData)
+          return
+        }
+      }
+
       res
         .json()
         .then<TData>((res) => {
