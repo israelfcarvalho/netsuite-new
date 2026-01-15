@@ -74,7 +74,7 @@ export function OverlappingHistoryView({
                     `}
                   title={CropPlanKeysToNames[primaryField].join(' ')}
                 >
-                  {CropPlanKeysToNames[primaryField][0]}
+                  {CropPlanKeysToNames[primaryField].join(' ')}
                 </button>
                 <div className="h-4 w-px bg-neutral-40" />
                 <button
@@ -85,7 +85,7 @@ export function OverlappingHistoryView({
                     `}
                   title={CropPlanKeysToNames[relatedField].join(' ')}
                 >
-                  {CropPlanKeysToNames[relatedField][0]}
+                  {CropPlanKeysToNames[relatedField].join(' ')}
                 </button>
               </div>
             )}
