@@ -6,6 +6,7 @@ import {
   GetCropPlanLinesHistoryResponse,
   CropPlanLineHistoryItem,
 } from './crop-plan.types'
+import response from './response.json'
 import { CostCodeService } from '../cost-code/cost-code.service'
 import { CostCode } from '../cost-code/cost-code.types'
 import { CostTypeService } from '../cost-type/cost-type.service'
@@ -19,7 +20,9 @@ export class CropPlanService {
     private readonly divisionService: DivisionService,
     private readonly costCodeService: CostCodeService,
     private readonly costTypeService: CostTypeService
-  ) {}
+  ) {
+    this.mockDataStore[999] = response.data as unknown as CropPlanLine[]
+  }
 
   private mockDataStore: Record<number, CropPlanLine[]> = {}
   private mockCostTypeData: Record<number, Record<string, Omit<CropPlanLine, 'children'>>> = {}
