@@ -6,21 +6,32 @@ import { BudgetNode } from './use-budget-table/types'
 
 import { useGetCostCodes, useGetCostTypes } from '@/lib/api'
 
-function sumBudgetNodeValues(node: BudgetNode, children: BudgetNode[]): BudgetNode {
+function sumBudgetNodeValues(
+  node: BudgetNode,
+  children: BudgetNode[],
+  isGrandTotal: boolean = false,
+  hasBlockLevel: boolean = false
+): BudgetNode {
+  let totalAcres = node.totalAcres
+  if (isGrandTotal) {
+    if (hasBlockLevel) {
+      totalAcres = children.reduce((acc, child) => acc + child.totalAcres, 0)
+    } else {
+      totalAcres = children[0]?.totalAcres || 0
+    }
+  }
+
   return {
     ...node,
     originalEstimate: children.reduce((acc, child) => acc + child.originalEstimate, 0),
-    actualCostPerAcre: children.reduce((acc, child) => acc + child.actualCostPerAcre, 0),
     actualCost: children.reduce((acc, child) => acc + child.actualCost, 0),
     currentEstimate: children.reduce((acc, child) => acc + child.currentEstimate, 0),
-    currentEstimatePerAcre: children.reduce((acc, child) => acc + child.currentEstimatePerAcre, 0),
     projectedEstimate: children.reduce((acc, child) => acc + child.projectedEstimate, 0),
     committedCost: children.reduce((acc, child) => acc + child.committedCost, 0),
-    committedCostPerAcre: children.reduce((acc, child) => acc + child.committedCostPerAcre, 0),
-    originalEstimatePerAcre: children.reduce((acc, child) => acc + child.originalEstimatePerAcre, 0),
     children: node.children ? [...children] : undefined,
     wipBalance: node.wipBalance ? node.wipBalance : children.reduce((acc, child) => acc + (child.wipBalance || 0), 0),
     wipInput: node.wipInput ? node.wipInput : children.reduce((acc, child) => acc + (child.wipInput || 0), 0),
+    totalAcres,
   }
 }
 
@@ -141,7 +152,7 @@ export function useBudgetTableFilters(data: BudgetNode[] = [], hasBlockLevel: bo
       totalAcres: 0,
     }
 
-    const grandTotal = sumBudgetNodeValues(initialGrandTotal, filteredData)
+    const grandTotal = sumBudgetNodeValues(initialGrandTotal, filteredData, true, hasBlockLevel)
 
     if (hasBlockLevel && totalAcresOfCrop) {
       grandTotal.originalEstimatePerAcre = grandTotal.originalEstimate / Number(totalAcresOfCrop)

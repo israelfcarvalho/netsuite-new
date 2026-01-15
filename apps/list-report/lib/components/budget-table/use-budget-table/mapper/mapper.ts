@@ -1,4 +1,5 @@
 import { BudgetNode } from '../types'
+import { calculatePerAcreValues } from '../use-budget-table.utils'
 
 import { CropPlanLineItem } from '@/lib/api/crop-plan/types'
 
@@ -11,14 +12,14 @@ export function createNode(item: CropPlanLineItem, parentRowId: string = ''): Bu
     rowId,
     name: item.name,
     originalEstimate: item.originalEstimate,
-    originalEstimatePerAcre: item.originalEstimatePerAcre,
+    originalEstimatePerAcre: item.originalEstimate / item.totalAcres,
     currentEstimate: item.currentEstimate,
-    currentEstimatePerAcre: item.currentEstimatePerAcre,
+    currentEstimatePerAcre: item.currentEstimate / item.totalAcres,
     projectedEstimate: item.projectedEstimate,
     committedCost: item.committedCost,
-    committedCostPerAcre: item.totalAcres > 0 ? item.committedCost / item.totalAcres : 0,
+    committedCostPerAcre: item.committedCost / item.totalAcres,
     actualCost: item.actualCost,
-    actualCostPerAcre: item.totalAcres > 0 ? item.actualCost / item.totalAcres : 0,
+    actualCostPerAcre: item.actualCost / item.totalAcres,
     wipBalance: item.wipBalance,
     wipInput: item.wipInput,
     totalAcres: item.totalAcres,
@@ -36,27 +37,22 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
 
     if (node.children?.length && node.children.length > 0) {
       node.originalEstimate = 0
-      node.originalEstimatePerAcre = 0
       node.currentEstimate = 0
-      node.currentEstimatePerAcre = 0
       node.projectedEstimate = 0
       node.committedCost = 0
-      node.committedCostPerAcre = 0
       node.actualCost = 0
       node.actualCostPerAcre = 0
-      node.totalAcres = 0
+      node.committedCostPerAcre = 0
+      node.currentEstimatePerAcre = 0
+      node.originalEstimatePerAcre = 0
     }
 
     node.children?.forEach((child) => {
       node.originalEstimate += child.originalEstimate
-      node.originalEstimatePerAcre += child.originalEstimatePerAcre
       node.currentEstimate += child.currentEstimate
-      node.currentEstimatePerAcre += child.currentEstimatePerAcre
       node.projectedEstimate += child.projectedEstimate
-      node.committedCostPerAcre += child.committedCostPerAcre
       node.committedCost += child.committedCost
       node.actualCost += child.actualCost
-      node.actualCostPerAcre += child.actualCostPerAcre
       if (node.wipBalance) {
         node.wipBalance += child.wipBalance ?? 0
       }
@@ -64,6 +60,11 @@ export function mapCropPlanToNodes(data: CropPlanLineItem[]): Map<string, Budget
         node.wipInput += child.wipInput ?? 0
       }
     })
+
+    node.originalEstimatePerAcre = calculatePerAcreValues(node.originalEstimate, node.totalAcres)
+    node.currentEstimatePerAcre = calculatePerAcreValues(node.currentEstimate, node.totalAcres)
+    node.committedCostPerAcre = calculatePerAcreValues(node.committedCost, node.totalAcres)
+    node.actualCostPerAcre = calculatePerAcreValues(node.actualCost, node.totalAcres)
 
     nodes.set(node.rowId, node)
 

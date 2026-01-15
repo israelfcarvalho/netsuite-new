@@ -153,7 +153,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         ),
         ({ row }) => {
           const originalRow = row.original as unknown as BudgetNode
-          const originalValue = originalRow.originalEstimatePerAcre
+          const originalValue = originalRow.originalEstimate / originalRow.totalAcres
           const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('originalEstimatePerAcre')
 
@@ -174,7 +174,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                   variant="currency"
                   value={originalValue}
                   onChange={(value) => {
-                    updateNode(originalRow.rowId, { originalEstimatePerAcre: value })
+                    updateNode(originalRow.rowId, { originalEstimate: value * originalRow.totalAcres })
                     updateLocalHistory({
                       type: 'local',
                       lineId: originalRow.lineId,
@@ -182,22 +182,18 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       name: 'originalEstimatePerAcre',
                       newValue: value,
                     })
+                    updateLocalHistory({
+                      type: 'local',
+                      lineId: originalRow.lineId,
+                      rowId: originalRow.rowId,
+                      name: 'originalEstimate',
+                      newValue: value * originalRow.totalAcres,
+                    })
 
                     if (value !== originalValue) {
                       setTimeout(() => {
                         setSelectedBudgetHistory({ field: 'originalEstimatePerAcre', rowId: originalRow.rowId })
                       }, 300)
-                    }
-
-                    if (originalRow.totalAcres) {
-                      updateNode(originalRow.rowId, { originalEstimate: value * originalRow.totalAcres })
-                      updateLocalHistory({
-                        type: 'local',
-                        lineId: originalRow.lineId,
-                        rowId: originalRow.rowId,
-                        name: 'originalEstimate',
-                        newValue: value * originalRow.totalAcres,
-                      })
                     }
                   }}
                   changeOnBlur
@@ -222,9 +218,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         {
           isFixed: true,
           className: () => {
-            const isLastColumn = !visibleColumns.find((column) =>
-              ['originalEstimate', 'currentEstimatePerAcre', 'currentEstimate'].includes(column)
-            )
+            const isLastColumn = !visibleColumns.find((column) => ['originalEstimate'].includes(column))
             if (isLastColumn) {
               return cn('border-r border-neutral-60')
             }
@@ -270,23 +264,19 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       name: 'originalEstimate',
                       newValue: value,
                     })
+                    const newOriginalEstimatePerAcre = Math.round((value * 100) / originalRow.totalAcres) / 100
+                    updateLocalHistory({
+                      type: 'local',
+                      lineId: originalRow.lineId,
+                      rowId: originalRow.rowId,
+                      name: 'originalEstimatePerAcre',
+                      newValue: newOriginalEstimatePerAcre,
+                    })
 
                     if (value !== originalValue) {
                       setTimeout(() => {
                         setSelectedBudgetHistory({ field: 'originalEstimate', rowId: originalRow.rowId })
                       }, 300)
-                    }
-
-                    if (originalRow.totalAcres) {
-                      const newOriginalEstimatePerAcre = Math.round((value * 100) / originalRow.totalAcres) / 100
-                      updateNode(originalRow.rowId, { originalEstimatePerAcre: newOriginalEstimatePerAcre })
-                      updateLocalHistory({
-                        type: 'local',
-                        lineId: originalRow.lineId,
-                        rowId: originalRow.rowId,
-                        name: 'originalEstimatePerAcre',
-                        newValue: newOriginalEstimatePerAcre,
-                      })
                     }
                   }}
                   changeOnBlur
@@ -310,14 +300,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         },
         {
           isFixed: true,
-          className: () => {
-            const isLastColumn = !visibleColumns.find((column) =>
-              ['currentEstimatePerAcre', 'currentEstimate'].includes(column)
-            )
-            if (isLastColumn) {
-              return cn('border-r border-neutral-60')
-            }
-          },
+          className: () => cn('border-r border-neutral-60'),
         }
       ),
       createColumn<BudgetNode>(
@@ -331,7 +314,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
         ),
         ({ row }) => {
           const originalRow = row.original as unknown as BudgetNode
-          const originalValue = originalRow.currentEstimatePerAcre
+          const originalValue = originalRow.currentEstimate / originalRow.totalAcres
           const hasChildren = originalRow.children?.length
           const isBlockEC = blockEC.includes('currentEstimatePerAcre')
 
@@ -352,9 +335,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                   variant="currency"
                   value={originalValue}
                   onChange={(value) => {
-                    updateNode(originalRow.rowId, {
-                      currentEstimatePerAcre: value,
-                    })
+                    updateNode(originalRow.rowId, { currentEstimate: value * originalRow.totalAcres })
                     updateLocalHistory({
                       type: 'local',
                       lineId: originalRow.lineId,
@@ -362,22 +343,18 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       name: 'currentEstimatePerAcre',
                       newValue: value,
                     })
+                    updateLocalHistory({
+                      type: 'local',
+                      lineId: originalRow.lineId,
+                      rowId: originalRow.rowId,
+                      name: 'currentEstimate',
+                      newValue: value * originalRow.totalAcres,
+                    })
 
                     if (value !== originalValue) {
                       setTimeout(() => {
                         setSelectedBudgetHistory({ field: 'currentEstimatePerAcre', rowId: originalRow.rowId })
                       }, 300)
-                    }
-
-                    if (originalRow.totalAcres) {
-                      updateNode(originalRow.rowId, { currentEstimate: value * originalRow.totalAcres })
-                      updateLocalHistory({
-                        type: 'local',
-                        lineId: originalRow.lineId,
-                        rowId: originalRow.rowId,
-                        name: 'currentEstimate',
-                        newValue: value * originalRow.totalAcres,
-                      })
                     }
                   }}
                   changeOnBlur
@@ -452,23 +429,19 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
                       name: 'currentEstimate',
                       newValue: value,
                     })
+                    const newCurrentEstimatePerAcre = Math.round((value * 100) / originalRow.totalAcres) / 100
+                    updateLocalHistory({
+                      type: 'local',
+                      lineId: originalRow.lineId,
+                      rowId: originalRow.rowId,
+                      name: 'currentEstimatePerAcre',
+                      newValue: newCurrentEstimatePerAcre,
+                    })
 
                     if (value !== originalValue) {
                       setTimeout(() => {
                         setSelectedBudgetHistory({ field: 'currentEstimate', rowId: originalRow.rowId })
                       }, 300)
-                    }
-
-                    if (originalRow.totalAcres) {
-                      const newCurrentEstimatePerAcre = Math.round((value * 100) / originalRow.totalAcres) / 100
-                      updateNode(originalRow.rowId, { currentEstimatePerAcre: newCurrentEstimatePerAcre })
-                      updateLocalHistory({
-                        type: 'local',
-                        lineId: originalRow.lineId,
-                        rowId: originalRow.rowId,
-                        name: 'currentEstimatePerAcre',
-                        newValue: newCurrentEstimatePerAcre,
-                      })
                     }
                   }}
                   changeOnBlur
@@ -507,15 +480,14 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           </span>
         ),
         ({ row }) => {
-          const { committedCostPerAcre } = row.original as unknown as BudgetNode
+          const { committedCost, totalAcres } = row.original as unknown as BudgetNode
+          const committedCostPerAcre = committedCost / totalAcres
 
           return <span className="text-right">{formatCurrency(committedCostPerAcre)}</span>
         },
         {
           className: () => {
-            const isLastColumn = !visibleColumns.find((column) =>
-              ['committedCost', 'actualCostPerAcre', 'actualCost'].includes(column)
-            )
+            const isLastColumn = !visibleColumns.find((column) => ['committedCost'].includes(column))
             if (isLastColumn) {
               return cn('border-r border-neutral-60')
             }
@@ -537,12 +509,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           return <span className="text-right">{formatCurrency(committedCost)}</span>
         },
         {
-          className: () => {
-            const isLastColumn = !visibleColumns.find((column) => ['actualCostPerAcre', 'actualCost'].includes(column))
-            if (isLastColumn) {
-              return cn('border-r border-neutral-60')
-            }
-          },
+          className: () => cn('border-r border-neutral-60'),
         }
       ),
       createColumn<BudgetNode>(
@@ -555,7 +522,8 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           </span>
         ),
         ({ row }) => {
-          const { actualCostPerAcre } = row.original as unknown as BudgetNode
+          const { actualCost, totalAcres } = row.original as unknown as BudgetNode
+          const actualCostPerAcre = actualCost / totalAcres
 
           return <span className="text-right">{formatCurrency(actualCostPerAcre)}</span>
         },
@@ -634,15 +602,14 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           </span>
         ),
         ({ row }) => {
-          const { actualCostPerAcre, committedCostPerAcre } = row.original as unknown as BudgetNode
-          const totalCostPerAcre = actualCostPerAcre + committedCostPerAcre
+          const { actualCost, committedCost, totalAcres } = row.original as unknown as BudgetNode
+          const totalCost = actualCost + committedCost
+          const totalCostPerAcre = totalCost / totalAcres
           return <span className="text-right">{formatCurrency(totalCostPerAcre)}</span>
         },
         {
           className: () => {
-            const isLastColumn = !visibleColumns.find((column) =>
-              ['totalCost', 'costsToCompletePerAcre', 'costsToComplete'].includes(column)
-            )
+            const isLastColumn = !visibleColumns.find((column) => ['totalCost'].includes(column))
             if (isLastColumn) {
               return cn('border-r border-neutral-60')
             }
@@ -668,14 +635,7 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           )
         },
         {
-          className: () => {
-            const isLastColumn = !visibleColumns.find((column) =>
-              ['costsToCompletePerAcre', 'costsToComplete'].includes(column)
-            )
-            if (isLastColumn) {
-              return cn('border-r border-neutral-60')
-            }
-          },
+          className: () => cn('border-r border-neutral-60'),
         }
       ),
       createColumn<BudgetNodeCalculated>(
@@ -688,10 +648,11 @@ export const BudgetTable = (props: Omit<BudgetTableProps, 'columns' | 'filteredD
           </span>
         ),
         ({ row }) => {
-          const { actualCostPerAcre, committedCostPerAcre, currentEstimatePerAcre } =
-            row.original as unknown as BudgetNode
-          const totalCostPerAcre = actualCostPerAcre + committedCostPerAcre
-          const costsToCompletePerAcre = currentEstimatePerAcre - totalCostPerAcre
+          const originalRow = row.original as unknown as BudgetNode
+          const { actualCost, committedCost, currentEstimate, totalAcres } = originalRow
+          const totalCost = actualCost + committedCost
+          const costsToComplete = currentEstimate - totalCost
+          const costsToCompletePerAcre = costsToComplete / totalAcres
 
           return (
             <span className={cn('text-right', { 'text-danger-80 font-semibold': costsToCompletePerAcre < 0 })}>
