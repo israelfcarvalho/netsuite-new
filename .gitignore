@@ -34,3 +34,6 @@ npm-debug.log*
 # Misc
 .DS_Store
 *.pem
+
+# Mock Server
+apps/_mock-server/**/response.json
